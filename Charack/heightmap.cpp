@@ -131,7 +131,7 @@ void displayHeightMapDovyski(void) {
 	int aXNow = getPositionX();
 	int aZNow = getPositionZ();
 
-	printf("%d,%d\n", aXNow, aZNow);
+	printf("%d,%d (rotY: %d)\n", aXNow, aZNow, gRotY);
 
 	for (mapX = abs(aXNow) - CK_VIEW_FRUSTUM; mapX < abs(aXNow) + CK_VIEW_FRUSTUM; mapX +=4){ 
 		for (mapZ = abs(aZNow) - CK_VIEW_FRUSTUM; mapZ < abs(aZNow) + CK_VIEW_FRUSTUM; mapZ+=4){ 

@@ -183,6 +183,10 @@
 				RelativePath=".\move.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\vector3.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -199,6 +203,10 @@
 			</File>
 			<File
 				RelativePath=".\move.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vector3.h"
 				>
 			</File>
 		</Filter>

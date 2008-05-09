@@ -48,18 +48,7 @@ void display (void) {
 
 	glRotatef(gRotY, 0,1,0);
 	glRotatef(gRotX, 1,0,0);
-	glTranslatef(gPosX, gPosY, gPosZ);
-
-//	glRotatef(gRotX, gPosX,1,-1); // na ideia tb
-
-/*	
-	Na ideia esse aqui ^^
-	glRotatef(gRotX, 1,1,gPosZ);
-	glRotatef(gRotY, gPosX,0,1);
-*/
-
-	//glRotatef(gRotX, 1,0,0);
-	//glRotatef(gRotY, 0,1,0);
+	glTranslatef(gCameraPosition.x, gCameraPosition.y, gCameraPosition.z);
 	
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	displayHeightMapDovyski();
