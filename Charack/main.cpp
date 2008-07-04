@@ -5,9 +5,58 @@
 #include <math.h>
 #include <iostream>
 
-#include "heightmap.h"
-#include "move.h"
-#include "config.h"
+#include "charack/charack.h"
+
+CharackCamera gCamera;
+
+void processNormalKeys(unsigned char key, int x, int y) {
+	switch(key) {
+		case 27:
+			exit(0);
+			break;
+		case 'w':
+			// Move forward
+			gCamera.moveForward(5);
+			break;
+
+		case 's':
+			// Move backward
+			gCamera.moveBackward(5);
+			break;
+
+		case 'a':
+			// Move left
+			gCamera.moveLeft(5);
+			break;
+
+		case 'd':
+			// Move right
+			gCamera.moveRight(5);
+			break;
+
+		case 'r':
+			// Look above
+			gCamera.rotateLookUpDown(5);
+			break;
+
+		case 'f':
+			// Look down
+			gCamera.rotateLookUpDown(-5);
+			break;
+
+		case 'q':
+			// Look to the left
+			gCamera.rotateLookLeftRight(5)
+			break;
+
+		case 'e':
+			// Look to the right
+			gCamera.rotateLookLeftRight(-5);
+			break;
+	}
+}
+
+
 
 void setupEnableStuffs(void) {
 	glEnable(GL_DEPTH_TEST);	//enable the depth testing
@@ -16,22 +65,10 @@ void setupEnableStuffs(void) {
 	glCullFace(GL_BACK);		//set the face to be culled
 	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
 	glShadeModel (GL_SMOOTH);	//set the shade model to smooth
-	glEnable(GL_TEXTURE_2D);	//enable texturing
-	glEnable(GL_LIGHTING);		//enable the lighting
-	glEnable(GL_LIGHT0);		//enable our diffuse light
 	glEnable (GL_LIGHT1);		//enable our ambient light
 	glEnable(GL_NORMALIZE);		//enable normalizing of normals, wont make a difference if disabled
 }
 
-void setupLights(void) {
-	GLfloat aDiffuseLight[] = {dlr, dlg, dlb};
-	GLfloat aAmbientLight[] = {alr, alg, alb};
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, aDiffuseLight);
-	glLightfv(GL_LIGHT1, GL_AMBIENT, aAmbientLight);
-	
-	GLfloat aLightPosition[] = {getPositionX(), getPositionY(), getPositionZ(), lw};
-	glLightfv (GL_LIGHT0, GL_POSITION, aLightPosition);
-}
 
 void display (void) {
 	glClearColor (0.0,0.0,0.0,1.0);
@@ -39,24 +76,19 @@ void display (void) {
     glLoadIdentity(); 
 	
 	setupEnableStuffs();
-	setupLights();
 
-	// TODO: colocar uma constante aqui
 	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	// We point the camera to our landscape
-
-	glRotatef(gRotY, 0,1,0);
-	glRotatef(gRotX, 1,0,0);
-	glTranslatef(gCameraPosition.x, gCameraPosition.y, gCameraPosition.z);
+	glRotatef(gCamera.getRotationY(), 0,1,0);
+	glRotatef(gCamera.getRotationX(), 1,0,0);
+	glTranslatef(gCamera.getPosition()->x, gCamera.getPosition()->y, gCamera.getPosition()->z);
 	
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	displayHeightMapDovyski();
 	glutSwapBuffers();
 }
 
 void init (void) {
-	texture[0] = LoadTextureRAW("texture.raw", 256, 256);
 	LoadHeightMap ("height.raw", 128, 128);
 }
 
@@ -69,20 +101,20 @@ void reshape (int w, int h) {
 }
 
 int main (int argc, char **argv) {
-    glutInit (&argc, argv);
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
-	glutInitWindowSize (800, 600); 
-	glutInitWindowPosition (100, 100);
-	glutCreateWindow ("Pseudo-infinie world generator");
+    glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
+	glutInitWindowSize(800, 600); 
+	glutInitWindowPosition(100, 100);
+	glutCreateWindow("Pseudo-infinie world generator");
 
 	init();
 
-    glutDisplayFunc (display);
-	glutIdleFunc (display);
-	glutReshapeFunc (reshape);
+    glutDisplayFunc(display);
+	glutIdleFunc(display);
+	glutReshapeFunc(reshape);
 	glutKeyboardFunc(processNormalKeys);
 
-	glutMainLoop ();
+	glutMainLoop();
 
 	return 0;
 }

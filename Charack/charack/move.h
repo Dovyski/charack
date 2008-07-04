@@ -8,12 +8,6 @@
 #include "vector3.h"
 #include "config.h"
 
-#define DEG2RAD(X)		((PI*(X))/180)
-
-extern int gPosX;
-extern int gPosY;
-extern int gPosZ;
-
 extern int gRotX;
 extern int gRotY;
 

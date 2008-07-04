@@ -172,43 +172,63 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\heightmap.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\move.cpp"
+			<Filter
+				Name="charack"
 				>
-			</File>
-			<File
-				RelativePath=".\vector3.cpp"
-				>
-			</File>
+				<File
+					RelativePath=".\charack\CharackCamera.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackMathCollection.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\heightmap.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\vector3.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\config.h"
+			<Filter
+				Name="charack"
 				>
-			</File>
-			<File
-				RelativePath=".\heightmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\move.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vector3.h"
-				>
-			</File>
+				<File
+					RelativePath=".\charack\charack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackCamera.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackMathCollection.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\config.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\heightmap.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\vector3.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
