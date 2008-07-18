@@ -1,4 +1,5 @@
 #include "CharackCamera.h"
+#include <stdio.h>
 
 CharackCamera::CharackCamera() {
 	mRotX = 0;
@@ -34,7 +35,7 @@ void CharackCamera::moveRight(int theHowMuch){
  * Negative = rotate to left, positive rotate to right
  */
 void CharackCamera::rotateLookLeftRight(int theDegres) {
-	mRotY -= theDegres;
+	mRotY += theDegres;
 }
 
 /**

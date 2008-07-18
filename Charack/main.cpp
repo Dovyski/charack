@@ -7,7 +7,19 @@
 
 #include "charack/charack.h"
 
-CharackCamera gCamera;
+// All this funciton will be interpolated to create the world terrain.
+// The weight of each one of these functions are described in gWeights (below).
+float f1(float a) { return sin(a); }
+float f2(float a) { return sin(20*a); }
+float f3(float a) { return sin(300*a); }
+float f4(float a) { return sin(500*a); }
+
+// Define how much each of the functions above interferes in the terrain generation.
+float gWeights[CK_MATHC_MAX_FUNCTION] = {100, 30, 3, 1};
+
+
+// We create an "eye" to see the generated world.
+CharackRender gRender;
 
 void processNormalKeys(unsigned char key, int x, int y) {
 	switch(key) {
@@ -16,42 +28,42 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 		case 'w':
 			// Move forward
-			gCamera.moveForward(5);
+			gRender.getCamera()->moveForward(5);
 			break;
 
 		case 's':
 			// Move backward
-			gCamera.moveBackward(5);
+			gRender.getCamera()->moveBackward(5);
 			break;
 
 		case 'a':
 			// Move left
-			gCamera.moveLeft(5);
+			gRender.getCamera()->moveLeft(5);
 			break;
 
 		case 'd':
 			// Move right
-			gCamera.moveRight(5);
+			gRender.getCamera()->moveRight(5);
 			break;
 
 		case 'r':
 			// Look above
-			gCamera.rotateLookUpDown(5);
+			gRender.getCamera()->rotateLookUpDown(5);
 			break;
 
 		case 'f':
 			// Look down
-			gCamera.rotateLookUpDown(-5);
+			gRender.getCamera()->rotateLookUpDown(-5);
 			break;
 
 		case 'q':
 			// Look to the left
-			gCamera.rotateLookLeftRight(5)
+			gRender.getCamera()->rotateLookLeftRight(-5);
 			break;
 
 		case 'e':
 			// Look to the right
-			gCamera.rotateLookLeftRight(-5);
+			gRender.getCamera()->rotateLookLeftRight(5);
 			break;
 	}
 }
@@ -78,18 +90,19 @@ void display (void) {
 	setupEnableStuffs();
 
 	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-
-	// We point the camera to our landscape
-	glRotatef(gCamera.getRotationY(), 0,1,0);
-	glRotatef(gCamera.getRotationX(), 1,0,0);
-	glTranslatef(gCamera.getPosition()->x, gCamera.getPosition()->y, gCamera.getPosition()->z);
 	
-	displayHeightMapDovyski();
+	gRender.displayMap();
+
 	glutSwapBuffers();
 }
 
 void init (void) {
-	LoadHeightMap ("height.raw", 128, 128);
+	gRender.getMathCollection()->addFunction(f1);
+	gRender.getMathCollection()->addFunction(f2);
+	gRender.getMathCollection()->addFunction(f3);
+	gRender.getMathCollection()->addFunction(f4);
+
+	gRender.getMathCollection()->setWeights(gWeights);
 }
 
 void reshape (int w, int h) {

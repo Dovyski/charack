@@ -5,7 +5,7 @@
 #define CK_VIEW_FRUSTUM					300
 
 // Max world width/height
-#define CK_MAX_WIDTH					50000.0
+#define CK_MAX_WIDTH					7000.0
 
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)

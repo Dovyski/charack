@@ -187,7 +187,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\charack\heightmap.cpp"
+					RelativePath=".\charack\CharackRender.cpp"
 					>
 				</File>
 				<File
@@ -217,11 +217,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\charack\config.h"
+					RelativePath=".\charack\CharackRender.h"
 					>
 				</File>
 				<File
-					RelativePath=".\charack\heightmap.h"
+					RelativePath=".\charack\config.h"
 					>
 				</File>
 				<File

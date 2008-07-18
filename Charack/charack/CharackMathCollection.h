@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define CK_MATHC_MAX_FUNCTION	255
+#define CK_MATHC_MAX_FUNCTION	4
 
 /**
  * Manage a collection of math function, providing a easy way to get a interpolation of them.
