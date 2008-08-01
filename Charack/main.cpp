@@ -15,7 +15,7 @@ float f3(float a) { return sin(300*a); }
 float f4(float a) { return sin(500*a); }
 
 // Define how much each of the functions above interferes in the terrain generation.
-float gWeights[CK_MATHC_MAX_FUNCTION] = {100, 30, 3, 1};
+float gWeights[CK_MATHC_MAX_FUNCTION] = {2000, 500, 50, 1};
 
 
 // We create an "eye" to see the generated world.
@@ -65,6 +65,16 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			// Look to the right
 			gRender.getCamera()->rotateLookLeftRight(5);
 			break;
+
+		case 't':
+			// Move up
+			gRender.getCamera()->moveUpDown(-5);
+			break;
+
+		case 'g':
+			// Move down
+			gRender.getCamera()->moveUpDown(5);
+			break;
 	}
 }
 
@@ -74,11 +84,13 @@ void setupEnableStuffs(void) {
 	glEnable(GL_DEPTH_TEST);	//enable the depth testing
 	glDepthFunc(GL_LEQUAL);		//set the depth function
 	glFrontFace(GL_CCW);		//set which face is facing forward
-	glCullFace(GL_BACK);		//set the face to be culled
-	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
+//	glCullFace(GL_BACK);		//set the face to be culled
+//	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
 	glShadeModel (GL_SMOOTH);	//set the shade model to smooth
-	glEnable (GL_LIGHT1);		//enable our ambient light
+//	glEnable (GL_LIGHT1);		//enable our ambient light
 	glEnable(GL_NORMALIZE);		//enable normalizing of normals, wont make a difference if disabled
+
+	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_LINE, GL_FILL, GL_POINT 
 }
 
 
@@ -97,12 +109,19 @@ void display (void) {
 }
 
 void init (void) {
-	gRender.getMathCollection()->addFunction(f1);
-	gRender.getMathCollection()->addFunction(f2);
-	gRender.getMathCollection()->addFunction(f3);
-	gRender.getMathCollection()->addFunction(f4);
+	gRender.getMathCollectionX()->addFunction(f1);
+//	gRender.getMathCollectionX()->addFunction(f2);
+//	gRender.getMathCollectionX()->addFunction(f3);
+//	gRender.getMathCollectionX()->addFunction(f4);
 
-	gRender.getMathCollection()->setWeights(gWeights);
+	gRender.getMathCollectionX()->setWeights(gWeights);
+
+	gRender.getMathCollectionZ()->addFunction(f1);
+//	gRender.getMathCollectionZ()->addFunction(f2);
+//	gRender.getMathCollectionZ()->addFunction(f3);
+//	gRender.getMathCollectionZ()->addFunction(f4);
+
+	gRender.getMathCollectionZ()->setWeights(gWeights);
 }
 
 void reshape (int w, int h) {

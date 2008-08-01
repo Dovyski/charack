@@ -14,7 +14,8 @@
 class CharackRender {
 	private:
 		CharackCamera *mCamera;
-		CharackMathCollection *mMaths;
+		CharackMathCollection *mMathsX;
+		CharackMathCollection *mMathsZ;
 
 	public:
 		CharackRender();		
@@ -22,11 +23,12 @@ class CharackRender {
 
 		void loadHeightMap(char* Filename, int Width, int Height);
 		void displayMap(void);
-		BYTE getHeight(float theX, float theZ);
+		float getHeight(float theX, float theZ);
 		CharackCamera *getCamera(void);
 		
 		// TODO: fix this ("ordinary" users should not see the math collection...)
-		CharackMathCollection *getMathCollection(void);
+		CharackMathCollection *getMathCollectionX(void);
+		CharackMathCollection *getMathCollectionZ(void);
 };
 
 

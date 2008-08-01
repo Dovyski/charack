@@ -4,7 +4,7 @@
 CharackCamera::CharackCamera() {
 	mRotX = 0;
 	mRotY = 0;
-	mPosition = new Vector3(100, -100, 100);
+	mPosition = new Vector3(-1000, -100, -1000); //TODO: fix this
 }
 
 CharackCamera::~CharackCamera() {
@@ -30,6 +30,9 @@ void CharackCamera::moveRight(int theHowMuch){
 	mPosition->x = mPosition->x + theHowMuch * sin(CK_DEG2RAD(270 - mRotY));
 }
 
+void CharackCamera::moveUpDown(int theHowMuch) {
+	mPosition->y += theHowMuch;
+}
 
 /**
  * Negative = rotate to left, positive rotate to right

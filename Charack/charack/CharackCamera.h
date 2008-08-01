@@ -20,6 +20,8 @@ class CharackCamera {
 		void moveLeft(int theHowMuch);
 		void moveRight(int theHowMuch);
 
+		void moveUpDown(int theHowMuch);
+
 		void rotateLookLeftRight(int theDegres);
 		void rotateLookUpDown(int theDegres);
 
