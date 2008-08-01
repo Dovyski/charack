@@ -11,11 +11,13 @@
 #include "CharackCamera.h"
 #include "CharackMathCollection.h"
 
+// TODO: comment this?
 class CharackRender {
 	private:
 		CharackCamera *mCamera;
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
+		float mHeightMap[CK_VIEW_FRUSTUM*2][CK_VIEW_FRUSTUM*2];
 
 	public:
 		CharackRender();		
@@ -24,6 +26,7 @@ class CharackRender {
 		void loadHeightMap(char* Filename, int Width, int Height);
 		void displayMap(void);
 		float getHeight(float theX, float theZ);
+		void generateMap(void);
 		CharackCamera *getCamera(void);
 		
 		// TODO: fix this ("ordinary" users should not see the math collection...)
@@ -31,5 +34,11 @@ class CharackRender {
 		CharackMathCollection *getMathCollectionZ(void);
 };
 
+// Useful datatypes we can use in the render processing.
+typedef struct {
+	float x; 
+	float y;
+	float z;
+} CK_NORMALS;
 
 #endif

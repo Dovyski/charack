@@ -4,6 +4,8 @@
 // How far the user can see, in pixels
 #define CK_VIEW_FRUSTUM					300
 
+#define CK_SCALE						5
+
 // Max world width/height
 #define CK_MAX_WIDTH					500.0
 
