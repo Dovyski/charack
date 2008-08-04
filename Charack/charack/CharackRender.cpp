@@ -20,7 +20,7 @@ void CharackRender::generateMap(void) {
 
 	for(x = 0; x < CK_VIEW_FRUSTUM; x++){ 
 		for(mapZ = 0, z = 0; z < CK_VIEW_FRUSTUM; z++){ 
-			mHeightMap[x][z] = getHeight(mapX, mapZ);
+			mMap[x][z] = Vector3(x, getHeight(mapX, mapZ), z);
 			mapZ++;
 		}
 		mapX++;
@@ -29,6 +29,8 @@ void CharackRender::generateMap(void) {
 
 
 void CharackRender::displayMap(void) {
+	Vector3 aNormal, aV0, aV1;
+
 	glRotatef(mCamera->getRotationY(), 0,1,0);
 	glRotatef(getCamera()->getRotationX(), 1,0,0);
 	glTranslatef(-CK_VIEW_FRUSTUM/2, getCamera()->getPosition()->y, -CK_VIEW_FRUSTUM/2);
@@ -48,13 +50,49 @@ void CharackRender::displayMap(void) {
 		glEnd();
 	}*/
 
+	aV0 = mMap[0][1] - mMap[0][0];
+	aV1 = mMap[1][0] - mMap[0][0];
+	aNormal = aV1 ^ aV0;
+	aNormal.normalize();
+	glNormal3f(aNormal.x, aNormal.y, aNormal.z);
+
+	glVertex3f(0,	mMap[0][0].y,	0);
+	glVertex3f(1,	mMap[1][0].y,	0);
+
 	for(int x = 0; x < CK_VIEW_FRUSTUM - 1; x++){ 
 		glBegin(GL_TRIANGLE_STRIP);
-		for(int z = 0; z < CK_VIEW_FRUSTUM; z++){ 
-			glVertex3f(x,	mHeightMap[x][z],	z);
-			glVertex3f(x + 1,	mHeightMap[x+1][z],	z);
+		for(int z = 1; z < CK_VIEW_FRUSTUM; z++){ 
+			glVertex3f(x,	mMap[x][z].y,	z);
+
+			// Calculate the normals
+			/*
+			aV0 = mMap[x][z] - mMap[x][z-1];
+			aV1 = mMap[x+1][z-1] - mMap[x-1][z];
+			aNormal = aV1 ^ aV0;
+			aNormal = normal.normalize();
+			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
+			*/
+
+			aV0 = mMap[x-1][z] - mMap[x][z];
+			aV1 = mMap[x][z-1] - mMap[x][z];
+			aNormal = aV1 ^ aV0;
+			aNormal.normalize();
+			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
+
+			glVertex3f(mMap[x+1][z].x, mMap[x+1][z].y, mMap[x+1][z].z);
 		}
 		glEnd();
+
+		if((x + 1) < (CK_VIEW_FRUSTUM - 1)) {
+			aV0 = mMap[x+1][1] - mMap[x+1][0];
+			aV1 = mMap[x+2][0] - mMap[x+1][0];
+			aNormal = aV1 ^ aV0;
+			aNormal.normalize();
+			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
+
+			glVertex3f(mMap[x+1][0].x, mMap[x+1][0].y, mMap[x+1][0].z);
+			glVertex3f(mMap[x+2][0].x, mMap[x+2][0].y, mMap[x+2][0].z);
+		}
 	}
 }
 
@@ -74,3 +112,4 @@ CharackMathCollection *CharackRender::getMathCollectionX(void) {
 CharackMathCollection *CharackRender::getMathCollectionZ(void) {
 	return mMathsZ;
 }
+

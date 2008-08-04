@@ -17,7 +17,7 @@ class CharackRender {
 		CharackCamera *mCamera;
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
-		float mHeightMap[CK_VIEW_FRUSTUM*2][CK_VIEW_FRUSTUM*2];
+		Vector3 mMap[CK_VIEW_FRUSTUM*2][CK_VIEW_FRUSTUM*2];
 
 	public:
 		CharackRender();		

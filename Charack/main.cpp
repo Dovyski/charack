@@ -78,6 +78,19 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	}
 }
 
+void setupLights(void) {
+	// Create light components
+	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+	GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+}
 
 
 void setupEnableStuffs(void) {
@@ -87,10 +100,11 @@ void setupEnableStuffs(void) {
 //	glCullFace(GL_BACK);		//set the face to be culled
 //	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
 	glShadeModel (GL_SMOOTH);	//set the shade model to smooth
-//	glEnable (GL_LIGHT1);		//enable our ambient light
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);		//enable our ambient light
 	glEnable(GL_NORMALIZE);		//enable normalizing of normals, wont make a difference if disabled
 
-	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_LINE, GL_FILL, GL_POINT 
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_LINE, GL_FILL, GL_POINT 
 }
 
 
@@ -100,6 +114,7 @@ void display (void) {
     glLoadIdentity(); 
 	
 	setupEnableStuffs();
+	setupLights();
 
 	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	

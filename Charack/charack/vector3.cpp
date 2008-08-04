@@ -93,6 +93,13 @@ Vector3 Vector3::operator - ( const Vector3& v )
 	return( aux );
 }
 
+// cross
+Vector3 Vector3::operator ^ (const Vector3& v)
+{
+	Vector3 aux( y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x );
+	return( aux );
+}
+
 //	Produto por escalar (float)
 Vector3 Vector3::operator * ( const float s )
 {
