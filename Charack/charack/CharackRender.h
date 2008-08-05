@@ -17,7 +17,9 @@ class CharackRender {
 		CharackCamera *mCamera;
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
-		Vector3 mMap[CK_VIEW_FRUSTUM*2][CK_VIEW_FRUSTUM*2];
+		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
+
+		Vector3 CharackRender::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 
 	public:
 		CharackRender();		

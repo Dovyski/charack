@@ -80,26 +80,26 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 void setupLights(void) {
 	// Create light components
-	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
-	GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	GLfloat position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+	GLfloat aAmbientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat aDiffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+	GLfloat aSpecularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat aPosition[] = { -1.5f, 1.0f, -4.0f, 1.0f };
 
 	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, aAmbientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, aDiffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, aSpecularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, aPosition);
 }
 
 
 void setupEnableStuffs(void) {
 	glEnable(GL_DEPTH_TEST);	//enable the depth testing
 	glDepthFunc(GL_LEQUAL);		//set the depth function
-	glFrontFace(GL_CCW);		//set which face is facing forward
+	glFrontFace(GL_CW);		//set which face is facing forward
 //	glCullFace(GL_BACK);		//set the face to be culled
 //	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
-	glShadeModel (GL_SMOOTH);	//set the shade model to smooth
+	glShadeModel(GL_SMOOTH);	//set the shade model to smooth
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);		//enable our ambient light
 	glEnable(GL_NORMALIZE);		//enable normalizing of normals, wont make a difference if disabled
@@ -112,9 +112,6 @@ void display (void) {
 	glClearColor (0.0,0.0,0.0,1.0);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity(); 
-	
-	setupEnableStuffs();
-	setupLights();
 
 	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
@@ -124,6 +121,9 @@ void display (void) {
 }
 
 void init (void) {
+	setupEnableStuffs();
+	setupLights();
+
 	gRender.getMathCollectionX()->addFunction(f1);
 //	gRender.getMathCollectionX()->addFunction(f2);
 //	gRender.getMathCollectionX()->addFunction(f3);
