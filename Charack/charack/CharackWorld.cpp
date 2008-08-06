@@ -1,11 +1,12 @@
 #include "CharackWorld.h"
 
-CharackWorld::CharackWorld(int theViewFrustum) {
+CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	mCamera  = new CharackObserver();
 	mMathsX  = new CharackMathCollection();
 	mMathsZ  = new CharackMathCollection();
 	
 	setViewFrustum(theViewFrustum);
+	setSample(theSample);
 }
 
 CharackWorld::~CharackWorld() {
@@ -41,8 +42,8 @@ void CharackWorld::generateMap(void) {
 	//							 |------------|
 	//							 getViewFrustum()/2
 
-	for(aMapX = abs(aXNow) - getViewFrustum()/2, x = 0; x < getViewFrustum(); x++, aMapX++){ 
-		for(aMapZ = abs(aZNow) - getViewFrustum()/2, z = 0; z < getViewFrustum(); z++, aMapZ++){ 
+	for(aMapX = abs(aXNow) - getViewFrustum()/2, x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
+		for(aMapZ = abs(aZNow) - getViewFrustum()/2, z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
 			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ), z);
 		}
 	}
@@ -90,7 +91,7 @@ void CharackWorld::displayMap(void) {
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return sin(abs(theX)/(CK_MAX_WIDTH/20)) * 20 + cos(abs(theZ)/(CK_MAX_WIDTH/30)) * 10;
+	return sin(abs(theX)/(CK_MAX_WIDTH/10)) * 20 + cos(abs(theZ)/(CK_MAX_WIDTH/30)) * 10;
 	//return getMathCollectionX()->getValue(abs(theX)/CK_MAX_WIDTH) + getMathCollectionZ()->getValue(abs(theZ)/CK_MAX_WIDTH);
 }
 
@@ -130,5 +131,14 @@ void CharackWorld::printDebugInfo(void) {
 	printf("--- Charack World (Debug info) ---\n\n");
 	printf("Observer = (%d,%d,%d), [rotx, roty] = (%d, %d)\n", (int)getObserver()->getPositionX(), (int)getObserver()->getPositionY(), (int)getObserver()->getPositionZ(), getObserver()->getRotationX(), getObserver()->getRotationY());	
 	printf("View frustum = %d\n", getViewFrustum());
+	printf("Sample = %d\n", getSample());
 	printf("Terrain height (observer) = %.2f\n", getHeight(getObserver()->getPosition()->x, getObserver()->getPosition()->z));
+}
+
+void CharackWorld::setSample(int theSample) {
+	mSample = theSample < 0 ? 1 : theSample;
+}
+
+int CharackWorld::getSample() {
+	return mSample;
 }

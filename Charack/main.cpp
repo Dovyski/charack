@@ -21,7 +21,7 @@ float gWeights[CK_MATHC_MAX_FUNCTION] = {2000, 500, 50, 1};
 
 
 // We create an "eye" to see the generated world.
-CharackWorld gWorld(100);
+CharackWorld gWorld(100, 1);
 
 
 // To avoid walk through the walls, below the ground, etc.
@@ -96,6 +96,15 @@ void processNormalKeys(unsigned char key, int x, int y) {
 		case 'v':
 			// Increase the view frustum (user can see large distances)
 			gWorld.setViewFrustum(gWorld.getViewFrustum() + 5);
+			break;
+
+		case 'n':
+			// Decrease the sample size
+			gWorld.setSample(gWorld.getSample() - 1);
+			break;
+		case 'm':
+			// Increase the sample size
+			gWorld.setSample(gWorld.getSample() + 1);
 			break;
 	}
 

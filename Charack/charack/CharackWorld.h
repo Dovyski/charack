@@ -18,12 +18,14 @@ class CharackWorld {
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
+		
 		int mViewFrustum;
+		int mSample;
 
 		Vector3 CharackWorld::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 
 	public:
-		CharackWorld(int theViewFrustum);		
+		CharackWorld(int theViewFrustum, int theSample);
 		~CharackWorld();
 
 		void displayMap(void);
@@ -33,6 +35,9 @@ class CharackWorld {
 
 		void setViewFrustum(int theViewFrustum);
 		int getViewFrustum();
+
+		void setSample(int theViewFrustum);
+		int getSample();
 
 		// Print useful information about the world.
 		void printDebugInfo(void);
