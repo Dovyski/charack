@@ -1,19 +1,19 @@
-#ifndef __CHARACK_CAMERA_H_
-#define __CHARACK_CAMERA_H_
+#ifndef __CHARACK_OBSERVER_H_
+#define __CHARACK_OBSERVER_H_
 
 #include <math.h>
 #include "vector3.h"
 #include "config.h"
 
-class CharackCamera {
+class CharackObserver {
 	private:
 		int mRotX;
 		int mRotY;
 		Vector3 *mPosition;
 
 	public:
-		CharackCamera();		
-		~CharackCamera();
+		CharackObserver();		
+		~CharackObserver();
 
 		void moveForward(int theHowMuch);
 		void moveBackward(int theHowMuch);

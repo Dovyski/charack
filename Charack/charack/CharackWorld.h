@@ -8,28 +8,34 @@
 #include <math.h>
 #include <iostream>
 
-#include "CharackCamera.h"
+#include "CharackObserver.h"
 #include "CharackMathCollection.h"
 
 // TODO: comment this?
-class CharackRender {
+class CharackWorld {
 	private:
-		CharackCamera *mCamera;
+		CharackObserver *mCamera;
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
+		int mViewFrustum;
 
-		Vector3 CharackRender::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
+		Vector3 CharackWorld::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 
 	public:
-		CharackRender();		
-		~CharackRender();
+		CharackWorld(int theViewFrustum);		
+		~CharackWorld();
 
-		void loadHeightMap(char* Filename, int Width, int Height);
 		void displayMap(void);
 		float getHeight(float theX, float theZ);
 		void generateMap(void);
-		CharackCamera *getCamera(void);
+		CharackObserver *getObserver(void);
+
+		void setViewFrustum(int theViewFrustum);
+		int getViewFrustum();
+
+		// Print useful information about the world.
+		void printDebugInfo(void);
 		
 		// TODO: fix this ("ordinary" users should not see the math collection...)
 		CharackMathCollection *getMathCollectionX(void);

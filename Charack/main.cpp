@@ -21,16 +21,16 @@ float gWeights[CK_MATHC_MAX_FUNCTION] = {2000, 500, 50, 1};
 
 
 // We create an "eye" to see the generated world.
-CharackRender gRender;
+CharackWorld gWorld(100);
 
 
 // To avoid walk through the walls, below the ground, etc.
 void sanitizePosition() {
-	float	aCameraHeight	= gRender.getCamera()->getPosition()->y,
-			aTerrainHeight	= gRender.getHeight(gRender.getCamera()->getPosition()->x, gRender.getCamera()->getPosition()->z);
+	float	aCameraHeight	= gWorld.getObserver()->getPosition()->y,
+			aTerrainHeight	= gWorld.getHeight(gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->z);
 
 	if((aCameraHeight - OBSERVER_HEIGHT) < aTerrainHeight) {
-		gRender.getCamera()->getPosition()->y = aTerrainHeight + OBSERVER_HEIGHT;
+		gWorld.getObserver()->getPosition()->y = aTerrainHeight + OBSERVER_HEIGHT;
 	}
 }
 
@@ -41,52 +41,61 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 		case 'w':
 			// Move forward
-			gRender.getCamera()->moveForward(5);
+			gWorld.getObserver()->moveForward(5);
 			break;
 
 		case 's':
 			// Move backward
-			gRender.getCamera()->moveBackward(5);
+			gWorld.getObserver()->moveBackward(5);
 			break;
 
 		case 'a':
 			// Move left
-			gRender.getCamera()->moveLeft(5);
+			gWorld.getObserver()->moveLeft(5);
 			break;
 
 		case 'd':
 			// Move right
-			gRender.getCamera()->moveRight(5);
+			gWorld.getObserver()->moveRight(5);
 			break;
 
 		case 'r':
 			// Look above
-			gRender.getCamera()->rotateLookUpDown(5);
+			gWorld.getObserver()->rotateLookUpDown(5);
 			break;
 
 		case 'f':
 			// Look down
-			gRender.getCamera()->rotateLookUpDown(-5);
+			gWorld.getObserver()->rotateLookUpDown(-5);
 			break;
 
 		case 'q':
 			// Look to the left
-			gRender.getCamera()->rotateLookLeftRight(-5);
+			gWorld.getObserver()->rotateLookLeftRight(-5);
 			break;
 
 		case 'e':
 			// Look to the right
-			gRender.getCamera()->rotateLookLeftRight(5);
+			gWorld.getObserver()->rotateLookLeftRight(5);
 			break;
 
 		case 't':
 			// Move up
-			gRender.getCamera()->moveUpDown(5);
+			gWorld.getObserver()->moveUpDown(5);
 			break;
 
 		case 'g':
 			// Move down
-			gRender.getCamera()->moveUpDown(-5);
+			gWorld.getObserver()->moveUpDown(-5);
+			break;
+
+		case 'c':
+			// Decrease the view frustum (user can see short distances)
+			gWorld.setViewFrustum(gWorld.getViewFrustum() - 5);
+			break;
+		case 'v':
+			// Increase the view frustum (user can see large distances)
+			gWorld.setViewFrustum(gWorld.getViewFrustum() + 5);
 			break;
 	}
 
@@ -125,34 +134,38 @@ void setupEnableStuffs(void) {
 
 
 void display (void) {
+	setupEnableStuffs();
+	setupLights();
+
 	glClearColor (0.0,0.0,0.0,1.0);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity(); 
 
-	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM/2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(0.0, 0.0, gWorld.getViewFrustum()/2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
-	gRender.displayMap();
+	sanitizePosition();
+	gWorld.displayMap();
+	
+	system("cls");
+	gWorld.printDebugInfo();
 
 	glutSwapBuffers();
 }
 
 void init (void) {
-	setupEnableStuffs();
-	setupLights();
+	gWorld.getMathCollectionX()->addFunction(f1);
+//	gWorld.getMathCollectionX()->addFunction(f2);
+//	gWorld.getMathCollectionX()->addFunction(f3);
+//	gWorld.getMathCollectionX()->addFunction(f4);
 
-	gRender.getMathCollectionX()->addFunction(f1);
-//	gRender.getMathCollectionX()->addFunction(f2);
-//	gRender.getMathCollectionX()->addFunction(f3);
-//	gRender.getMathCollectionX()->addFunction(f4);
+	gWorld.getMathCollectionX()->setWeights(gWeights);
 
-	gRender.getMathCollectionX()->setWeights(gWeights);
+	gWorld.getMathCollectionZ()->addFunction(f1);
+//	gWorld.getMathCollectionZ()->addFunction(f2);
+//	gWorld.getMathCollectionZ()->addFunction(f3);
+//	gWorld.getMathCollectionZ()->addFunction(f4);
 
-	gRender.getMathCollectionZ()->addFunction(f1);
-//	gRender.getMathCollectionZ()->addFunction(f2);
-//	gRender.getMathCollectionZ()->addFunction(f3);
-//	gRender.getMathCollectionZ()->addFunction(f4);
-
-	gRender.getMathCollectionZ()->setWeights(gWeights);
+	gWorld.getMathCollectionZ()->setWeights(gWeights);
 }
 
 void reshape (int w, int h) {

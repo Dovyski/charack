@@ -1,22 +1,21 @@
-#include "CharackRender.h"
+#include "CharackWorld.h"
 
-CharackRender::CharackRender() {
-	mCamera  = new CharackCamera();
+CharackWorld::CharackWorld(int theViewFrustum) {
+	mCamera  = new CharackObserver();
 	mMathsX  = new CharackMathCollection();
 	mMathsZ  = new CharackMathCollection();
+	
+	setViewFrustum(theViewFrustum);
 }
 
-CharackRender::~CharackRender() {
+CharackWorld::~CharackWorld() {
 }
 
 
-void CharackRender::generateMap(void) {
+void CharackWorld::generateMap(void) {
 	int aMapX, aMapZ, x, z;
-	int aXNow = (int)getCamera()->getPositionX();
-	int aZNow = (int)getCamera()->getPositionZ();
-
-	system("cls");
-	printf("(x,y,z) = (%d,%d,%d), (rotx, roty) = (%d, %d)\n", (int)getCamera()->getPositionX(), (int)getCamera()->getPositionY(), (int)getCamera()->getPositionZ(), getCamera()->getRotationX(), getCamera()->getRotationY());
+	int aXNow = (int)getObserver()->getPositionX();
+	int aZNow = (int)getObserver()->getPositionZ();
 
 	// What we have here is this:
 	//
@@ -24,7 +23,7 @@ void CharackRender::generateMap(void) {
 	// mMap with data, we will collect all points localized within the square centered at (aXNow, aZNow) (in the figure
 	// below, the square has A, B, C and D as its corners).
 	//
-	// The size of the square is determinated by CK_VIEW_FRUSTUM. We will iterate from A to B (X axis) and, for each step,
+	// The size of the square is determinated by getViewFrustum(). We will iterate from A to B (X axis) and, for each step,
 	// we will iterare from A to D (or B to C) (Z axis) collecting points.
 	//
 	// Each of these collected points will be stored at mMap[x][y]. x and y will just be used to index
@@ -33,30 +32,30 @@ void CharackRender::generateMap(void) {
 	// -------------D------------|------------C    -
 	// |            |            |            |    |
 	// |            |            |            |    |
-	// |------------|-------(aXNow,aZNow)-----| -- | CK_VIEW_FRUSTUM
+	// |------------|-------(aXNow,aZNow)-----| -- | getViewFrustum()
 	// |            |            |            |    |
 	// |            |            |            |    |
 	// -------------A------------|------------B    -
 	//        (aMapX, aMapZ)			|
 	//									|
 	//							 |------------|
-	//							 CK_VIEW_FRUSTUM/2
+	//							 getViewFrustum()/2
 
-	for(aMapX = abs(aXNow) - CK_VIEW_FRUSTUM/2, x = 0; x < CK_VIEW_FRUSTUM; x++, aMapX++){ 
-		for(aMapZ = abs(aZNow) - CK_VIEW_FRUSTUM/2, z = 0; z < CK_VIEW_FRUSTUM; z++, aMapZ++){ 
+	for(aMapX = abs(aXNow) - getViewFrustum()/2, x = 0; x < getViewFrustum(); x++, aMapX++){ 
+		for(aMapZ = abs(aZNow) - getViewFrustum()/2, z = 0; z < getViewFrustum(); z++, aMapZ++){ 
 			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ), z);
 		}
 	}
 }
 
 
-void CharackRender::displayMap(void) {
+void CharackWorld::displayMap(void) {
 	Vector3 aNormal;
 
-	glRotatef(getCamera()->getRotationY(), 0,1,0);
-	glRotatef(getCamera()->getRotationX(), 1,0,0);
+	glRotatef(getObserver()->getRotationY(), 0,1,0);
+	glRotatef(getObserver()->getRotationX(), 1,0,0);
 
-	glTranslatef(-CK_VIEW_FRUSTUM/2, -getCamera()->getPosition()->y, -CK_VIEW_FRUSTUM/2);
+	glTranslatef(-getViewFrustum()/2, -getObserver()->getPosition()->y, -getViewFrustum()/2);
 
 	generateMap();
 
@@ -66,10 +65,10 @@ void CharackRender::displayMap(void) {
 	glVertex3f(0, mMap[0][0].y,	0);
 	glVertex3f(1, mMap[1][0].y,	0);
 
-	for(int x = 0; x < CK_VIEW_FRUSTUM - 1; x++){ 
+	for(int x = 0; x < getViewFrustum() - 1; x++){ 
 		glBegin(GL_TRIANGLE_STRIP);
 		
-		for(int z = 1; z < CK_VIEW_FRUSTUM; z++){ 
+		for(int z = 1; z < getViewFrustum(); z++){ 
 			glVertex3f(x, mMap[x][z].y,	z);
 
 			aNormal = calculateNormal(mMap[x-1][z], mMap[x][z], mMap[x][z-1]);
@@ -80,7 +79,7 @@ void CharackRender::displayMap(void) {
 		
 		glEnd();
 
-		if((x + 1) < (CK_VIEW_FRUSTUM - 1)) {
+		if((x + 1) < (getViewFrustum() - 1)) {
 			aNormal = calculateNormal(mMap[x+1][1], mMap[x+1][0], mMap[x+2][0]);
 			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
 
@@ -90,25 +89,25 @@ void CharackRender::displayMap(void) {
 	}
 }
 
-float CharackRender::getHeight(float theX, float theZ) {
+float CharackWorld::getHeight(float theX, float theZ) {
 	return sin(abs(theX)/(CK_MAX_WIDTH/20)) * 20 + cos(abs(theZ)/(CK_MAX_WIDTH/30)) * 10;
 	//return getMathCollectionX()->getValue(abs(theX)/CK_MAX_WIDTH) + getMathCollectionZ()->getValue(abs(theZ)/CK_MAX_WIDTH);
 }
 
-CharackCamera *CharackRender::getCamera(void) {
+CharackObserver *CharackWorld::getObserver(void) {
 	return mCamera;
 }
 
-CharackMathCollection *CharackRender::getMathCollectionX(void) {
+CharackMathCollection *CharackWorld::getMathCollectionX(void) {
 	return mMathsX;
 }
 
-CharackMathCollection *CharackRender::getMathCollectionZ(void) {
+CharackMathCollection *CharackWorld::getMathCollectionZ(void) {
 	return mMathsZ;
 }
 
 // This method will perform the following: (theLeftPoint - theMiddlePoint) ^ (theRightPoint - theMiddlePoint)
-Vector3 CharackRender::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint) {
+Vector3 CharackWorld::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint) {
 	Vector3 aV0, aV1, aNormal;
 
 	aV0 = theLeftPoint - theMiddlePoint;
@@ -117,4 +116,19 @@ Vector3 CharackRender::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePo
 	aNormal.normalize();
 
 	return aNormal;
+}
+
+void CharackWorld::setViewFrustum(int theViewFrustum) {
+	mViewFrustum = (theViewFrustum < 0 || theViewFrustum > CK_VIEW_FRUSTUM) ? CK_VIEW_FRUSTUM : theViewFrustum; 
+}
+
+int CharackWorld::getViewFrustum() {
+	return mViewFrustum;
+}
+
+void CharackWorld::printDebugInfo(void) {
+	printf("--- Charack World (Debug info) ---\n\n");
+	printf("Observer = (%d,%d,%d), [rotx, roty] = (%d, %d)\n", (int)getObserver()->getPositionX(), (int)getObserver()->getPositionY(), (int)getObserver()->getPositionZ(), getObserver()->getRotationX(), getObserver()->getRotationY());	
+	printf("View frustum = %d\n", getViewFrustum());
+	printf("Terrain height (observer) = %.2f\n", getHeight(getObserver()->getPosition()->x, getObserver()->getPosition()->z));
 }

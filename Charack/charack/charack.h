@@ -12,8 +12,8 @@
 
 // Classes
 #include "CharackMathCollection.h"
-#include "CharackCamera.h"
-#include "CharackRender.h"
+#include "CharackObserver.h"
+#include "CharackWorld.h"
 #include "vector3.h"
 
 #endif

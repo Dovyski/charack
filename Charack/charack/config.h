@@ -2,7 +2,7 @@
 #define __CHARACK_CONFIG_H_
 
 // How far the user can see, in pixels
-#define CK_VIEW_FRUSTUM					300
+#define CK_VIEW_FRUSTUM					1000
 
 #define CK_SCALE						5
 

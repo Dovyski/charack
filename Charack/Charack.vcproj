@@ -179,15 +179,15 @@
 				Name="charack"
 				>
 				<File
-					RelativePath=".\charack\CharackCamera.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\charack\CharackMathCollection.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\charack\CharackRender.cpp"
+					RelativePath=".\charack\CharackObserver.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackWorld.cpp"
 					>
 				</File>
 				<File
@@ -209,15 +209,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\charack\CharackCamera.h"
-					>
-				</File>
-				<File
 					RelativePath=".\charack\CharackMathCollection.h"
 					>
 				</File>
 				<File
-					RelativePath=".\charack\CharackRender.h"
+					RelativePath=".\charack\CharackObserver.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackWorld.h"
 					>
 				</File>
 				<File

@@ -1,73 +1,73 @@
-#include "CharackCamera.h"
+#include "CharackObserver.h"
 #include <stdio.h>
 
-CharackCamera::CharackCamera() {
+CharackObserver::CharackObserver() {
 	mRotX = 0;
 	mRotY = 0;
-	mPosition = new Vector3(-1000, 100, -1000); //TODO: fix this
+	mPosition = new Vector3(-1000, 0, -1000); //TODO: fix this
 }
 
-CharackCamera::~CharackCamera() {
+CharackObserver::~CharackObserver() {
 }
 
-void CharackCamera::moveForward(int theHowMuch) {
+void CharackObserver::moveForward(int theHowMuch) {
 	mPosition->z = mPosition->z + theHowMuch * cos(CK_DEG2RAD(360 - mRotY));
 	mPosition->x = mPosition->x + theHowMuch * sin(CK_DEG2RAD(360 - mRotY));
 }
 
-void CharackCamera::moveBackward(int theHowMuch){
+void CharackObserver::moveBackward(int theHowMuch){
 	mPosition->z = mPosition->z - theHowMuch * cos(CK_DEG2RAD(360 - mRotY));
 	mPosition->x = mPosition->x - theHowMuch * sin(CK_DEG2RAD(360 - mRotY));
 }
 
-void CharackCamera::moveLeft(int theHowMuch){
+void CharackObserver::moveLeft(int theHowMuch){
 	mPosition->z = mPosition->z + theHowMuch * cos(CK_DEG2RAD(90 - mRotY));
 	mPosition->x = mPosition->x + theHowMuch * sin(CK_DEG2RAD(90 - mRotY));
 }
 
-void CharackCamera::moveRight(int theHowMuch){
+void CharackObserver::moveRight(int theHowMuch){
 	mPosition->z = mPosition->z + theHowMuch * cos(CK_DEG2RAD(270 - mRotY));
 	mPosition->x = mPosition->x + theHowMuch * sin(CK_DEG2RAD(270 - mRotY));
 }
 
-void CharackCamera::moveUpDown(int theHowMuch) {
+void CharackObserver::moveUpDown(int theHowMuch) {
 	mPosition->y += theHowMuch;
 }
 
 /**
  * Negative = rotate to left, positive rotate to right
  */
-void CharackCamera::rotateLookLeftRight(int theDegres) {
+void CharackObserver::rotateLookLeftRight(int theDegres) {
 	mRotY += theDegres;
 }
 
 /**
  * Positive = look up, negative = look down
  */
-void CharackCamera::rotateLookUpDown(int theDegres){
+void CharackObserver::rotateLookUpDown(int theDegres){
 	mRotX += theDegres;
 }
 
-float CharackCamera::getPositionX() {
+float CharackObserver::getPositionX() {
 	return mPosition->x;
 }
 
-float CharackCamera::getPositionY() {
+float CharackObserver::getPositionY() {
 	return mPosition->y;
 }
 
-float CharackCamera::getPositionZ() {
+float CharackObserver::getPositionZ() {
 	return mPosition->z;
 }
 
-Vector3 *CharackCamera::getPosition() {
+Vector3 *CharackObserver::getPosition() {
 	return mPosition;
 }
 
-int CharackCamera::getRotationX() {
+int CharackObserver::getRotationX() {
 	return mRotX;
 }
 
-int CharackCamera::getRotationY() {
+int CharackObserver::getRotationY() {
 	return mRotY;
 }
