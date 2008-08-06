@@ -4,7 +4,7 @@
 CharackCamera::CharackCamera() {
 	mRotX = 0;
 	mRotY = 0;
-	mPosition = new Vector3(-1000, -100, -1000); //TODO: fix this
+	mPosition = new Vector3(-1000, 100, -1000); //TODO: fix this
 }
 
 CharackCamera::~CharackCamera() {

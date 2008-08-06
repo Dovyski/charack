@@ -7,6 +7,8 @@
 
 #include "charack/charack.h"
 
+#define OBSERVER_HEIGHT		30
+
 // All this funciton will be interpolated to create the world terrain.
 // The weight of each one of these functions are described in gWeights (below).
 float f1(float a) { return sin(a); }
@@ -20,6 +22,17 @@ float gWeights[CK_MATHC_MAX_FUNCTION] = {2000, 500, 50, 1};
 
 // We create an "eye" to see the generated world.
 CharackRender gRender;
+
+
+// To avoid walk through the walls, below the ground, etc.
+void sanitizePosition() {
+	float	aCameraHeight	= gRender.getCamera()->getPosition()->y,
+			aTerrainHeight	= gRender.getHeight(gRender.getCamera()->getPosition()->x, gRender.getCamera()->getPosition()->z);
+
+	if((aCameraHeight - OBSERVER_HEIGHT) < aTerrainHeight) {
+		gRender.getCamera()->getPosition()->y = aTerrainHeight + OBSERVER_HEIGHT;
+	}
+}
 
 void processNormalKeys(unsigned char key, int x, int y) {
 	switch(key) {
@@ -68,14 +81,17 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 't':
 			// Move up
-			gRender.getCamera()->moveUpDown(-5);
+			gRender.getCamera()->moveUpDown(5);
 			break;
 
 		case 'g':
 			// Move down
-			gRender.getCamera()->moveUpDown(5);
+			gRender.getCamera()->moveUpDown(-5);
 			break;
 	}
+
+
+	sanitizePosition();
 }
 
 void setupLights(void) {
@@ -113,7 +129,7 @@ void display (void) {
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity(); 
 
-	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(0.0, 0.0, CK_VIEW_FRUSTUM/2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
 	gRender.displayMap();
 
