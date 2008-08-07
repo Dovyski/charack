@@ -6,7 +6,6 @@
 #define __CHARACK__H_
 
 // Non-classes (some day, I think its a good idea remove it all...)
-#include "move.h"
 #include "config.h"
 
 

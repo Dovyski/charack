@@ -91,8 +91,7 @@ void CharackWorld::displayMap(void) {
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return sin(abs(theX)/(CK_MAX_WIDTH/10)) * 20 + cos(abs(theZ)/(CK_MAX_WIDTH/30)) * 10;
-	//return getMathCollectionX()->getValue(abs(theX)/CK_MAX_WIDTH) + getMathCollectionZ()->getValue(abs(theZ)/CK_MAX_WIDTH);
+	return getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ));
 }
 
 CharackObserver *CharackWorld::getObserver(void) {

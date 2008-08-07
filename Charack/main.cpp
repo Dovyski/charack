@@ -11,17 +11,22 @@
 
 // All this funciton will be interpolated to create the world terrain.
 // The weight of each one of these functions are described in gWeights (below).
-float f1(float a) { return sin(a); }
-float f2(float a) { return sin(20*a); }
-float f3(float a) { return sin(300*a); }
-float f4(float a) { return sin(500*a); }
+float fs1(float a) { return sin(a/(CK_MAX_WIDTH/20)); }
+float fs2(float a) { return sin(a/(CK_MAX_WIDTH/20000)); }
+float fs3(float a) { return cos(a/(CK_MAX_WIDTH/200000)); }
+
+float fc1(float a) { return cos(a/(CK_MAX_WIDTH/20)); }
+float fc2(float a) { return cos(a/(CK_MAX_WIDTH/20000)); }
+float fc3(float a) { return cos(a/(CK_MAX_WIDTH/200000)); }
+
 
 // Define how much each of the functions above interferes in the terrain generation.
-float gWeights[CK_MATHC_MAX_FUNCTION] = {2000, 500, 50, 1};
+float gWeightsX[CK_MATHC_MAX_FUNCTION] = {80, 60, 2, 1};
+float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {50, 120, 5, 1};
 
 
 // We create an "eye" to see the generated world.
-CharackWorld gWorld(100, 1);
+CharackWorld gWorld(300, 1);
 
 
 // To avoid walk through the walls, below the ground, etc.
@@ -117,7 +122,7 @@ void setupLights(void) {
 	GLfloat aAmbientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	GLfloat aDiffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
 	GLfloat aSpecularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	GLfloat aPosition[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+	GLfloat aPosition[] = { 0.0f, 500.0f, 0.0f, 1.0f };
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, aAmbientLight);
@@ -162,19 +167,15 @@ void display (void) {
 }
 
 void init (void) {
-	gWorld.getMathCollectionX()->addFunction(f1);
-//	gWorld.getMathCollectionX()->addFunction(f2);
-//	gWorld.getMathCollectionX()->addFunction(f3);
-//	gWorld.getMathCollectionX()->addFunction(f4);
+	gWorld.getMathCollectionX()->addFunction(fs1);
+	gWorld.getMathCollectionX()->addFunction(fs2);
+	gWorld.getMathCollectionX()->addFunction(fs3);
+	gWorld.getMathCollectionX()->setWeights(gWeightsX);
 
-	gWorld.getMathCollectionX()->setWeights(gWeights);
-
-	gWorld.getMathCollectionZ()->addFunction(f1);
-//	gWorld.getMathCollectionZ()->addFunction(f2);
-//	gWorld.getMathCollectionZ()->addFunction(f3);
-//	gWorld.getMathCollectionZ()->addFunction(f4);
-
-	gWorld.getMathCollectionZ()->setWeights(gWeights);
+	gWorld.getMathCollectionZ()->addFunction(fc1);
+	gWorld.getMathCollectionZ()->addFunction(fc2);
+	gWorld.getMathCollectionZ()->addFunction(fc3);
+	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
 }
 
 void reshape (int w, int h) {
