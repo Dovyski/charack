@@ -42,8 +42,8 @@ void CharackWorld::generateMap(void) {
 	//							 |------------|
 	//							 getViewFrustum()/2
 
-	for(aMapX = abs(aXNow) - getViewFrustum()/2, x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
-		for(aMapZ = abs(aZNow) - getViewFrustum()/2, z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
+	for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
+		for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
 			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ), z);
 		}
 	}
@@ -60,6 +60,8 @@ void CharackWorld::displayMap(void) {
 
 	generateMap();
 
+	glBegin(GL_TRIANGLE_STRIP);
+
 	aNormal = calculateNormal(mMap[0][1], mMap[0][0], mMap[1][0]);
 	glNormal3f(aNormal.x, aNormal.y, aNormal.z);
 
@@ -67,9 +69,8 @@ void CharackWorld::displayMap(void) {
 	glVertex3f(1, mMap[1][0].y,	0);
 
 	for(int x = 0; x < getViewFrustum() - 1; x++){ 
-		glBegin(GL_TRIANGLE_STRIP);
-		
-		for(int z = 1; z < getViewFrustum(); z++){ 
+		for(int z = 1; z < getViewFrustum(); z++){
+			applyColorByHeight(mMap[x][z]);
 			glVertex3f(x, mMap[x][z].y,	z);
 
 			aNormal = calculateNormal(mMap[x-1][z], mMap[x][z], mMap[x][z-1]);
@@ -79,6 +80,7 @@ void CharackWorld::displayMap(void) {
 		}
 		
 		glEnd();
+		glBegin(GL_TRIANGLE_STRIP);
 
 		if((x + 1) < (getViewFrustum() - 1)) {
 			aNormal = calculateNormal(mMap[x+1][1], mMap[x+1][0], mMap[x+2][0]);
@@ -88,10 +90,19 @@ void CharackWorld::displayMap(void) {
 			glVertex3f(mMap[x+2][0].x, mMap[x+2][0].y, mMap[x+2][0].z);
 		}
 	}
+	glEnd();
+}
+
+void CharackWorld::applyColorByHeight(Vector3 thePoint) {
+	glColor3f(thePoint.y/500, (200 - thePoint.y)/500, 0.0f);
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
 	return getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ));
+}
+
+float CharackWorld::getHeightAtObserverPosition(void) {
+	return getHeight(getObserver()->getPosition()->x, getObserver()->getPosition()->z);
 }
 
 CharackObserver *CharackWorld::getObserver(void) {
@@ -131,7 +142,7 @@ void CharackWorld::printDebugInfo(void) {
 	printf("Observer = (%d,%d,%d), [rotx, roty] = (%d, %d)\n", (int)getObserver()->getPositionX(), (int)getObserver()->getPositionY(), (int)getObserver()->getPositionZ(), getObserver()->getRotationX(), getObserver()->getRotationY());	
 	printf("View frustum = %d\n", getViewFrustum());
 	printf("Sample = %d\n", getSample());
-	printf("Terrain height (observer) = %.2f\n", getHeight(getObserver()->getPosition()->x, getObserver()->getPosition()->z));
+	printf("Terrain height (observer) = %.2f\n", getHeightAtObserverPosition());
 }
 
 void CharackWorld::setSample(int theSample) {

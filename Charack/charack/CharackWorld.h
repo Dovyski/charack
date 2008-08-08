@@ -22,7 +22,8 @@ class CharackWorld {
 		int mViewFrustum;
 		int mSample;
 
-		Vector3 CharackWorld::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
+		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
+		void applyColorByHeight(Vector3 thePoint);
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);
@@ -30,6 +31,7 @@ class CharackWorld {
 
 		void displayMap(void);
 		float getHeight(float theX, float theZ);
+		float getHeightAtObserverPosition(void);
 		void generateMap(void);
 		CharackObserver *getObserver(void);
 
