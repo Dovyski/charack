@@ -7,7 +7,8 @@
 
 #include "charack/charack.h"
 
-#define OBSERVER_HEIGHT		30
+#define OBSERVER_HEIGHT		5
+#define MOV_SPEED			15
 
 // All this funciton will be interpolated to create the world terrain.
 // The weight of each one of these functions are described in gWeights (below).
@@ -32,7 +33,7 @@ CharackWorld gWorld(300, 1);
 // To avoid walk through the walls, below the ground, etc.
 void sanitizePosition() {
 	float	aCameraHeight	= gWorld.getObserver()->getPosition()->y,
-			aTerrainHeight	= gWorld.getHeight(gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->z);
+			aTerrainHeight	= gWorld.getHeightAtObserverPosition();
 
 	if((aCameraHeight - OBSERVER_HEIGHT) < aTerrainHeight) {
 		gWorld.getObserver()->getPosition()->y = aTerrainHeight + OBSERVER_HEIGHT;
@@ -46,22 +47,22 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 		case 'w':
 			// Move forward
-			gWorld.getObserver()->moveForward(5);
+			gWorld.getObserver()->moveForward(MOV_SPEED);
 			break;
 
 		case 's':
 			// Move backward
-			gWorld.getObserver()->moveBackward(5);
+			gWorld.getObserver()->moveBackward(MOV_SPEED);
 			break;
 
 		case 'a':
 			// Move left
-			gWorld.getObserver()->moveLeft(5);
+			gWorld.getObserver()->moveLeft(MOV_SPEED);
 			break;
 
 		case 'd':
 			// Move right
-			gWorld.getObserver()->moveRight(5);
+			gWorld.getObserver()->moveRight(MOV_SPEED);
 			break;
 
 		case 'r':
@@ -76,22 +77,22 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 'q':
 			// Look to the left
-			gWorld.getObserver()->rotateLookLeftRight(-5);
+			gWorld.getObserver()->rotateLookLeftRight(-MOV_SPEED);
 			break;
 
 		case 'e':
 			// Look to the right
-			gWorld.getObserver()->rotateLookLeftRight(5);
+			gWorld.getObserver()->rotateLookLeftRight(MOV_SPEED);
 			break;
 
 		case 't':
 			// Move up
-			gWorld.getObserver()->moveUpDown(5);
+			gWorld.getObserver()->moveUpDown(MOV_SPEED);
 			break;
 
 		case 'g':
 			// Move down
-			gWorld.getObserver()->moveUpDown(-5);
+			gWorld.getObserver()->moveUpDown(-MOV_SPEED);
 			break;
 
 		case 'c':
@@ -111,10 +112,20 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			// Increase the sample size
 			gWorld.setSample(gWorld.getSample() + 1);
 			break;
+
+		case 'k':
+			// Decrease the scale
+			printf("Scale down-A: %f\n", gWorld.getScale());
+			gWorld.setScale(gWorld.getScale() - 0.2);
+			printf("Scale down: %f\n", gWorld.getScale());
+			break;
+		case 'l':
+			// Increase the scale
+			printf("Scale up-A: %f\n", gWorld.getScale());
+			gWorld.setScale(gWorld.getScale() + 0.2);
+			printf("Scale up: %f\n", gWorld.getScale());
+			break;
 	}
-
-
-	sanitizePosition();
 }
 
 void setupLights(void) {
@@ -142,6 +153,9 @@ void setupEnableStuffs(void) {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);		//enable our ambient light
 	glEnable(GL_NORMALIZE);		//enable normalizing of normals, wont make a difference if disabled
+	glEnable(GL_COLOR_MATERIAL); // enable color tracking
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);// set material properties which will be assigned by glColor
+
 
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_LINE, GL_FILL, GL_POINT 
 }
@@ -182,7 +196,7 @@ void reshape (int w, int h) {
 	glViewport (0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	gluPerspective (60, (GLfloat)w / (GLfloat)h, 0.01, 500.0);
+	gluPerspective (60, (GLfloat)w / (GLfloat)h, 10.0, 9000000.0);
 	glMatrixMode (GL_MODELVIEW);
 }
 

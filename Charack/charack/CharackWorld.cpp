@@ -7,6 +7,7 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	
 	setViewFrustum(theViewFrustum);
 	setSample(theSample);
+	setScale(1);
 }
 
 CharackWorld::~CharackWorld() {
@@ -52,11 +53,13 @@ void CharackWorld::generateMap(void) {
 
 void CharackWorld::displayMap(void) {
 	Vector3 aNormal;
+	int aHalfViewFrustum = getViewFrustum()/2;
 
 	glRotatef(getObserver()->getRotationY(), 0,1,0);
 	glRotatef(getObserver()->getRotationX(), 1,0,0);
 
-	glTranslatef(-getViewFrustum()/2, -getObserver()->getPosition()->y, -getViewFrustum()/2);
+	glTranslatef(-aHalfViewFrustum, -getObserver()->getPosition()->y, -aHalfViewFrustum);
+	glScalef(getScale(), getScale(), getScale());
 
 	generateMap();
 
@@ -142,7 +145,16 @@ void CharackWorld::printDebugInfo(void) {
 	printf("Observer = (%d,%d,%d), [rotx, roty] = (%d, %d)\n", (int)getObserver()->getPositionX(), (int)getObserver()->getPositionY(), (int)getObserver()->getPositionZ(), getObserver()->getRotationX(), getObserver()->getRotationY());	
 	printf("View frustum = %d\n", getViewFrustum());
 	printf("Sample = %d\n", getSample());
+	printf("Scale = %.2f\n", getScale());
 	printf("Terrain height (observer) = %.2f\n", getHeightAtObserverPosition());
+	printf("\nControls:\n");
+	printf("\t Move: w,a,s,d\n");
+	printf("\t Turn: q,e\n");
+	printf("\t Curve: r,f\n");
+	printf("\t Move Up/Down: t,g\n");
+	printf("\t View frustum: c,v\n");
+	printf("\t Sampling: n,m\n");
+	printf("\t Scale: k,l\n");
 }
 
 void CharackWorld::setSample(int theSample) {
@@ -151,4 +163,12 @@ void CharackWorld::setSample(int theSample) {
 
 int CharackWorld::getSample() {
 	return mSample;
+}
+
+void CharackWorld::setScale(float theScale) {
+	mScale = theScale;
+}
+
+float CharackWorld::getScale() {
+	return mScale;
 }

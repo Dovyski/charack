@@ -21,6 +21,7 @@ class CharackWorld {
 		
 		int mViewFrustum;
 		int mSample;
+		float mScale;
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 		void applyColorByHeight(Vector3 thePoint);
@@ -40,6 +41,9 @@ class CharackWorld {
 
 		void setSample(int theViewFrustum);
 		int getSample();
+
+		void setScale(float theScale);
+		float getScale();
 
 		// Print useful information about the world.
 		void printDebugInfo(void);
