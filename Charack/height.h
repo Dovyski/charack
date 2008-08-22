@@ -7,6 +7,7 @@
 #define __HEIGHT__H_
 
 #include "charack/charack.h"
+#include "perlin.h"
 
 float fx1(float a);
 float fx2(float a);

@@ -178,13 +178,13 @@ void display (void) {
 
 void init (void) {
 	gWorld.getMathCollectionX()->addFunction(fx1);
-	gWorld.getMathCollectionX()->addFunction(fx2);
-	gWorld.getMathCollectionX()->addFunction(fx3);
+	//gWorld.getMathCollectionX()->addFunction(fx2);
+	//gWorld.getMathCollectionX()->addFunction(fx3);
 	gWorld.getMathCollectionX()->setWeights(gWeightsX);
 
 	gWorld.getMathCollectionZ()->addFunction(fz1);
-	gWorld.getMathCollectionZ()->addFunction(fz2);
-	gWorld.getMathCollectionZ()->addFunction(fz3);
+	//gWorld.getMathCollectionZ()->addFunction(fz2);
+	//gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
 }
 

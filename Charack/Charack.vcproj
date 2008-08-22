@@ -179,6 +179,10 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\perlin.cpp"
+				>
+			</File>
 			<Filter
 				Name="charack"
 				>
@@ -207,6 +211,10 @@
 			>
 			<File
 				RelativePath=".\height.h"
+				>
+			</File>
+			<File
+				RelativePath=".\perlin.h"
 				>
 			</File>
 			<Filter
