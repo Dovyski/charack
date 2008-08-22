@@ -6,20 +6,10 @@
 #include <iostream>
 
 #include "charack/charack.h"
+#include "height.h" // terrain functions
 
 #define OBSERVER_HEIGHT		5
 #define MOV_SPEED			15
-
-// All this funciton will be interpolated to create the world terrain.
-// The weight of each one of these functions are described in gWeights (below).
-float fs1(float a) { return sin(a/(CK_MAX_WIDTH/20)); }
-float fs2(float a) { return sin(a/(CK_MAX_WIDTH/20000)); }
-float fs3(float a) { return cos(a/(CK_MAX_WIDTH/200000)); }
-
-float fc1(float a) { return cos(a/(CK_MAX_WIDTH/20)); }
-float fc2(float a) { return cos(a/(CK_MAX_WIDTH/20000)); }
-float fc3(float a) { return cos(a/(CK_MAX_WIDTH/200000)); }
-
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {80, 60, 2, 1};
@@ -27,7 +17,7 @@ float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {50, 120, 5, 1};
 
 
 // We create an "eye" to see the generated world.
-CharackWorld gWorld(300, 1);
+CharackWorld gWorld(300, 8);
 
 
 // To avoid walk through the walls, below the ground, etc.
@@ -115,15 +105,21 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 'k':
 			// Decrease the scale
-			printf("Scale down-A: %f\n", gWorld.getScale());
 			gWorld.setScale(gWorld.getScale() - 0.2);
-			printf("Scale down: %f\n", gWorld.getScale());
 			break;
 		case 'l':
 			// Increase the scale
-			printf("Scale up-A: %f\n", gWorld.getScale());
 			gWorld.setScale(gWorld.getScale() + 0.2);
-			printf("Scale up: %f\n", gWorld.getScale());
+			break;
+
+		case 'p':
+			// Toggle controller for global view (view from top).
+			if(gWorld.getObserver()->getRotationX() == 90) {
+				gWorld.getObserver()->setRotationX(0);
+			} else {
+				gWorld.getObserver()->setRotationX(90);
+				gWorld.getObserver()->setRotationY(0);
+			}
 			break;
 	}
 }
@@ -181,23 +177,23 @@ void display (void) {
 }
 
 void init (void) {
-	gWorld.getMathCollectionX()->addFunction(fs1);
-	gWorld.getMathCollectionX()->addFunction(fs2);
-	gWorld.getMathCollectionX()->addFunction(fs3);
+	gWorld.getMathCollectionX()->addFunction(fx1);
+	gWorld.getMathCollectionX()->addFunction(fx2);
+	gWorld.getMathCollectionX()->addFunction(fx3);
 	gWorld.getMathCollectionX()->setWeights(gWeightsX);
 
-	gWorld.getMathCollectionZ()->addFunction(fc1);
-	gWorld.getMathCollectionZ()->addFunction(fc2);
-	gWorld.getMathCollectionZ()->addFunction(fc3);
+	gWorld.getMathCollectionZ()->addFunction(fz1);
+	gWorld.getMathCollectionZ()->addFunction(fz2);
+	gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
 }
 
 void reshape (int w, int h) {
-	glViewport (0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	gluPerspective (60, (GLfloat)w / (GLfloat)h, 10.0, 9000000.0);
-	glMatrixMode (GL_MODELVIEW);
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60, (GLfloat)w / (GLfloat)h, 10.0, 9000000.0);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 int main (int argc, char **argv) {

@@ -33,6 +33,9 @@ class CharackObserver {
 
 		int getRotationX();
 		int getRotationY();
+
+		void setRotationX(int theRotation);
+		void setRotationY(int theRotation);
 };
 
 #endif

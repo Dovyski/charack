@@ -58,8 +58,9 @@ void CharackWorld::displayMap(void) {
 	glRotatef(getObserver()->getRotationY(), 0,1,0);
 	glRotatef(getObserver()->getRotationX(), 1,0,0);
 
-	glTranslatef(-aHalfViewFrustum, -getObserver()->getPosition()->y, -aHalfViewFrustum);
 	glScalef(getScale(), getScale(), getScale());
+
+	glTranslatef(-aHalfViewFrustum, -getObserver()->getPosition()->y, -aHalfViewFrustum);
 
 	generateMap();
 

@@ -4,7 +4,7 @@
 CharackObserver::CharackObserver() {
 	mRotX = 0;
 	mRotY = 0;
-	mPosition = new Vector3(-1000, 0, -1000); //TODO: fix this
+	mPosition = new Vector3(-55000, 300, -55000); //TODO: fix this
 }
 
 CharackObserver::~CharackObserver() {
@@ -70,4 +70,12 @@ int CharackObserver::getRotationX() {
 
 int CharackObserver::getRotationY() {
 	return mRotY;
+}
+
+void CharackObserver::setRotationX(int theRotation) {
+	mRotX = theRotation;
+}
+
+void CharackObserver::setRotationY(int theRotation) {
+	mRotY = theRotation;
 }
