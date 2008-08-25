@@ -12,8 +12,8 @@
 #define MOV_SPEED			15
 
 // Define how much each of the functions above interferes in the terrain generation.
-float gWeightsX[CK_MATHC_MAX_FUNCTION] = {80, 60, 2, 1};
-float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {50, 120, 5, 1};
+float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
+float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 
 
 // We create an "eye" to see the generated world.
@@ -178,12 +178,12 @@ void display (void) {
 
 void init (void) {
 	gWorld.getMathCollectionX()->addFunction(fx1);
-	//gWorld.getMathCollectionX()->addFunction(fx2);
+	gWorld.getMathCollectionX()->addFunction(fx2);
 	//gWorld.getMathCollectionX()->addFunction(fx3);
 	gWorld.getMathCollectionX()->setWeights(gWeightsX);
 
 	gWorld.getMathCollectionZ()->addFunction(fz1);
-	//gWorld.getMathCollectionZ()->addFunction(fz2);
+	gWorld.getMathCollectionZ()->addFunction(fz2);
 	//gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
 }
