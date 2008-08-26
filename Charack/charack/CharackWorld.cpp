@@ -98,7 +98,7 @@ void CharackWorld::displayMap(void) {
 }
 
 void CharackWorld::applyColorByHeight(Vector3 thePoint) {
-	glColor3f(thePoint.y/500, (200 - thePoint.y)/500, 0.0f);
+	glColor3f(thePoint.y/500, (200 - thePoint.y)/3000, 0.0f);
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {

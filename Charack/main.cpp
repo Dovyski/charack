@@ -9,7 +9,7 @@
 #include "height.h" // terrain functions
 
 #define OBSERVER_HEIGHT		5
-#define MOV_SPEED			15
+#define MOV_SPEED			100
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
@@ -67,22 +67,22 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 'q':
 			// Look to the left
-			gWorld.getObserver()->rotateLookLeftRight(-MOV_SPEED);
+			gWorld.getObserver()->rotateLookLeftRight(-5);
 			break;
 
 		case 'e':
 			// Look to the right
-			gWorld.getObserver()->rotateLookLeftRight(MOV_SPEED);
+			gWorld.getObserver()->rotateLookLeftRight(5);
 			break;
 
 		case 't':
 			// Move up
-			gWorld.getObserver()->moveUpDown(MOV_SPEED);
+			gWorld.getObserver()->moveUpDown(MOV_SPEED/3);
 			break;
 
 		case 'g':
 			// Move down
-			gWorld.getObserver()->moveUpDown(-MOV_SPEED);
+			gWorld.getObserver()->moveUpDown(-MOV_SPEED/3);
 			break;
 
 		case 'c':
