@@ -17,7 +17,7 @@ float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 
 
 // We create an "eye" to see the generated world.
-CharackWorld gWorld(300, 8);
+CharackWorld gWorld(300, 2);
 
 
 // To avoid walk through the walls, below the ground, etc.
