@@ -5,14 +5,16 @@
 
 #include "../Charack/perlin.h"
 
-#define CAMERA_DISTANCE		50.0
-#define CONTINENT_SIZE		10.0
-#define MAX_DIST			15.0
+#define SEED				68454848
+#define CAMERA_DISTANCE		100.0
+#define CONTINENT_SIZE		50.0
+#define MAX_DIST			5.0
 #define NEGATIVE(X)			((X) < 0 ? (X) : ((X)*-1))
+#define TURB_MINFREQ		2
+#define TURB_MAXFREQ		8
 
 int gPontos = 10;
-Perlin gPerlinNoise(8, 8, 1, rand());
-Perlin gPerlinNoise2(8, 8, 1, rand());
+Perlin gPerlinNoise(8, 8, 1, SEED);
 
 void processNormalKeys(unsigned char key, int x, int y) {
 	switch(key) {
@@ -41,15 +43,21 @@ void display(void) {
 
 	glBegin(GL_LINE_STRIP);
 		for(i = 0; i < gPontos; i++) {
-			aPoint = gPerlinNoise.Get(i * 0.1, i/gPontos) * 30;
+			aPoint = gPerlinNoise.Get(i * 0.01, i/gPontos) * 30;
 			aPoint = abs(aLastPoint - aPoint) > MAX_DIST ? MAX_DIST : aPoint;
 
-			glVertex2f(aPoint, 20 - i);
+			glVertex2f(aLastPoint + aPoint, 20 - i + gPerlinNoise.Get(i * 0.1, i/gPontos)*10);
 			aLastPoint = aPoint;
 		}
 
+		aLastPoint = 0;
+
 		for(j = 0; j < gPontos; j++) {
-			glVertex2f(NEGATIVE(gPerlinNoise2.Get(j * 0.1, j/gPontos) * 50) - CONTINENT_SIZE, 20 - i + j);
+			aPoint = gPerlinNoise.Get(j * 0.01, j/gPontos) * 30;
+			aPoint = abs(aLastPoint - aPoint) > MAX_DIST ? MAX_DIST : aPoint;
+			glVertex2f(aLastPoint + aPoint - CONTINENT_SIZE, 20 - i + j + abs(gPerlinNoise.Get(j * 0.1, j/gPontos))*10);
+
+			aLastPoint = aPoint;
 		}
 
 		// Connect the last point with the firts one
@@ -87,7 +95,3 @@ int main (int argc, char **argv)
 	
 	return 0;
 }
-
-
-
-
