@@ -11,6 +11,7 @@
 
 // Classes
 #include "CharackMathCollection.h"
+#include "CharackMapGenerator.h"
 #include "CharackObserver.h"
 #include "CharackWorld.h"
 #include "vector3.h"

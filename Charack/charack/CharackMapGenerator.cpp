@@ -1,3 +1,7 @@
+/** 
+ * Below you can find the comments made by the original author of the source code.
+ */
+
 /* planet.c */
 /* planet generating program */
 /* Copyright 1988-2003 Torben AE. Mogensen */
@@ -27,163 +31,81 @@
 /* can yield very different planets. */
 /* The primitive user interface is a result of portability concerns */
 
-#ifdef THINK_C
-#define macintosh 1
-#endif
+#include "CharackMapGenerator.h"
 
-#include <stdio.h>
-#include <errno.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
+// TODO: fix these global vars
+CTable colors =
+		{{0,0,255},	    /* Dark blue depths		*/
+		 {0,128,255},   /* Light blue shores	*/
+		 {0,255,0},	    /* Light green lowlands	*/
+		 {64,192,16},   /* Dark green highlands	*/
+		 {64,192,16},   /* Dark green Mountains	*/
+		 {128,128,32},  /* Brown stoney peaks	*/
+		 {255,255,255}, /* White - peaks		*/
+		 {0,0,0},	    /* Black - outlines		*/
+		 {0,0,0},	    /* Black - background	*/
+		 {0,0,0}};	    /* Black - gridlines	*/
 
-#define BLACK 0
-#define BACK 1
-#define GRID 2
-#define WHITE 3
-#define BLUE0 4
-
-int altColors = 0;
-
-char view;
-
-int BLUE1, LAND0, LAND1, LAND2, LAND4;
-int GREEN1, BROWN0, GREY0;
-
-int back = BACK;
-
-#define MAXCOL	10
-typedef int CTable[MAXCOL][3];
-
-CTable	colors =
-	    {{0,0,255},	    /* Dark blue depths		*/
-	     {0,128,255},   /* Light blue shores	*/
-	     {0,255,0},	    /* Light green lowlands	*/
-	     {64,192,16},   /* Dark green highlands	*/
-	     {64,192,16},   /* Dark green Mountains	*/
-	     {128,128,32},  /* Brown stoney peaks	*/
-	     {255,255,255}, /* White - peaks		*/
-	     {0,0,0},	    /* Black - outlines		*/
-	     {0,0,0},	    /* Black - background	*/
-	     {0,0,0}};	    /* Black - gridlines	*/
-
-CTable	alt_colors =
-	    {{0,0,192},	    /* Dark blue depths		*/
-	     {0,128,255},   /* Light blue shores	*/
-	     {0,96,0},	    /* Dark green Lowlands	*/
-	     {0,224,0},	    /* Light green Highlands	*/
-	     {128,176,0},   /* Brown mountainsides	*/
-	     {128,128,128}, /* Grey stoney peaks	*/
-	     {255,255,255}, /* White - peaks		*/
-	     {0,0,0},	    /* Black - outlines		*/
-	     {0,0,0},	    /* Black - background	*/
-	     {0,0,0}};	    /* Black - gridlines	*/
-    /*
-     *	This color table tries to follow the coloring conventions of
-     *	several atlases.
-     *
-     *	The first two colors are reserved for black and white
-     *	1/4 of the colors are blue for the sea, dark being deep
-     *	3/4 of the colors are land, divided as follows:
-     *	 nearly 1/2 of the colors are greens, with the low being dark
-     *	 1/8 of the colors shade from green through brown to grey
-     *	 1/8 of the colors are shades of grey for the highest altitudes
-     *
-     */
-    
-int nocols = 256;
-
-int rtable[256], gtable[256], btable[256];
-
-int lighter = 0; /* specifies lighter colours */
-
-/* Character table for XPM output */
-
-char letters[64] = {
-	'@','$','.',',',':',';','-','+','=','#','*','&','A','B','C','D',
-	'E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T',
-	'U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j',
-	'k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-
-#define PI 3.14159265358979
-#define DEG2RAD 0.0174532918661 /* pi/180 */
-
-/* these three values can be changed to change world characteristica */
-
-double M  = -.02;   /* initial altitude (slightly below sea level) */
-double dd1 = 0.4;   /* weight for altitude difference */
-double dd2 = 0.03;  /* weight for distance */
-double POW = 0.47;  /* power for distance function */
-
-int Depth; /* depth of subdivisions */
-double r1,r2,r3,r4; /* seeds */
-double longi,lat,scale;
-double vgrid, hgrid;
-
-int latic = 0; /* flag for latitude based colour */
-
-int Width = 800, Height = 600;
-
-unsigned char **col;
-int **heights;
-int cl0[60][30];
-
-int do_outline = 0;
-int do_bw = 0;
-int *outx, *outy;
+CTable alt_colors =
+		{{0,0,192},	    /* Dark blue depths		*/
+		 {0,128,255},   /* Light blue shores	*/
+		 {0,96,0},	    /* Dark green Lowlands	*/
+		 {0,224,0},	    /* Light green Highlands	*/
+		 {128,176,0},   /* Brown mountainsides	*/
+		 {128,128,128}, /* Grey stoney peaks	*/
+		 {255,255,255}, /* White - peaks		*/
+		 {0,0,0},	    /* Black - outlines		*/
+		 {0,0,0},	    /* Black - background	*/
+		 {0,0,0}};	    /* Black - gridlines	*/
 
 double moll_table[] = {0.0, 0.0685055811, 0.1368109534, 0.2047150027,
-		       0.2720147303, 0.3385041213, 0.4039727534,
-		       0.4682040106, 0.5309726991, 0.5920417499,
-		       0.6511575166, 0.7080428038, 0.7623860881,
-		       0.8138239166, 0.8619100185, 0.9060553621,
-		       0.9453925506, 0.9783738403, 1.0};
+			   0.2720147303, 0.3385041213, 0.4039727534,
+			   0.4682040106, 0.5309726991, 0.5920417499,
+			   0.6511575166, 0.7080428038, 0.7623860881,
+			   0.8138239166, 0.8619100185, 0.9060553621,
+			   0.9453925506, 0.9783738403, 1.0};
 
-double cla, sla, clo, slo;
+CharackMapGenerator::CharackMapGenerator() {
+	altColors = 0;
+	back = BACK;
+	    
+	nocols = 256;
+	lighter = 0; /* specifies lighter colours */
 
-double rseed, increment = 0.00000001;
+	M  = -.02;   /* initial altitude (slightly below sea level) */
+	dd1 = 0.4;   /* weight for altitude difference */
+	dd2 = 0.03;  /* weight for distance */
+	POW = 0.47;  /* power for distance function */
 
-int best = 500000;
-int weight[30];
+	latic = 0; /* flag for latitude based colour */
 
-int min_dov(int x, int y) {
- return x < y ? x : y; 
+	Width = 800;
+	Height = 600;
+
+	do_outline = 0;
+	do_bw = 0;
+
+	increment = 0.00000001;
+	best = 500000;
 }
 
-int max_dov(x,y)
-int x,y;
-{ return(x<y ? y : x); }
-
-double fmin_dov(x,y)
-double x,y;
-{ return(x<y ? x : y); }
-
-double fmax_dov(x,y)
-double x,y;
-{ return(x<y ? y : x); }
+CharackMapGenerator::~CharackMapGenerator() {
+}
 
 
-int main(ac,av)
-int ac;
-char **av;
-{
-  void printbmp(), printbmpBW(), print_error();
-  void mercator(), setcolours(), makeoutline();
-
+void CharackMapGenerator::generate() {
   int i;
-  double rand2(), log_2(), planet1();
 
   FILE *outfile, *colfile = NULL;
-  char filename[256] = "p.bmp";
+  char filename[256] = "C:\\temp\\p.bmp";
   int do_file = 0;
 
   longi = 0.0;
   lat = 0.0;
   scale = 1.0;
   rseed = 0.123;
-  view = 'm';
+  
   vgrid = hgrid = 0.0;
-//  outfile = stdout;
 
 	outfile = fopen(filename,"wb");
 
@@ -199,6 +121,7 @@ char **av;
   sla = sin(lat); cla = cos(lat);
   slo = sin(longi); clo = cos(longi);
 
+// TODO: fix this malloc. It must be done just once, not every method call...
 
 	col = (unsigned char**)calloc(Width,sizeof(unsigned char*));
 	if (col == 0) {
@@ -228,13 +151,12 @@ char **av;
 
   mercator();
   makeoutline(1);
-
+	
+  printf("aqui????\n");
   printbmpBW(outfile);
-
-  return(0);
 }
 
-void setcolours()
+void CharackMapGenerator::setcolours()
 {
   int i;
   
@@ -358,7 +280,7 @@ void setcolours()
 
 }
 
-void makeoutline(int do_bw)
+void CharackMapGenerator::makeoutline(int do_bw)
 {
   int i,j,k;
 
@@ -384,10 +306,10 @@ void makeoutline(int do_bw)
   while (k-->0) col[outx[k]][outy[k]] = BLACK;
 }
 
-void mercator()
+void CharackMapGenerator::mercator()
 {
-  double y,scale1,cos2,theta1, log_2();
-  int i,j,k, planet0();
+  double y,scale1,cos2,theta1;
+  int i,j,k;
 
   y = sin(lat);
   y = (1.0+y)/(1.0-y);
@@ -425,10 +347,9 @@ void mercator()
 }
 
 
-int planet0(x,y,z)
-double x,y,z;
+int CharackMapGenerator::planet0(double x, double y, double z)
 {
-  double alt, planet1();
+  double alt;
   int colour;
 
   alt = planet1(x,y,z);
@@ -501,17 +422,15 @@ double x,y,z;
 double ssa,ssb,ssc,ssd, ssas,ssbs,sscs,ssds,
   ssax,ssay,ssaz, ssbx,ssby,ssbz, sscx,sscy,sscz, ssdx,ssdy,ssdz;
 
-double planet(a,b,c,d, as,bs,cs,ds,
-	      ax,ay,az, bx,by,bz, cx,cy,cz, dx,dy,dz,
-	      x,y,z, level)
-double a,b,c,d;		    /* altitudes of the 4 verticess */
-double as,bs,cs,ds;	    /* seeds of the 4 verticess */
-double ax,ay,az, bx,by,bz,  /* vertex coordinates */
-  cx,cy,cz, dx,dy,dz;
-double x,y,z;		    /* goal point */
-int level;		    /* levels to go */
+// a,b,c,d;		    /* altitudes of the 4 verticess */
+// as,bs,cs,ds;	    /* seeds of the 4 verticess */
+// ax,ay,az, bx,by,bz,  /* vertex coordinates */
+// cx,cy,cz, dx,dy,dz;
+// x,y,z;		    /* goal point */
+// level;		    /* levels to go */
+
+double CharackMapGenerator::planet(double a,double b,double c,double d, double as, double bs, double cs, double ds, double ax, double ay, double az, double bx, double by, double bz, double cx, double cy, double cz, double dx, double dy, double dz, double x, double y, double z, int level)
 {
-  double rand2();
   double abx,aby,abz, acx,acy,acz, adx,ady,adz;
   double bcx,bcy,bcz, bdx,bdy,bdz, cdx,cdy,cdz;
   double lab, lac, lad, lbc, lbd, lcd;
@@ -602,8 +521,7 @@ int level;		    /* levels to go */
   }
 }
 
-double planet1(x,y,z)
-double x,y,z;
+double CharackMapGenerator::planet1(double x, double y, double z)
 {
   double abx,aby,abz, acx,acy,acz, adx,ady,adz, apx,apy,apz;
   double bax,bay,baz, bcx,bcy,bcz, bdx,bdy,bdz, bpx,bpy,bpz;
@@ -662,16 +580,15 @@ double x,y,z;
 }
 
 
-double rand2(p,q) /* random number generator taking two seeds */
-double p,q;	  /* rand2(p,q) = rand2(q,p) is important     */
+/* rand2(p,q) = rand2(q,p) is important     */
+double CharackMapGenerator::rand2(double p, double q) /* random number generator taking two seeds */
 {
   double r;
   r = (p+3.14159265)*(q+3.14159265);
   return(2.*(r-(int)r)-1.);
 }
  
-void printbmp(outfile) /* prints picture in BMP format */
-FILE *outfile;
+void CharackMapGenerator::printbmp(FILE *outfile) /* prints picture in BMP format */
 {
   int i,j,s, W1;
 
@@ -760,8 +677,7 @@ FILE *outfile;
   fclose(outfile);
 }
 
-void printbmpBW(outfile) /* prints picture in b/w BMP format */
-FILE *outfile;
+void CharackMapGenerator::printbmpBW(FILE *outfile) /* prints picture in b/w BMP format */
 {
   int i,j,c,s, W1;
 
@@ -874,154 +790,26 @@ FILE *outfile;
       if (i+7<Width && col[i+7][j] != BLACK && col[i+7][j] != GRID
 	  && col[i+7][j] != BACK)
 	c+=1;
+	  printf("%d\n", c);
       putc(c,outfile);
     }
   fclose(outfile);
-}
-
-char *nletters(int n, int c)
-{
-  int i;
-  static char buffer[8];
-  
-  buffer[n] = '\0';
-
-  for (i = n-1; i >= 0; i--)
-  {
-    buffer[i] = letters[c & 0x001F];
-    c >>= 5;
-  }
-  
-  return buffer;
-}
-
-void printxpm(outfile) /* prints picture in XPM (X-windows pixel map) format */
-FILE *outfile;
-{
-  int x,y,i,nbytes;
-
-  x = nocols - 1;
-  for (nbytes = 0; x != 0; nbytes++)
-    x >>= 5;
-  
-  fprintf(outfile,"/* XPM */\n");
-  fprintf(outfile,"static char *xpmdata[] = {\n");
-  fprintf(outfile,"/* width height ncolors chars_per_pixel */\n");
-  fprintf(outfile,"\"%d %d %d %d\",\n", Width, Height, nocols, nbytes);
-  fprintf(outfile,"/* colors */\n");
-  for (i = 0; i < nocols; i++)
-    fprintf(outfile,"\"%s c #%2.2X%2.2X%2.2X\",\n", 
-	    nletters(nbytes, i), rtable[i], gtable[i], btable[i]);
-
-  fprintf(outfile,"/* pixels */\n");
-  for (y = 0 ; y < Height; y++) {
-    fprintf(outfile,"\"");
-    for (x = 0; x < Width; x++)
-      fprintf(outfile, "%s", nletters(nbytes, col[x][y]));
-    fprintf(outfile,"\",\n");
-  }
-  fprintf(outfile,"};\n");
-
-  fclose(outfile);
-}
-
-void printxpmBW(outfile) /* prints picture in XPM (X-windows pixel map) format */
-FILE *outfile;
-{
-  int x,y,nbytes;
-
-  x = nocols - 1;
-  nbytes = 1;
-  
-  fprintf(outfile,"/* XPM */\n");
-  fprintf(outfile,"static char *xpmdata[] = {\n");
-  fprintf(outfile,"/* width height ncolors chars_per_pixel */\n");
-  fprintf(outfile,"\"%d %d %d %d\",\n", Width, Height, 2, nbytes);
-  fprintf(outfile,"/* colors */\n");
-  
-  fprintf(outfile,"\". c #FFFFFF\",\n");
-  fprintf(outfile,"\"X c #000000\",\n");
-
-  fprintf(outfile,"/* pixels */\n");
-  for (y = 0 ; y < Height; y++) {
-    fprintf(outfile,"\"");
-    for (x = 0; x < Width; x++)
-      fprintf(outfile, "%s",
-	      (col[x][y] == BLACK || col[x][y] == GRID || col[x][y] == BACK)
-	      ? "X" : ".");
-    fprintf(outfile,"\",\n");
-  }
-  fprintf(outfile,"};\n");
-
-  fclose(outfile);
+  printf("FIM BMP_OUT\n");
 }
       
-double log_2(x)
-double x;
+double CharackMapGenerator::log_2(double x)
 { return(log(x)/log(2.0)); }
 
-void print_error(char *filename, char *ext)
-{
-  fprintf(stderr,"Usage: planet [options]\n\n");
-  fprintf(stderr,"options:\n");
-  fprintf(stderr,"  -?                (or any illegal option) Output this text\n");
-  fprintf(stderr,"  -s seed           Specifies seed as number between 0.0 and 1.0\n");
-  fprintf(stderr,"  -w width          Specifies width in pixels, default = 800\n");
-  fprintf(stderr,"  -h height         Specifies height in pixels, default = 600\n");
-  fprintf(stderr,"  -m magnification  Specifies magnification, default = 1.0\n");
-  fprintf(stderr,"  -o output_file    Specifies output file, default is %s%s\n",
-                                            filename, ext);
-  fprintf(stderr,"  -l longitude      Specifies longitude of centre in degrees, default = 0.0\n");
-  fprintf(stderr,"  -L latitude       Specifies latitude of centre in degrees, default = 0.0\n");
-  fprintf(stderr,"  -g gridsize       Specifies vertical gridsize in degrees, default = 0.0 (no grid)\n");
-  fprintf(stderr,"  -G gridsize       Specifies horisontal gridsize in degrees, default = 0.0 (no grid)\n");
-  fprintf(stderr,"  -i init_alt       Specifies initial altitude (default = -0.02)\n");
-  fprintf(stderr,"  -c                Colour depends on latitude (default: only altitude)\n");
-  fprintf(stderr,"  -C                Use lighter colours (original scheme only)\n");
-  fprintf(stderr,"  -N nocols         Use nocols number of colours (default = 256, min_dovimum = 8)\n");
-  fprintf(stderr,"  -a                Switch to alternative colour scheme\n");
-  fprintf(stderr,"  -M file           Read colour definitions from file\n");
-  fprintf(stderr,"  -O                Produce a black and white outline map\n");
-  fprintf(stderr,"  -E                Trace the edges of land in black on colour map\n");
-  fprintf(stderr,"  -B                Use ``bumpmap'' shading\n");
-  fprintf(stderr,"  -b                Use ``bumpmap'' shading on land only\n");
-  fprintf(stderr,"  -A angle          Angle of ``light'' in bumpmap shading\n");
-  fprintf(stderr,"  -P                Use PPM file format (default is BMP)\n");
-  fprintf(stderr,"  -x                Use XPM file format (default is BMP)\n");
-  fprintf(stderr,"  -r                Reverse background colour (default: black)\n");
-  fprintf(stderr,"  -V number         Distance contribution to variation (default = 0.03)\n");
-  fprintf(stderr,"  -v number         Altitude contribution to variation (default = 0.4)\n");
-  fprintf(stderr,"  -pprojection      Specifies projection: m = Mercator (default)\n");
-  fprintf(stderr,"                                          p = Peters\n");
-  fprintf(stderr,"                                          q = Square\n");
-  fprintf(stderr,"                                          s = Stereographic\n");
-  fprintf(stderr,"                                          o = Orthographic\n");
-  fprintf(stderr,"                                          g = Gnomonic\n");
-  fprintf(stderr,"                                          a = Area preserving azimuthal\n");
-  fprintf(stderr,"                                          c = Conical (conformal)\n");
-  fprintf(stderr,"                                          M = Mollweide\n");
-  fprintf(stderr,"                                          S = Sinusoidal\n");
-  fprintf(stderr,"                                          h = Heightfield\n");
-  fprintf(stderr,"                                          f = Find match, see manual\n");
-  exit(0);
+
+int CharackMapGenerator::min_dov(int x, int y) {
+ return x < y ? x : y; 
 }
 
-/* With the -pf option a map must be given on standard input.  */
-/* This map is 11 lines of 24 characters. The characters are:  */
-/*    . : very strong preference for water (value=8)	       */
-/*    , : strong preference for water (value=4)		       */
-/*    : : preference for water (value=2)		       */
-/*    ; : weak preference for water (value=1)		       */
-/*    - : don't care (value=0)				       */
-/*    * : weak preference for land (value=1)		       */
-/*    o : preference for land (value=2)			       */
-/*    O : strong preference for land (value=4)		       */
-/*    @ : very strong preference for land (value=8)	       */
-/*							       */
-/* Each point on the map corresponds to a point on a 15° grid. */
-/*							       */
-/* The program tries seeds starting from the specified and     */
-/* successively outputs the seed (and rotation) of the best    */
-/* current match, together with a small map of this.	       */
-/* This is all ascii, no bitmap is produced.		       a*/
+int CharackMapGenerator::max_dov(int x, int y)
+{ return(x<y ? y : x); }
 
+double CharackMapGenerator::fmin_dov(double x, double y)
+{ return(x<y ? x : y); }
+
+double fmax_dov(double x, double y)
+{ return(x<y ? y : x); }

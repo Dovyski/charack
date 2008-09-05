@@ -5,6 +5,8 @@
 
 #include "../Charack/perlin.h"
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #define SEED				68454848
 #define CAMERA_DISTANCE		100.0
 #define CONTINENT_SIZE		50.0

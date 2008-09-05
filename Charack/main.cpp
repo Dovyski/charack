@@ -170,8 +170,8 @@ void display (void) {
 	sanitizePosition();
 	gWorld.displayMap();
 	
-	system("cls");
-	gWorld.printDebugInfo();
+//	system("cls");
+//	gWorld.printDebugInfo();
 
 	glutSwapBuffers();
 }
@@ -186,6 +186,10 @@ void init (void) {
 	gWorld.getMathCollectionZ()->addFunction(fz2);
 	//gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
+
+	// TODO: remove this
+	CharackMapGenerator aMap;
+	aMap.generate();
 }
 
 void reshape (int w, int h) {

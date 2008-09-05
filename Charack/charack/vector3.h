@@ -8,10 +8,17 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#ifndef PI
+	#define PI 3.14159265358979
+#endif
 
-#define PIOVER180 0.0174532925f
-#define PI        3.1415
-#define PI2       PI/2
+#ifndef PIOVER180
+	#define PIOVER180 0.0174532925f
+#endif
+
+#ifndef PIOVER180
+	#define PI2       PI/2
+#endif
 
 class Vector3  
 {
