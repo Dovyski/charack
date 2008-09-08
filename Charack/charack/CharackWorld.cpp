@@ -1,9 +1,15 @@
 #include "CharackWorld.h"
 
 CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
-	mCamera  = new CharackObserver();
-	mMathsX  = new CharackMathCollection();
-	mMathsZ  = new CharackMathCollection();
+	mCamera			= new CharackObserver();
+	mMathsX			= new CharackMathCollection();
+	mMathsZ			= new CharackMathCollection();
+	mMapGenerator	= new CharackMapGenerator();
+	
+	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
+	// world, like oceans and continents, then the other Charack classes will use that "guide"
+	// as a clue repository to generate specific height variation, beach stuff, mountains, etc.
+	mMapGenerator->generate();
 	
 	setViewFrustum(theViewFrustum);
 	setSample(theSample);
@@ -148,6 +154,7 @@ void CharackWorld::printDebugInfo(void) {
 	printf("Sample = %d\n", getSample());
 	printf("Scale = %.2f\n", getScale());
 	printf("Terrain height (observer) = %.2f\n", getHeightAtObserverPosition());
+	printf("isLand: %d\n", getMapGenerator()->isLand(getObserver()->getPositionX(), getObserver()->getPositionZ()));
 	printf("\nControls:\n");
 	printf("\t Move: w,a,s,d\n");
 	printf("\t Turn: q,e\n");
@@ -172,4 +179,8 @@ void CharackWorld::setScale(float theScale) {
 
 float CharackWorld::getScale() {
 	return mScale;
+}
+
+CharackMapGenerator *CharackWorld::getMapGenerator(void) {
+	return mMapGenerator;
 }

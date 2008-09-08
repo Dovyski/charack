@@ -10,6 +10,7 @@
 
 #include "CharackObserver.h"
 #include "CharackMathCollection.h"
+#include "CharackMapGenerator.h"
 
 // TODO: comment this?
 class CharackWorld {
@@ -17,6 +18,8 @@ class CharackWorld {
 		CharackObserver *mCamera;
 		CharackMathCollection *mMathsX;
 		CharackMathCollection *mMathsZ;
+		CharackMapGenerator *mMapGenerator;
+
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
 		
 		int mViewFrustum;
@@ -35,6 +38,7 @@ class CharackWorld {
 		float getHeightAtObserverPosition(void);
 		void generateMap(void);
 		CharackObserver *getObserver(void);
+		CharackMapGenerator *getMapGenerator(void);
 
 		void setViewFrustum(int theViewFrustum);
 		int getViewFrustum();

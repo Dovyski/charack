@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "config.h"
+
 #define BLACK 0
 #define BACK 1
 #define GRID 2
@@ -82,12 +84,6 @@ class CharackMapGenerator {
 		int max_dov(int x, int y);
 		double fmin_dov(double x, double y);
 		double fmax_dov(double x, double y);
-
-	public:
-		CharackMapGenerator();
-		~CharackMapGenerator();
-
-		void generate();
 		void setcolours();
 		void makeoutline(int do_bw);
 		void mercator();
@@ -98,6 +94,13 @@ class CharackMapGenerator {
 		void printbmp(FILE *outfile);
 		void printbmpBW(FILE *outfile);
 		double log_2(double x);
+
+	public:
+		CharackMapGenerator();
+		~CharackMapGenerator();
+
+		void generate();
+		int isLand(float theX, float theZ);
 };
 
 #endif
