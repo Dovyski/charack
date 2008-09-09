@@ -145,7 +145,7 @@ void CharackMapGenerator::generate() {
   mercator();
   makeoutline(1);
 	
-//  printbmpBW(outfile);
+  //printbmpBW(outfile);
 }
 
 void CharackMapGenerator::setcolours()
@@ -578,95 +578,6 @@ double CharackMapGenerator::rand2(double p, double q) /* random number generator
   double r;
   r = (p+3.14159265)*(q+3.14159265);
   return(2.*(r-(int)r)-1.);
-}
- 
-void CharackMapGenerator::printbmp(FILE *outfile) /* prints picture in BMP format */
-{
-  int i,j,s, W1;
-
-  fprintf(outfile,"BM");
-
-  W1 = (3*Width+3);
-  W1 -= W1 % 4;
-  s = 54+W1*Height; /* file size */
-  putc(s&255,outfile);
-  putc((s>>8)&255,outfile);
-  putc((s>>16)&255,outfile);
-  putc(s>>24,outfile);
-
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(54,outfile); /* offset to data */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(40,outfile); /* size of infoheader */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(Width&255,outfile);
-  putc((Width>>8)&255,outfile);
-  putc((Width>>16)&255,outfile);
-  putc(Width>>24,outfile);
-
-  putc(Height&255,outfile);
-  putc((Height>>8)&255,outfile);
-  putc((Height>>16)&255,outfile);
-  putc(Height>>24,outfile);
-
-  putc(1,outfile);  /* no. of planes = 1 */
-  putc(0,outfile);
-
-  putc(24,outfile);  /* bpp */
-  putc(0,outfile);  
-
-  putc(0,outfile); /* no compression */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(0,outfile); /* image size (unspecified) */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(0,outfile); /* h. pixels/m */
-  putc(32,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(0,outfile); /* v. pixels/m */
-  putc(32,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-  putc(0,outfile); /* colours used (unspecified) */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-
-  putc(0,outfile); /* important colours (all) */
-  putc(0,outfile);
-  putc(0,outfile);
-  putc(0,outfile);
-
-
-	for (j=Height-1; j>=0; j--) {
-	  for (i=0; i<Width; i++) {
-	putc(btable[col[i][j]],outfile);
-	putc(gtable[col[i][j]],outfile);
-	putc(rtable[col[i][j]],outfile);
-	  }
-	  for (i=3*Width; i<W1; i++) putc(0,outfile);
-	}
-  
-  fclose(outfile);
 }
 
 void CharackMapGenerator::printbmpBW(FILE *outfile) /* prints picture in b/w BMP format */

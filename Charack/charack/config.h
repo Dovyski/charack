@@ -12,4 +12,4 @@
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)
 
-#endif _CONFIG_H
+#endif

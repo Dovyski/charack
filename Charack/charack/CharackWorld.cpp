@@ -108,7 +108,7 @@ void CharackWorld::applyColorByHeight(Vector3 thePoint) {
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ));
+	return getMapGenerator()->isLand(theX,theZ) ? getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ)) : 1;
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {
@@ -164,6 +164,18 @@ void CharackWorld::printDebugInfo(void) {
 	printf("\t Sampling: n,m\n");
 	printf("\t Scale: k,l\n");
 }
+
+void CharackWorld::placeObserverOnLand() {
+	for(int z=0; z < CK_MAX_WIDTH; z++) {
+		for(int x=0; x < CK_MAX_WIDTH; x++) {
+			if(getMapGenerator()->isLand(x, z)) {
+				getObserver()->setPosition(-x, getObserver()->getPositionY(), -z);
+				return;
+			}
+		}
+	}
+}
+
 
 void CharackWorld::setSample(int theSample) {
 	mSample = theSample < 0 ? 1 : theSample;

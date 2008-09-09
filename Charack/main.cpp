@@ -153,7 +153,7 @@ void setupEnableStuffs(void) {
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);// set material properties which will be assigned by glColor
 
 
-	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_LINE, GL_FILL, GL_POINT 
+	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_LINE, GL_FILL, GL_POINT 
 }
 
 
@@ -170,8 +170,8 @@ void display (void) {
 	sanitizePosition();
 	gWorld.displayMap();
 	
-	system("cls");
-	gWorld.printDebugInfo();
+//	system("cls");
+//	gWorld.printDebugInfo();
 
 	glutSwapBuffers();
 }
@@ -186,6 +186,8 @@ void init (void) {
 	gWorld.getMathCollectionZ()->addFunction(fz2);
 	//gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
+
+	gWorld.placeObserverOnLand();
 }
 
 void reshape (int w, int h) {

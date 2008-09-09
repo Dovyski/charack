@@ -51,6 +51,8 @@ class CharackWorld {
 
 		// Print useful information about the world.
 		void printDebugInfo(void);
+
+		void placeObserverOnLand(void);
 		
 		// TODO: fix this ("ordinary" users should not see the math collection...)
 		CharackMathCollection *getMathCollectionX(void);

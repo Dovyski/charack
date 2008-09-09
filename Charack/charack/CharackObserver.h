@@ -29,6 +29,8 @@ class CharackObserver {
 		float getPositionY();
 		float getPositionZ();
 
+		void setPosition(float theX, float theY, float theZ);
+
 		Vector3 *getPosition();
 
 		int getRotationX();
