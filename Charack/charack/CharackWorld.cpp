@@ -51,7 +51,7 @@ void CharackWorld::generateMap(void) {
 
 	for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
 		for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
-			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ), z);
+			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * CK_HEIGHT_CEIL/getSample(), z);
 		}
 	}
 }
@@ -104,11 +104,15 @@ void CharackWorld::displayMap(void) {
 }
 
 void CharackWorld::applyColorByHeight(Vector3 thePoint) {
-	glColor3f(thePoint.y/500, (200 - thePoint.y)/3000, 0.0f);
+	if(thePoint.y == CK_SEA_LEVEL) {
+		glColor3f(0.0f, 0.0f, 0.5f);
+	} else {
+		glColor3f(thePoint.y/500, (200 - thePoint.y)/3000, 0.0f);
+	}
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return getMapGenerator()->isLand(theX,theZ) ? getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ)) : 1;
+	return getMapGenerator()->isLand(theX,theZ) ? getMathCollectionX()->getValue(abs(theX)) + getMathCollectionZ()->getValue(abs(theZ)) : CK_SEA_LEVEL;
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {

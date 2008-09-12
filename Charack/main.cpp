@@ -9,7 +9,7 @@
 #include "height.h" // terrain functions
 
 #define OBSERVER_HEIGHT		5
-#define MOV_SPEED			100
+#define MOV_SPEED			8000
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
@@ -77,12 +77,12 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 't':
 			// Move up
-			gWorld.getObserver()->moveUpDown(MOV_SPEED/3);
+			gWorld.getObserver()->moveUpDown(200);
 			break;
 
 		case 'g':
 			// Move down
-			gWorld.getObserver()->moveUpDown(-MOV_SPEED/3);
+			gWorld.getObserver()->moveUpDown(-200);
 			break;
 
 		case 'c':
@@ -96,11 +96,11 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 'n':
 			// Decrease the sample size
-			gWorld.setSample(gWorld.getSample() - 1);
+			gWorld.setSample(gWorld.getSample() - 20);
 			break;
 		case 'm':
 			// Increase the sample size
-			gWorld.setSample(gWorld.getSample() + 1);
+			gWorld.setSample(gWorld.getSample() + 20);
 			break;
 
 		case 'k':
@@ -113,7 +113,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 
 		case 'p':
-			// Toggle controller for global view (view from top).
+			// Toggle controller for global viewing (view from top).
 			if(gWorld.getObserver()->getRotationX() == 90) {
 				gWorld.getObserver()->setRotationX(0);
 			} else {
@@ -153,7 +153,7 @@ void setupEnableStuffs(void) {
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);// set material properties which will be assigned by glColor
 
 
-	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_LINE, GL_FILL, GL_POINT 
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_LINE, GL_FILL, GL_POINT 
 }
 
 
@@ -170,8 +170,8 @@ void display (void) {
 	sanitizePosition();
 	gWorld.displayMap();
 	
-//	system("cls");
-//	gWorld.printDebugInfo();
+	system("cls");
+	gWorld.printDebugInfo();
 
 	glutSwapBuffers();
 }

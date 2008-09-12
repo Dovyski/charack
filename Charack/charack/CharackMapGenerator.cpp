@@ -73,7 +73,7 @@ CharackMapGenerator::CharackMapGenerator() {
 	latic = 0; /* flag for latitude based colour */
 
 	Width = 800;
-	Height = 600;
+	Height = 800;
 
 	do_outline = 0;
 	do_bw = 0;
@@ -145,7 +145,7 @@ void CharackMapGenerator::generate() {
   mercator();
   makeoutline(1);
 	
-  //printbmpBW(outfile);
+  printbmpBW(outfile);
 }
 
 void CharackMapGenerator::setcolours()
