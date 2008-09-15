@@ -7,7 +7,7 @@
 #define CK_SCALE						5
 
 #define CK_SEA_LEVEL					1
-#define CK_HEIGHT_CEIL					100
+#define CK_SAMPLE_CORRECTION			20
 
 // Max world width/height
 #define CK_MAX_WIDTH					3000000.0

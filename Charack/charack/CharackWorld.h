@@ -28,6 +28,7 @@ class CharackWorld {
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 		void applyColorByHeight(Vector3 thePoint);
+		float normilizeHeight();
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);

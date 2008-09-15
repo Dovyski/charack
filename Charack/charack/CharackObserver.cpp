@@ -4,7 +4,7 @@
 CharackObserver::CharackObserver() {
 	mRotX = 0;
 	mRotY = 0;
-	mPosition = new Vector3(-55000, -140, -55000); //TODO: fix this
+	mPosition = new Vector3(-55000, 100, -55000); //TODO: fix this
 }
 
 CharackObserver::~CharackObserver() {

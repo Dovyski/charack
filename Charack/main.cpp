@@ -9,7 +9,7 @@
 #include "height.h" // terrain functions
 
 #define OBSERVER_HEIGHT		5
-#define MOV_SPEED			8000
+#define MOV_SPEED			10
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
@@ -37,22 +37,22 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 		case 'w':
 			// Move forward
-			gWorld.getObserver()->moveForward(MOV_SPEED);
+			gWorld.getObserver()->moveForward(MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 's':
 			// Move backward
-			gWorld.getObserver()->moveBackward(MOV_SPEED);
+			gWorld.getObserver()->moveBackward(MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 'a':
 			// Move left
-			gWorld.getObserver()->moveLeft(MOV_SPEED);
+			gWorld.getObserver()->moveLeft(MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 'd':
 			// Move right
-			gWorld.getObserver()->moveRight(MOV_SPEED);
+			gWorld.getObserver()->moveRight(MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 'r':
@@ -77,12 +77,12 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 't':
 			// Move up
-			gWorld.getObserver()->moveUpDown(200);
+			gWorld.getObserver()->moveUpDown(MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 'g':
 			// Move down
-			gWorld.getObserver()->moveUpDown(-200);
+			gWorld.getObserver()->moveUpDown(-MOV_SPEED * gWorld.getSample());
 			break;
 
 		case 'c':
@@ -167,7 +167,7 @@ void display (void) {
 
 	gluLookAt(0.0, 0.0, gWorld.getViewFrustum()/2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
-	sanitizePosition();
+	//sanitizePosition();
 	gWorld.displayMap();
 	
 	system("cls");

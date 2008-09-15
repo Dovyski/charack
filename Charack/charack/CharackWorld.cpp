@@ -51,9 +51,13 @@ void CharackWorld::generateMap(void) {
 
 	for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
 		for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
-			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * CK_HEIGHT_CEIL/getSample(), z);
+			mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * normilizeHeight(), z);
 		}
 	}
+}
+
+float CharackWorld::normilizeHeight() {
+	return getSample() < CK_SAMPLE_CORRECTION ? 1 : 0.1 + CK_SAMPLE_CORRECTION/getSample();
 }
 
 
