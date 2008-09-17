@@ -16,12 +16,17 @@
 
 Vector3::Vector3() 
 { 
-   x = y = z = 0;    
+   x = y = z = a = 0;    
 }
 
 Vector3::Vector3(float vx, float vy, float vz) 
 {
    x = vx;  y = vy;  z = vz; 
+}
+
+Vector3::Vector3(float vx, float vy, float vz,  float va) 
+{
+   x = vx;  y = vy;  z = vz;  a = va;
 }
 
 Vector3::Vector3(const Vector3& u)

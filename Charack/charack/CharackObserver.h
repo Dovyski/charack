@@ -11,6 +11,8 @@ class CharackObserver {
 		int mRotY;
 		Vector3 *mPosition;
 
+		void nomalizePosition();
+
 	public:
 		CharackObserver();		
 		~CharackObserver();

@@ -10,11 +10,14 @@
 
 #define OBSERVER_HEIGHT		5
 #define MOV_SPEED			10
+#define GLOBAL_VIEW_SAMPE	10000
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 
+// Some variables to control our settings
+int gCurrentSample = 2;
 
 // We create an "eye" to see the generated world.
 CharackWorld gWorld(300, 2);
@@ -116,9 +119,13 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			// Toggle controller for global viewing (view from top).
 			if(gWorld.getObserver()->getRotationX() == 90) {
 				gWorld.getObserver()->setRotationX(0);
+				gWorld.setSample(gCurrentSample);
 			} else {
 				gWorld.getObserver()->setRotationX(90);
 				gWorld.getObserver()->setRotationY(0);
+				
+				gCurrentSample = gWorld.getSample();
+				gWorld.setSample(GLOBAL_VIEW_SAMPE);
 			}
 			break;
 	}
@@ -187,7 +194,7 @@ void init (void) {
 	//gWorld.getMathCollectionZ()->addFunction(fz3);
 	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
 
-	gWorld.placeObserverOnLand();
+	//gWorld.placeObserverOnLand();
 }
 
 void reshape (int w, int h) {

@@ -24,10 +24,11 @@ class Vector3
 {
 public:
 
-	float x, y, z;
+	float x, y, z, a;
 
 	Vector3();
 	Vector3(float vx, float vy, float vz);
+	Vector3(float vx, float vy, float vz,  float va);
 	Vector3(const Vector3& u);
 	virtual ~Vector3();
 	void set(float vx, float vy, float vz);
