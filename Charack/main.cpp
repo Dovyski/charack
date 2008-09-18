@@ -9,15 +9,18 @@
 #include "height.h" // terrain functions
 
 #define OBSERVER_HEIGHT		5
-#define MOV_SPEED			10
-#define GLOBAL_VIEW_SAMPE	10000
+#define MOV_SPEED			5
+#define GLOBAL_VIEW_SAMPE	15000
+#define GLOBAL_VIEW_HEIGHT	40
 
 // Define how much each of the functions above interferes in the terrain generation.
 float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
 
 // Some variables to control our settings
-int gCurrentSample = 2;
+int gCurrentSample	= 2;
+int gCurrentHeight	= 0;
+int gSeaLevel		= CK_SEA_LEVEL;
 
 // We create an "eye" to see the generated world.
 CharackWorld gWorld(300, 2);
@@ -80,12 +83,12 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 't':
 			// Move up
-			gWorld.getObserver()->moveUpDown(MOV_SPEED * gWorld.getSample());
+			gWorld.getObserver()->moveUpDown(MOV_SPEED);
 			break;
 
 		case 'g':
 			// Move down
-			gWorld.getObserver()->moveUpDown(-MOV_SPEED * gWorld.getSample());
+			gWorld.getObserver()->moveUpDown(-MOV_SPEED);
 			break;
 
 		case 'c':
@@ -99,11 +102,11 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 		case 'n':
 			// Decrease the sample size
-			gWorld.setSample(gWorld.getSample() - 20);
+			gWorld.setSample(gWorld.getSample() - 1);
 			break;
 		case 'm':
 			// Increase the sample size
-			gWorld.setSample(gWorld.getSample() + 20);
+			gWorld.setSample(gWorld.getSample() + 1);
 			break;
 
 		case 'k':
@@ -115,16 +118,29 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			gWorld.setScale(gWorld.getScale() + 0.2);
 			break;
 
+		case 'u':
+			// Decrease the sea level
+			gSeaLevel -= 1;
+			break;
+		case 'i':
+			// Increase the sea level
+			gSeaLevel += 1;
+			break;
+
 		case 'p':
 			// Toggle controller for global viewing (view from top).
 			if(gWorld.getObserver()->getRotationX() == 90) {
-				gWorld.getObserver()->setRotationX(0);
 				gWorld.setSample(gCurrentSample);
+				
+				gWorld.getObserver()->setRotationX(0);
+				gWorld.getObserver()->setPosition(gWorld.getObserver()->getPosition()->x, gCurrentHeight, gWorld.getObserver()->getPosition()->z);
 			} else {
 				gWorld.getObserver()->setRotationX(90);
 				gWorld.getObserver()->setRotationY(0);
+				gWorld.getObserver()->setPosition(gWorld.getObserver()->getPosition()->x, GLOBAL_VIEW_HEIGHT, gWorld.getObserver()->getPosition()->z);
 				
 				gCurrentSample = gWorld.getSample();
+				gCurrentHeight = gWorld.getObserver()->getPosition()->y;
 				gWorld.setSample(GLOBAL_VIEW_SAMPE);
 			}
 			break;
@@ -164,6 +180,19 @@ void setupEnableStuffs(void) {
 }
 
 
+void displayOcean(void) {
+	glBegin(GL_POLYGON);
+		glColor3f(0.0f, 0.0f, 0.2f);
+
+		glNormal3f(0,1,0);
+		
+		glVertex3f(0.0, gSeaLevel, 0.0);
+		glVertex3f(CK_VIEW_FRUSTUM, gSeaLevel, 0.0);
+		glVertex3f(CK_VIEW_FRUSTUM, gSeaLevel, CK_VIEW_FRUSTUM);
+		glVertex3f(0.0, gSeaLevel, CK_VIEW_FRUSTUM);
+	glEnd(); 
+}
+
 void display (void) {
 	setupEnableStuffs();
 	setupLights();
@@ -176,6 +205,7 @@ void display (void) {
 	
 	//sanitizePosition();
 	gWorld.displayMap();
+	displayOcean();
 	
 	system("cls");
 	gWorld.printDebugInfo();

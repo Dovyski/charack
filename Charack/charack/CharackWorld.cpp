@@ -61,7 +61,7 @@ void CharackWorld::generateMap(void) {
 }
 
 float CharackWorld::normilizeHeight() {
-	return getSample() < CK_SAMPLE_CORRECTION ? 1 : 0.1 + CK_SAMPLE_CORRECTION/getSample();
+	return getSample() > CK_SAMPLE_CORRECTION_LIMIT ? CK_SAMPLE_CORRECTION : getSample();
 }
 
 
