@@ -191,10 +191,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\charack\CharackMathCollection.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\charack\CharackObserver.cpp"
 					>
 				</File>
@@ -230,10 +226,6 @@
 				</File>
 				<File
 					RelativePath=".\charack\CharackMapGenerator.h"
-					>
-				</File>
-				<File
-					RelativePath=".\charack\CharackMathCollection.h"
 					>
 				</File>
 				<File

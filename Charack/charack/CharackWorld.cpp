@@ -2,8 +2,6 @@
 
 CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	mCamera			= new CharackObserver();
-	mMathsX			= new CharackMathCollection();
-	mMathsZ			= new CharackMathCollection();
 	mMapGenerator	= new CharackMapGenerator();
 	
 	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
@@ -128,7 +126,7 @@ void CharackWorld::applyColorByHeight(Vector3 thePoint) {
 }
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return getMathCollectionX()->getValue(theX) + getMathCollectionZ()->getValue(theZ);
+	return mHeightFunctionX(theX) + mHeightFunctionZ(theZ);
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {
@@ -139,13 +137,6 @@ CharackObserver *CharackWorld::getObserver(void) {
 	return mCamera;
 }
 
-CharackMathCollection *CharackWorld::getMathCollectionX(void) {
-	return mMathsX;
-}
-
-CharackMathCollection *CharackWorld::getMathCollectionZ(void) {
-	return mMathsZ;
-}
 
 // This method will perform the following: (theLeftPoint - theMiddlePoint) ^ (theRightPoint - theMiddlePoint)
 Vector3 CharackWorld::calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint) {
@@ -215,4 +206,13 @@ float CharackWorld::getScale() {
 
 CharackMapGenerator *CharackWorld::getMapGenerator(void) {
 	return mMapGenerator;
+}
+
+
+void CharackWorld::setHeightFunctionX(float (*theFunction)(float)) {
+	mHeightFunctionX = theFunction;
+}
+
+void CharackWorld::setHeightFunctionZ(float (*theFunction)(float)) {
+	mHeightFunctionZ = theFunction;
 }

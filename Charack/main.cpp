@@ -13,17 +13,13 @@
 #define GLOBAL_VIEW_SAMPE	15000
 #define GLOBAL_VIEW_HEIGHT	40
 
-// Define how much each of the functions above interferes in the terrain generation.
-float gWeightsX[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
-float gWeightsZ[CK_MATHC_MAX_FUNCTION] = {1, 1, 1, 1};
-
 // Some variables to control our settings
 int gCurrentSample	= 2;
 int gCurrentHeight	= 0;
 int gSeaLevel		= CK_SEA_LEVEL;
 
 // We create an "eye" to see the generated world.
-CharackWorld gWorld(300, 2);
+CharackWorld gWorld(300, 1);
 
 
 // To avoid walk through the walls, below the ground, etc.
@@ -214,17 +210,10 @@ void display (void) {
 }
 
 void init (void) {
-	gWorld.getMathCollectionX()->addFunction(fx1);
-	gWorld.getMathCollectionX()->addFunction(fx2);
-	//gWorld.getMathCollectionX()->addFunction(fx3);
-	gWorld.getMathCollectionX()->setWeights(gWeightsX);
+	gWorld.setHeightFunctionX(fx1);
+	gWorld.setHeightFunctionZ(fz1);
 
-	gWorld.getMathCollectionZ()->addFunction(fz1);
-	gWorld.getMathCollectionZ()->addFunction(fz2);
-	//gWorld.getMathCollectionZ()->addFunction(fz3);
-	gWorld.getMathCollectionZ()->setWeights(gWeightsZ);
-
-	//gWorld.placeObserverOnLand();
+	gWorld.placeObserverOnLand();
 }
 
 void reshape (int w, int h) {

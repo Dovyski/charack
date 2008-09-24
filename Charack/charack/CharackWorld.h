@@ -9,18 +9,17 @@
 #include <iostream>
 
 #include "CharackObserver.h"
-#include "CharackMathCollection.h"
 #include "CharackMapGenerator.h"
 
 // TODO: comment this?
 class CharackWorld {
 	private:
 		CharackObserver *mCamera;
-		CharackMathCollection *mMathsX;
-		CharackMathCollection *mMathsZ;
 		CharackMapGenerator *mMapGenerator;
 
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
+		float (*mHeightFunctionX)(float); // generate the height coordinates for X axis
+		float (*mHeightFunctionZ)(float); // generate the height coordinates for X axis
 		
 		int mViewFrustum;
 		int mSample;
@@ -50,14 +49,13 @@ class CharackWorld {
 		void setScale(float theScale);
 		float getScale();
 
+		void setHeightFunctionX(float (*theFunction)(float));
+		void setHeightFunctionZ(float (*theFunction)(float));
+
 		// Print useful information about the world.
 		void printDebugInfo(void);
 
 		void placeObserverOnLand(void);
-		
-		// TODO: fix this ("ordinary" users should not see the math collection...)
-		CharackMathCollection *getMathCollectionX(void);
-		CharackMathCollection *getMathCollectionZ(void);
 };
 
 // Useful datatypes we can use in the render processing.

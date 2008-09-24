@@ -319,23 +319,6 @@ void CharackMapGenerator::mercator()
       col[i][j] = planet0(cos(theta1)*cos2,y,-sin(theta1)*cos2);
     }
   }
-  if (hgrid != 0.0) { /* draw horisontal gridlines */
-    for (theta1 = 0.0; theta1>-90.0; theta1-=hgrid);
-    for (theta1 = theta1; theta1<90.0; theta1+=hgrid) {
-      y = sin(DEG2RAD*theta1);
-      y = (1.0+y)/(1.0-y);
-      y = 0.5*log(y);
-      j = Height/2+(int)(0.5*y*Width*scale/PI)+k;
-      if (j>=0 && j<Height) for (i = 0; i < Width ; i++) col[i][j] = GRID;
-    }
-  }
-  if (vgrid != 0.0) { /* draw vertical gridlines */
-    for (theta1 = 0.0; theta1>-360.0; theta1-=vgrid);
-    for (theta1 = theta1; theta1<360.0; theta1+=vgrid) {
-      i = (int)(0.5*Width*(1.0+scale*(DEG2RAD*theta1-longi)/PI));
-      if (i>=0 && i<Width) for (j = 0; j < Height; j++) col[i][j] = GRID;
-    } 
-  }
 }
 
 
