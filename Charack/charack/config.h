@@ -6,7 +6,7 @@
 
 #define CK_SCALE						5
 
-#define CK_SEA_LEVEL					-10
+#define CK_SEA_LEVEL					-500
 #define CK_SAMPLE_CORRECTION_LIMIT		15
 #define CK_SAMPLE_CORRECTION			0.01
 

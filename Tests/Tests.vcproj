@@ -169,6 +169,10 @@
 				RelativePath="..\Charack\perlin.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\Charack\charack\vector3.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -177,6 +181,10 @@
 			>
 			<File
 				RelativePath="..\Charack\perlin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Charack\charack\vector3.h"
 				>
 			</File>
 		</Filter>

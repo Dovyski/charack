@@ -162,8 +162,8 @@ void setupEnableStuffs(void) {
 	glEnable(GL_DEPTH_TEST);	//enable the depth testing
 	glDepthFunc(GL_LEQUAL);		//set the depth function
 	glFrontFace(GL_CW);		//set which face is facing forward
-//	glCullFace(GL_BACK);		//set the face to be culled
-//	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
+	glCullFace(GL_BACK);		//set the face to be culled
+	glEnable(GL_CULL_FACE);		//enable culling to speed up the processing time
 	glShadeModel(GL_SMOOTH);	//set the shade model to smooth
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);		//enable our ambient light
@@ -201,7 +201,7 @@ void display (void) {
 	
 	//sanitizePosition();
 	gWorld.displayMap();
-	displayOcean();
+	//displayOcean();
 	
 	system("cls");
 	gWorld.printDebugInfo();
