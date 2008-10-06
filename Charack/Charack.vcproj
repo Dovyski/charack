@@ -187,6 +187,14 @@
 				Name="charack"
 				>
 				<File
+					RelativePath=".\charack\CharackCoastGenerator.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackLineSegment.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\charack\CharackMapGenerator.cpp"
 					>
 				</File>
@@ -222,6 +230,14 @@
 				>
 				<File
 					RelativePath=".\charack\charack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackCoastGenerator.h"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\CharackLineSegment.h"
 					>
 				</File>
 				<File

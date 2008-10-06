@@ -23,6 +23,12 @@ void CharackWorld::generateMap(void) {
 	int aXNow = (int)getObserver()->getPositionX();
 	int aZNow = (int)getObserver()->getPositionZ();
 
+	// TODO: comment this
+	getMapGenerator()->applyCoast(abs(aXNow) - (getViewFrustum()/2) * getSample(),
+								  abs(aZNow) - (getViewFrustum()/2) * getSample(),
+								  getViewFrustum(),
+								  getSample());
+
 	// What we have here is this:
 	//
 	// aXNow and aZNow hold the value of our current position in the Charack world. To populate
@@ -50,9 +56,9 @@ void CharackWorld::generateMap(void) {
 	for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
 		for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
 			if(getMapGenerator()->isLand(aMapX,aMapZ)) {
-				mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * normilizeHeight(), z, 1);
+				mMap[x][z] = Vector3(aMapX, getHeight(aMapX, aMapZ) * normilizeHeight(), aMapZ, 1);
 			} else {
-				mMap[x][z] = Vector3(x, CK_SEA_LEVEL, z, 0);
+				mMap[x][z] = Vector3(aMapX, CK_SEA_LEVEL, aMapZ, 0);
 			}
 		}
 	}

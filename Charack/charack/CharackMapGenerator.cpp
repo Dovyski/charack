@@ -59,6 +59,13 @@ CTable alt_colors =
 		 {0,0,0}};	    /* Black - gridlines	*/
 
 CharackMapGenerator::CharackMapGenerator() {
+	// TODO: get max_div and varitation from somewhere else?
+	mCoastGen.setMaxDivisions(CK_COAST_MAX_DIV);
+	mCoastGen.setVariation(CK_COAST_VARIATION);
+
+	// For now, we have no idea of what is land and what is water...
+	clearCoastMap();
+
 	altColors = 0;
 	back = BACK;
 	    
@@ -699,8 +706,7 @@ double fmax_dov(double x, double y)
 { return(x<y ? y : x); }
 
 
-// Will check if a specific position is land or water.
-int CharackMapGenerator::isLand(float theX, float theZ) {
+int CharackMapGenerator::globalIsLand(float theX, float theZ) {
 	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
 		return 0;
 	}
@@ -714,4 +720,51 @@ int CharackMapGenerator::isLand(float theX, float theZ) {
 	aZ = aZ >= Height	? Height -1 : aZ;
 
 	return col[aZ][aX] == BLACK;
+}
+
+int CharackMapGenerator::isLand(float theX, float theZ) {
+	// TODO: the method. For now, we use the information of a macro world view.
+	return globalIsLand(theX, theZ);
+}
+
+
+
+void CharackMapGenerator::clearCoastMap() {
+	for(int i = 0; i < CK_VIEW_FRUSTUM; i++) {
+		for(int j = 0; j < CK_VIEW_FRUSTUM; j++) {
+			mCoastMap[i][j] = 0;
+		}
+	}
+}
+
+void CharackMapGenerator::applyCoast(int theMapX, int theMapZ, int theViewFrustum, int theSample) {
+	std::list<CharackLineSegment> aCoastLines;
+	std::list<CharackLineSegment>::iterator i;
+	std::list<Vector3> aNewCoastPoints;
+
+	// First of all, we clean the coast map (
+	clearCoastMap();
+
+	aCoastLines = findCoastLines(theMapX, theMapZ, theViewFrustum, theSample);
+
+	for(i = aCoastLines.begin(); i != aCoastLines.end(); i++) {
+		CharackLineSegment aLine = (*i);
+		aNewCoastPoints = mCoastGen.generate(aLine.getPointA(), aLine.getPointB(), aLine.getOrientationAxis());
+
+		// Now that we know the points of the new coast, we have to apply them to the coast
+		// map (and, as a consequence, create the lines among the points). In the end, the
+		// coast map will give us the information isLand() needs to tell anyone what is
+		// water and what is land.
+		updateCoastMap(aNewCoastPoints);
+	}
+}
+
+std::list<CharackLineSegment> CharackMapGenerator::findCoastLines(int theMapX, int theMapZ, int theViewFrustum, int theSample) {
+	// TODO: the method itself xD
+	std::list<CharackLineSegment> aCoastLines;
+	return aCoastLines;
+}
+
+void CharackMapGenerator::updateCoastMap(std::list<Vector3> theCoastPoints) {
+	//TODO: the method...
 }
