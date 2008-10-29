@@ -742,14 +742,16 @@ void CharackMapGenerator::applyCoast(int theMapX, int theMapZ, int theViewFrustu
 	std::list<CharackLineSegment>::iterator i;
 	std::list<Vector3> aNewCoastPoints;
 
-	// First of all, we clean the coast map (
+	// First of all, we clean up the coast map
 	clearCoastMap();
 
 	aCoastLines = findCoastLines(theMapX, theMapZ, theViewFrustum, theSample);
 
+	// For each coast line, apply the midpoint displacement algorithm to create a noised line,
+	// which looks pretty much the same as a real coast line.
 	for(i = aCoastLines.begin(); i != aCoastLines.end(); i++) {
 		CharackLineSegment aLine = (*i);
-		aNewCoastPoints = mCoastGen.generate(aLine.getPointA(), aLine.getPointB(), aLine.getOrientationAxis());
+		aNewCoastPoints = getCoastGenerator().generate(aLine.getPointA(), aLine.getPointB(), aLine.getOrientationAxis());
 
 		// Now that we know the points of the new coast, we have to apply them to the coast
 		// map (and, as a consequence, create the lines among the points). In the end, the
@@ -760,11 +762,113 @@ void CharackMapGenerator::applyCoast(int theMapX, int theMapZ, int theViewFrustu
 }
 
 std::list<CharackLineSegment> CharackMapGenerator::findCoastLines(int theMapX, int theMapZ, int theViewFrustum, int theSample) {
-	// TODO: the method itself xD
+	Vector3 aStart, aTop, aBottom;
+	std::list<Vector3> aCorners;
+	
+	aStart	= findCoast(theMapX, theMapZ, theViewFrustum, theSample);
+	
+	aTop	= isCorner(aStart) ? aStart : findLineCorner(aStart, MOVE_UP,	AXIS_Z); 
+	aBottom	= isCorner(aStart) ? aStart : findLineCorner(aStart, MOVE_DOWN, AXIS_Z); 
+
+	findCorners(aCorners, aTop,		VERTICAL, INSERT_BEGIN);
+	findCorners(aCorners, aBottom,	VERTICAL, INSERT_END);
+	
+	// TODO: convert corners into segments (aCorners)
+	
 	std::list<CharackLineSegment> aCoastLines;
 	return aCoastLines;
 }
 
+void CharackMapGenerator::findCorners(std::list<Vector3> theCorners, Vector3 thePoint, int theDirection, int theListInsertOrder) {
+	int aSign;
+
+	do {
+		if(isCorner(thePoint)) {
+			if(theListInsertOrder == INSERT_BEGIN) {
+				theCorners.push_front(thePoint);
+			} else {
+				theCorners.push_back(thePoint);
+			}
+
+			theDirection = (theDirection == VERTICAL ? HORIZONTAL : VERTICAL);
+		}
+
+		if(isInsideViewFrustum(thePoint)) {
+			if(theDirection == CharackMapGenerator::VERTICAL) {
+				thePoint = findLineCorner(thePoint, canGoDown(thePoint) ? MOVE_DOWN : MOVE_UP, AXIS_Z);
+			} else {
+				thePoint = findLineCorner(thePoint, canGoLeft(thePoint) ? MOVE_LEFT : MOVE_RIGHT, AXIS_X);
+			}
+		}
+	} while (!inList(theCorners, thePoint));
+}
+
+int CharackMapGenerator::isInsideViewFrustum(Vector3 thePoint) {
+	// TODO: the method
+	return 0;
+}
+
+int CharackMapGenerator::isCorner(Vector3 thePoint) {
+	// TODO: the method
+	return 0;
+}
+
+int CharackMapGenerator::canGoDown(Vector3 thePoint) {
+	//TODO: the method
+	return 0;
+}
+
+int CharackMapGenerator::canGoLeft(Vector3 thePoint) {
+	//TODO: the method
+	return 0;
+}
+
+Vector3 CharackMapGenerator::findLineCorner(Vector3 theStart, int theDirection, int theGuideAxis) {
+	// TODO: the method
+	Vector3 aFake;
+	return aFake;
+}
+
+int CharackMapGenerator::inList(std::list<Vector3> theList, Vector3 theElement) {
+	std::list<Vector3>::iterator i;
+	int aReturn = 0;
+
+	for(i = theList.begin(); i != theList.end(); i++) {
+		Vector3 aElement = (*i);
+		if(aElement == theElement) {
+			aReturn = 1;
+			break;
+		}
+	}
+	return aReturn;
+}
+
+Vector3 CharackMapGenerator::findCoast(int theMapX, int theMapZ, int theViewFrustum, int theSample) {
+	int aMapX, aMapZ, x, z;
+	Vector3 aLand;
+
+	aMapX = theMapX;
+	aMapZ = theMapZ;
+
+	for(x = 0; x < theViewFrustum; x++, aMapX += theSample){ 
+		for(aMapZ = theMapZ, z = 0; z < theViewFrustum; z++, aMapZ += theSample){ 
+			if(globalIsLand(aMapX,aMapZ)) {
+				aLand.x = aMapX;
+				aLand.y = 0;
+				aLand.z = aMapZ;
+
+				return aLand;
+			}
+		}
+	}
+
+	return aLand;
+}
+
 void CharackMapGenerator::updateCoastMap(std::list<Vector3> theCoastPoints) {
 	//TODO: the method...
+}
+
+CharackCoastGenerator CharackMapGenerator::getCoastGenerator() {
+	return mCoastGen;
 }
