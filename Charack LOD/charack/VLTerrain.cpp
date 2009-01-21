@@ -41,7 +41,7 @@ void VLTerrain::init_quad()
 
 	FILE*	fp = fopen(".\\data\\pozzer.raw", "rb");  //513x513
 	fread(data, sizeof(unsigned char), dim*dim, fp);
-	fclose(fp);
+ 	fclose(fp);
 
    /*for(i=0; i<dim; i++)
    {

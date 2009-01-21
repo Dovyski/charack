@@ -109,7 +109,7 @@ void Camera::rotate(float rx, float ry, float rz)
 {
    //if( rx>2) rx = 2.0;
    
-   camDir.set(0.0f, 0.0f, 1.0f);
+   //camDir.set(0.0f, 0.0f, 1.0f);
    camDir.rotate(rx, ry, rz);
 }
 

@@ -2,8 +2,8 @@
 #define _DEFS_H	
 
 
-#define SCREEN_X  640
-#define SCREEN_Y  480
+#define SCREEN_X  850
+#define SCREEN_Y  550
 
 #define DIM_TERRAIN      512
 //#define DIM_TERRAIN      2
