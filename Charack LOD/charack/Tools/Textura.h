@@ -3,6 +3,8 @@
 #define _TEXTURA_H
 
 #include <math.h>
+#include "gl/glut.h" //gl utility toolkit
+#include "gl/gl.h" //gl utility toolkit
 
 
 #define GL_CLAMP_TO_EDGE	0x812F	// This is for our skybox textures

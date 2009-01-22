@@ -9,36 +9,29 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "charack/tools/gl/glut.h"
-#include "charack/tools/Frames.h"
-#include "charack/tools/Timer.h"
-#include "charack/tools/GLFont.h"
-#include "charack/tools/textura.h"
-#include "charack/defs.h"
-#include "charack/Camera.h"
-#include "charack/VLTerrain.h"
+#include "charack/charack.h"
 
 //variaveis globais
 Timer       *timer;
 GLFont      *font;
 Frames      *frames;
 int         polygonMode=1;
-float       mousex, mousey;
-Camera      *camera;
-VLTerrain   *terrain;
+//float       mousex, mousey;
+
+CharackWorld gWorld(300, 1);
 
 
-float rotacao   = 0.0;
-bool  arrayList = true;
-bool  debug = false;
+//float rotacao   = 0.0;
+//bool  arrayList = true;
+//bool  debug = false;
 bool  texture = false;
 bool  cullingB = false;
-int   cont_erros=0;
+//int   cont_erros=0;
 
-int oldX = 0, oldY = 0;
-int max_render   = 0; //usado pelo mouse
+//int oldX = 0, oldY = 0;
+//int max_render   = 0; //usado pelo mouse
 
-int TriangleCounter;
+//int TriangleCounter;
 
 //faz a geracao da cena. Esta funcao e' chamada apenas no inicio da execucao.
 void init()
@@ -46,12 +39,8 @@ void init()
 	frames     = new Frames();
 	font       = new GLFont();
 	timer      = new Timer();
-	camera     = new Camera();
 
-	terrain = new VLTerrain();
-	terrain->setCamera( camera );
-
-	mousex=mousey=0;
+//	mousex=mousey=0;
 
 	//inicializacao do OpenGL
 	glClearColor(0, 0, 0, 1);
@@ -61,7 +50,7 @@ void init()
 	//glPolygonMode(GL_FRONT, GL_LINE);
 
 
-	glVertexPointer (3, GL_FLOAT, 0, terrain->coordVert);     //coord per vertex, coord type, offset, pointer 
+	glVertexPointer (3, GL_FLOAT, 0, gWorld.getTerrain()->coordVert);     //coord per vertex, coord type, offset, pointer 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
@@ -90,13 +79,15 @@ void display (void)
    glDepthFunc(GL_LESS);
    glEnable(GL_DEPTH_TEST);
 
-   camera->render( );
+   //camera->render( );
 
-   glColor3f(1, 1, 1);
-   terrain->renderMain();
+  // glColor3f(1, 1, 1);
+   //terrain->renderMain();
    
-   if( terrain->contErro > 0)
-      printf(" %d", terrain->contErro);
+   //if( terrain->contErro > 0)
+      //printf(" %d", terrain->contErro);
+
+	gWorld.render();
 
 
    static char text[50];
@@ -107,10 +98,12 @@ void display (void)
    //glColor3f(1,1,1);
    sprintf(text, "Fps: %.2f ", fps);
    font->print(20.0f, 15.0f, text);
-   sprintf(text, "TRI: %d ", terrain->triangulos);
+   sprintf(text, "TRI: %d ", gWorld.getTerrain()->triangulos);
    font->print(20.0f, 45.0f, text);
+   sprintf(text, "camPos: (%2.f, %2.f,%2.f)", gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
+   font->print(20.0f, 75.0f, text);
    font->endText();
-   TriangleCounter += terrain->triangulos;
+//   TriangleCounter += gWorld.getTerrain()->triangulos;
    glutSwapBuffers();
 }
 
@@ -119,7 +112,6 @@ void display (void)
 //faz a leitura da entrada do usuario
 void keyboard(unsigned char key, int x, int y)
 {
-	//printf("%c", key);
 	key = tolower(key);
 	switch(key)	{
 		case 27:
@@ -127,59 +119,67 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		case 'a':  //seta esquerda
-			camera->move(200);
+			gWorld.getCamera()->move(500);
 			break;
 
 		case 'd': //seta direita
-			camera->move(-200); //TODO: fix the minus...
-			break;
-
-		case 'r': ////rotate up
-			camera->rotate(0.05, 0, 0);
-			break;
-
-		case 'f': ////rotate down
-			camera->rotate(-0.05, 0, 0);
-			break;
-
-		case 'q': ////rotate left
-			camera->rotate(0, -0.01, 0);
-			break;
-
-		case 'e': ////rotate right
-			camera->rotate(0, 0.01, 0);
-			break;
-
-		case 't': ////pg up
-			camera->elevate(200);
-			break;
-
-		case 'g': ////pg down
-			camera->elevate(-200);
+			gWorld.getCamera()->move(-500); //TODO: fix the minus...
 			break;
 
 		case 'w': //seta cima
-			camera->walk(200);
+			gWorld.getCamera()->walk(500);
 			break;
 
 		case 's': ////seta baixo
-			camera->walk(-200);
+			gWorld.getCamera()->walk(-500);
+			break;
+
+		case 't': ////pg up
+			gWorld.getCamera()->elevate(200);
+			break;
+
+		case 'g': ////pg down
+			gWorld.getCamera()->elevate(-200);
+			break;
+
+		case 'r': ////rotate up
+			gWorld.getCamera()->rotate(0.05, 0, 0);
+			break;
+
+		case 'f': ////rotate down
+			gWorld.getCamera()->rotate(-0.05, 0, 0);
+			break;
+
+		case 'q': ////rotate left
+			gWorld.getCamera()->rotate(0, -0.01, 0);
+			break;
+
+		case 'e': ////rotate right
+			gWorld.getCamera()->rotate(0, 0.01, 0);
+			break;
+
+		case 'y': // enable top view
+			gWorld.getCamera()->topView(1);
+			break;
+
+		case 'u': // disable top view
+			gWorld.getCamera()->topView(0);
 			break;
 
 		case '-': 
-			terrain->ThresholdDetail+=0.1;
-			if( terrain->ThresholdDetail > 170 ) {
-				terrain->ThresholdDetail = 170;
+			gWorld.getTerrain()->ThresholdDetail+=0.1;
+			if( gWorld.getTerrain()->ThresholdDetail > 170 ) {
+				gWorld.getTerrain()->ThresholdDetail = 170;
 			}
-			printf("\nThresholdDetail = %.2f",    terrain->ThresholdDetail);
+			printf("\nThresholdDetail = %.2f",    gWorld.getTerrain()->ThresholdDetail);
 			break;
 
 		case '+': 
-			terrain->ThresholdDetail-=0.1;
-			if( terrain->ThresholdDetail < 0.01 ) {
-				terrain->ThresholdDetail = 0.01;
+			gWorld.getTerrain()->ThresholdDetail-=0.1;
+			if( gWorld.getTerrain()->ThresholdDetail < 0.01 ) {
+				gWorld.getTerrain()->ThresholdDetail = 0.01;
 			}
-			printf("\nThresholdDetail = %.2f",    terrain->ThresholdDetail);
+			printf("\nThresholdDetail = %.2f",    gWorld.getTerrain()->ThresholdDetail);
 			break;
 
 		case 'i': //wireframe
@@ -194,18 +194,18 @@ void keyboard(unsigned char key, int x, int y)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
 			break;
-
+/*
 		case 'o': //debug
 			if(debug==true)
 				debug=false;
 			else
 				debug=true;
-			break;
+			break;*/
 
 		case 'l':
-			camera->lockPosition();
+			gWorld.getCamera()->lockPosition();
 			break;
-
+/*
 		case 'p': {
 			int	StartTicks = glutGet(GLUT_ELAPSED_TIME);
 			int	ticks;
@@ -228,6 +228,7 @@ void keyboard(unsigned char key, int x, int y)
 			printf("\nRendered %0.1f frames/sec, %d tris/frame, %d tris/sec\n", FrameCounter / dt, TrisPerFrame, int(TriangleCounter / dt));
 		}
 		break;
+*/
 
 		case 'k': //texture
 			if(texture==true)
@@ -245,10 +246,11 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }  
 
+/*
 //funcao para leitura do mouse e rotacao de toda cena. 
 void mouseFunc(int button, int state, int x, int y) {
 }
-
+*/
 
 /*
 void specialFunc(int key, int x, int y)
@@ -280,7 +282,7 @@ void specialFunc(int key, int x, int y)
 	}
 }
 */
-
+/*
 //retorna parametro [0,1] da posicao do mouse na tela
 void passiveMotionFunc(int x, int y)
 {
@@ -289,8 +291,8 @@ void passiveMotionFunc(int x, int y)
    max_render = (x+y);
    printf("\nMax_render %d", max_render);
 }
-
-
+*/
+/*
 void MotionFunc(int x, int y)
 {
    float rx, rz;
@@ -311,7 +313,7 @@ void MotionFunc(int x, int y)
    oldY = y;
 
 }
-
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char* argv[])
@@ -329,7 +331,7 @@ int main (int argc, char* argv[])
    glutKeyboardFunc(keyboard);
 //   glutSpecialFunc(specialFunc);
 //   glutPassiveMotionFunc(passiveMotionFunc);
-   glutMotionFunc(MotionFunc);
+   //glutMotionFunc(MotionFunc);
    glutIdleFunc(display);
 
    glutMainLoop();

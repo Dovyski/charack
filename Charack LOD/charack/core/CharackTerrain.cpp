@@ -1,11 +1,11 @@
-#include "VLTerrain.h"
-#include "./tools/gl/glut.h" //gl utility toolkit
-#include "./tools/gl/gl.h" //gl utility toolkit
+#include "CharackTerrain.h"
+#include "../tools/gl/glut.h" //gl utility toolkit
+#include "../tools/gl/gl.h" //gl utility toolkit
 
 #include <math.h>
 
 //class constructor
-VLTerrain::VLTerrain()
+CharackTerrain::CharackTerrain()
 {
    traversal = 0;
    ThresholdDetail = 1.0;
@@ -20,19 +20,19 @@ VLTerrain::VLTerrain()
 }
 
 //class destructor
-VLTerrain::~VLTerrain(void)
+CharackTerrain::~CharackTerrain(void)
 {
    free(quad);    
 }
 
 
-void VLTerrain::setCamera( Camera *cam )
+void CharackTerrain::setCamera( CharackCamera *cam )
 {
    camera = cam;
 }
 
 //ver funcao recorrente para determinar o numero de elementos
-void VLTerrain::init_quad()
+void CharackTerrain::init_quad()
 {
  	//open height field map
    int dim = DIM_TERRAIN+1, i;
@@ -67,7 +67,7 @@ void VLTerrain::init_quad()
 
 }
 
-void VLTerrain::build_quad(unsigned char *data)
+void CharackTerrain::build_quad(unsigned char *data)
 {
    int dim = DIM_TERRAIN, n_blocks = 1, linha = (DIM_TERRAIN+1);//number of coordinates of each line of the matrix
    int l, c, index, offset1 = 0, offset2 = 0, oldDim = 0;
@@ -127,7 +127,7 @@ void VLTerrain::build_quad(unsigned char *data)
 }
 
 //atribuir ao de cima o erro maximo dos filhos, que deve ser normalizado entre 0 e 1 ??
-float VLTerrain::computeError(Quadtree *q, int level)
+float CharackTerrain::computeError(Quadtree *q, int level)
 {
    //calcula o erro no quadrante local.
    float errRight, errBottom, errCenter, err;
@@ -157,7 +157,7 @@ float VLTerrain::computeError(Quadtree *q, int level)
    return max(filhos, err);
 }
 
-void VLTerrain::renderMain(void)
+void CharackTerrain::renderMain(void)
 {
    traversal++;
    idx        = 0; //usado no arrayList
@@ -168,7 +168,7 @@ void VLTerrain::renderMain(void)
    render_aux_2(quad, 0, 0, 0);
 }
 
-void VLTerrain::render_aux_2(Quadtree *q, int level, int x, int z)
+void CharackTerrain::render_aux_2(Quadtree *q, int level, int x, int z)
 {
    if( cullingB==true && level < (MAX_RES-1) && level >= MIN_RES && culling(q, x, z, level) == true )
    {
@@ -177,10 +177,10 @@ void VLTerrain::render_aux_2(Quadtree *q, int level, int x, int z)
       return;
    }
    n_quadrantes++;
-   if( n_quadrantes>max_render && debug==true)
-   {
-      return;
-   }
+   //if( n_quadrantes>max_render && debug==true)
+   //{
+   //   return;
+   //}
    //if( n_quadrantes==1726 )
    //   n_quadrantes=1726;
 
@@ -209,16 +209,16 @@ void VLTerrain::render_aux_2(Quadtree *q, int level, int x, int z)
          maximo = (maximo==-1) ? max(LEFT1, LEFT2) : max( max(LEFT1, LEFT2), maximo);
       }   
 
-      if( n_quadrantes==max_render && debug==true)
-      {
-         mipmap = find_level(q, x, z, level); 
+      //if( n_quadrantes==max_render && debug==true)
+      //{
+      //   mipmap = find_level(q, x, z, level); 
 
-         printf("\nLevel:%d ", level); 
+      //   printf("\nLevel:%d ", level); 
          //printf(" LEFT1: %d LEFT2: %d UP3: %d UP4: %d Quad: %d MIP: %d ", LEFT1, LEFT2, UP3, UP4, n_quadrantes, find_level(q, level));
-         printf(" LEFT1: %d LEFT2: %d UP3: %d UP4: %d DIAG2: %d DIAG3: %d LOD=%.2f", LEFT1, LEFT2, UP3, UP4, DIAG2, DIAG3, globalError);
+      //   printf(" LEFT1: %d LEFT2: %d UP3: %d UP4: %d DIAG2: %d DIAG3: %d LOD=%.2f", LEFT1, LEFT2, UP3, UP4, DIAG2, DIAG3, globalError);
          //printf(" UP4: %d  ", UP4 );
          //printf(" Erro0: %d Erro1:%d Erro2:%d ", q->E0, q->E1, q->E2); 
-      }/**/
+      //}/**/
 
       //entra se for pelo menos 1 menor que o minimo
       if( (level+2) > minimo )
@@ -250,7 +250,7 @@ void VLTerrain::render_aux_2(Quadtree *q, int level, int x, int z)
 }
 
 
-void VLTerrain::render(Quadtree *q, int level, char delta, int x, int z)
+void CharackTerrain::render(Quadtree *q, int level, char delta, int x, int z)
 {
    char deltaUp   = abs(UP3-UP4);
    char deltaLeft = abs(LEFT1-LEFT2);
@@ -356,7 +356,7 @@ void VLTerrain::render(Quadtree *q, int level, char delta, int x, int z)
 //**************************************************************************************************
 //**************************************************************************************************
 
-void VLTerrain::renderLeftBotton(Quadtree *q, int level, int x, int z)
+void CharackTerrain::renderLeftBotton(Quadtree *q, int level, int x, int z)
 {
    tri(3, 0);
    tri(8, 7);
@@ -376,7 +376,7 @@ void VLTerrain::renderLeftBotton(Quadtree *q, int level, int x, int z)
    q->L3 = max( q->Q2->L3, q->Q2->L4 ); 
 }
 
-void VLTerrain::renderUpRight(Quadtree *q, int level, int x, int z)
+void CharackTerrain::renderUpRight(Quadtree *q, int level, int x, int z)
 {
    tri(0, 1);
    tri(5, 8);
@@ -397,7 +397,7 @@ void VLTerrain::renderUpRight(Quadtree *q, int level, int x, int z)
    q->L1 = max( q->Q1->L1, q->Q1->L2 ); 
 }
 
-void VLTerrain::renderLeft(Quadtree *q, int level, char delta)
+void CharackTerrain::renderLeft(Quadtree *q, int level, char delta)
 {
    if(delta==1) 
    {
@@ -408,7 +408,7 @@ void VLTerrain::renderLeft(Quadtree *q, int level, char delta)
       tri(6, 0);
 }
    
-void VLTerrain::renderUp(Quadtree *q, int level, char delta)
+void CharackTerrain::renderUp(Quadtree *q, int level, char delta)
 {
    if(delta==1) 
    {
@@ -419,7 +419,7 @@ void VLTerrain::renderUp(Quadtree *q, int level, char delta)
       tri(0, 2);
 }
 
-void VLTerrain::renderRight(Quadtree *q, int level, char delta)
+void CharackTerrain::renderRight(Quadtree *q, int level, char delta)
 {
    if( delta > -1 ) //para o caso de chamadas recursivas em Left_Botton
    {
@@ -456,7 +456,7 @@ void VLTerrain::renderRight(Quadtree *q, int level, char delta)
 }
 
 //pode ser somente 1 maior que left.
-void VLTerrain::renderBotton(Quadtree *q, int level, char delta)
+void CharackTerrain::renderBotton(Quadtree *q, int level, char delta)
 {
    if( delta > -1 ) //para o caso de chamadas recursivas em UP_Right
    {
@@ -493,7 +493,7 @@ void VLTerrain::renderBotton(Quadtree *q, int level, char delta)
 }
 
 
-void VLTerrain::build_vertexes(int x, int z, int level, Quadtree *q)
+void CharackTerrain::build_vertexes(int x, int z, int level, Quadtree *q)
 {
    int full = LARGURA>>(level);
    int half = full>>1;
@@ -513,7 +513,7 @@ void VLTerrain::build_vertexes(int x, int z, int level, Quadtree *q)
 
 
 
-bool VLTerrain::culling(Quadtree *q, int x, int z, int level)
+bool CharackTerrain::culling(Quadtree *q, int x, int z, int level)
 {
    int shift = LARGURA>>(level);
    //if( (x+shift) < 35001 && (z+shift) < 35001)
@@ -527,7 +527,7 @@ bool VLTerrain::culling(Quadtree *q, int x, int z, int level)
 
 
 //return by reference the appropriate detail for the bottom and right quadrants
-char VLTerrain::find_level(Quadtree *q, int x, int z, int level)
+char CharackTerrain::find_level(Quadtree *q, int x, int z, int level)
 {
    //camera->camPos.print();
   	//printf("\n %.2f %.2f %.2f", camera->camPos.x, camera->camPos.y, camera->camPos.z);
@@ -565,7 +565,7 @@ char VLTerrain::find_level(Quadtree *q, int x, int z, int level)
 
 
 // Load some data and put it into the quadtree.
-void VLTerrain::ConvertData()
+void CharackTerrain::ConvertData()
 {
    FILE*	fp;
    int contZeros = 0;

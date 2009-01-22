@@ -1,13 +1,13 @@
 #ifndef _VLFRUSTUM_H
 #define _VLFRUSTUM_H	
 
-#include "./Tools/Vector3.h"
+#include "../tools/Vector3.h"
 
-class Frustrum2  
+class CharackFrustrum  
 {
 public:
-	Frustrum2(Vector3 cameraPosition, Vector3 cameraDirection, float angle);
-	virtual ~Frustrum2();
+	CharackFrustrum(Vector3 cameraPosition, Vector3 cameraDirection, float angle);
+	virtual ~CharackFrustrum();
 
 	bool visible(int xmin, int ymin, int xmax, int ymax);
 	//float distanceFromCameraSquared(int x, int y);

@@ -1,5 +1,5 @@
-#ifndef _VLTERRAIN_H
-#define _VLTERRAIN_H	
+#ifndef _CHARACKTERRAIN_H
+#define _CHARACKTERRAIN_H	
 
 
 #ifdef _WIN32
@@ -10,12 +10,12 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "./tools/gl/glut.h"
-#include "Camera.h"
 
-#include "defs.h"
-#include "./tools/textura.h"
+#include "CharackCamera.h"
 
+#include "../tools/textura.h"
+#include "../tools/gl/glut.h"
+#include "../defs.h"
 
 //#define tri(a,b,c)    ( indices[idx++] = a, indices[idx++] = b, indices[idx++] = c, triangulos ++ )
 #define tri(a,b)      ( indices[idx++] = a, indices[(++idx)++] = b, triangulos ++ )
@@ -36,7 +36,7 @@ typedef struct qua
 
 
 
-class VLTerrain
+class CharackTerrain
 {
 public:
    float         coordVert[27];//stores (x,y,z) triples for each trinangle's vertex.
@@ -46,17 +46,17 @@ public:
    int   triangulos;      //triangles counter
    float ThresholdDetail; //set maximum error allowed - lod
    int   contErro;
-   Camera *camera;
+   CharackCamera *camera;
 
    float globalError;
 
    //class constructor and destructor
-   VLTerrain(void);
-   ~VLTerrain(void);
+   CharackTerrain(void);
+   ~CharackTerrain(void);
 
    //main routine to render the mesh.
    void renderMain(void);
-   void setCamera( Camera *camera );
+   void setCamera( CharackCamera *camera );
 private:
    char DIAG2, DIAG3, UP2, UP3, UP4, LEFT1, LEFT2, LEFT4, mipmap;
    Textura  *texTerrain;   //pointer to the texture object

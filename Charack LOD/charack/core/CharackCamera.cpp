@@ -1,16 +1,14 @@
-// classe Camera
-//
-//////////////////////////////////////////////////////////////////////
-
 #include <math.h>
-#include "Camera.h"
-#include "tools/math.h"
-#include "tools/gl/glut.h" //gl utility toolkit
-#include "tools/gl/glu.h"  //gl utility
-#include "./Tools/Vector3.h"
+
+#include "CharackCamera.h"
+
+#include "../tools/math.h"
+#include "../tools/Vector3.h"
+#include "../tools/gl/glut.h"
+#include "../tools/gl/glu.h"
 
 
-Camera::Camera()
+CharackCamera::CharackCamera()
 {
 	camPos.set(10000.0f, 10000.0f, 10000);
 	camDir.set(0.0f, -1.0f, 1.0f);
@@ -21,9 +19,10 @@ Camera::Camera()
 	zfar   = 2000000;
 	aspect = 1;
    lock = false;
+	mTopView = false;
 }	
 
-void Camera::render()
+void CharackCamera::render()
 {
    if( lock==false)
    {
@@ -43,7 +42,7 @@ void Camera::render()
 }
 
 //verificar na minha funcao original em camera.h
-void Camera::setupCamera()
+void CharackCamera::setupCamera()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity( );
@@ -53,7 +52,7 @@ void Camera::setupCamera()
 	glLoadIdentity( );
 }
 
-void Camera::setupFrustum()
+void CharackCamera::setupFrustum()
 {
 	// Pre-calculus
 	// Project cameraVector on the plane
@@ -98,14 +97,14 @@ void Camera::setupFrustum()
 
 
 //desloca na direcao da camera
-void Camera::walk(float dist)
+void CharackCamera::walk(float dist)
 {
    //camPos += camDir*dist;
    camPos.x += camDir.x*dist;
    camPos.z += camDir.z*dist;
 }
 
-void Camera::rotate(float rx, float ry, float rz)
+void CharackCamera::rotate(float rx, float ry, float rz)
 {
    //if( rx>2) rx = 2.0;
    
@@ -115,7 +114,7 @@ void Camera::rotate(float rx, float ry, float rz)
 
 
 //desloca na direcao perpendicular da camera.
-void Camera::move(float dist)
+void CharackCamera::move(float dist)
 {
    Vector3 tmp;
    
@@ -128,12 +127,12 @@ void Camera::move(float dist)
    camPos += tmp*dist;
 }
 
-void Camera::elevate(float dist)
+void CharackCamera::elevate(float dist)
 {
    camPos.y += dist;
 }
 
-void Camera::lockPosition()
+void CharackCamera::lockPosition()
 {
    if( lock==false)
       lock=true;
@@ -141,7 +140,7 @@ void Camera::lockPosition()
       lock = false;
 }
 
-bool Camera::visible(int xmin, int xmax, int ymin, int ymax)
+bool CharackCamera::visible(int xmin, int xmax, int ymin, int ymax)
 {
 	float vxmin = xmin - camLockPos.x;
 	float vxmax = xmax - camLockPos.x;
@@ -170,31 +169,19 @@ bool Camera::visible(int xmin, int xmax, int ymin, int ymax)
 	return true;
 }
 
+void CharackCamera::topView(int theStatus) {
+	if(mTopView != theStatus) {
+		mTopView = theStatus;
 
+		if(mTopView) {
+			camPosOld = camPos;
+			camDirOld = camDir;
 
-
-//configuracao de parametros
-//------------------------------------------------------------------
-/*void Camera::setPos(float x, float y, float z)
-{
-	camPos.set(x, y, z);
+			camPos = Vector3(25590, 69000, 22662);
+			camDir = Vector3(0, -1.41, 0.05);
+		} else {
+			camPos = camPosOld;
+			camDir = camDirOld;
+		}
+	}
 }
-
-void Camera::setDir(float x, float y, float z)
-{
-	camDir.set(x, y, z);
-}
-
-void Camera::setVel(float vel)
-{
-	camVel = vel;
-}
-
-void Camera::resseta()
-{
-	camPos.set(0.0f, 100.0f, 0.0f);
-	camDir.set(10.0f, 10.0f, 10.0f);
-	camVel = 0;
-	rx = ry = rz = 0.0;
-}
-*/

@@ -2,17 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Frustrum2.h"
 #include <stdlib.h>
 #include <math.h>
 #include <windows.h>
 #include <gl/gl.h>
 
+#include "CharackFrustrum.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Frustrum2::Frustrum2(Vector3 cameraPosition, Vector3 cameraDirection, float angle)
+CharackFrustrum::CharackFrustrum(Vector3 cameraPosition, Vector3 cameraDirection, float angle)
 {
 	this->cameraPosition = cameraPosition;
 	this->cameraDirection = cameraDirection;
@@ -42,14 +43,14 @@ Frustrum2::Frustrum2(Vector3 cameraPosition, Vector3 cameraDirection, float angl
 	frustrumRY = camx * sinmangle + camy * cosmangle;
 }
 
-Frustrum2::~Frustrum2()
+CharackFrustrum::~CharackFrustrum()
 {
 
 }
 
 /** Tests visibility of a rectangle on the horizontal plane
 */
-bool Frustrum2::visible(int xmin, int ymin, int xmax, int ymax)
+bool CharackFrustrum::visible(int xmin, int ymin, int xmax, int ymax)
 {
 	float vxmin = xmin - cameraPosition.x;
 	float vymin = ymin - cameraPosition.z;
