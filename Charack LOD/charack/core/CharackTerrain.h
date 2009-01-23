@@ -57,6 +57,7 @@ public:
    //main routine to render the mesh.
    void renderMain(void);
    void setCamera( CharackCamera *camera );
+   void build_quad(unsigned char *data);
 private:
    char DIAG2, DIAG3, UP2, UP3, UP4, LEFT1, LEFT2, LEFT4, mipmap;
    Textura  *texTerrain;   //pointer to the texture object
@@ -77,7 +78,6 @@ private:
 
    char  find_level(Quadtree *q, int x, int z, int level);
    void build_vertexes(int x, int z, int level, Quadtree *q);
-   void build_quad(unsigned char *data);
    float computeError(Quadtree *q, int level);
    void init_quad();
    

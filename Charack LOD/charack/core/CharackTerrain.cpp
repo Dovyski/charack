@@ -16,7 +16,7 @@ CharackTerrain::CharackTerrain()
       indices[i] = (unsigned char)4;
 
    init_quad();
-   texTerrain = new Textura("data\\textura.raw");
+   texTerrain = new Textura("c:\\temp\\textura.raw");
 }
 
 //class destructor
@@ -36,12 +36,12 @@ void CharackTerrain::init_quad()
 {
  	//open height field map
    int dim = DIM_TERRAIN+1, i;
-	unsigned char *data = (unsigned char *)malloc(dim*dim);
+//	unsigned char *data = (unsigned char *)malloc(dim*dim);
 	printf("Loading height grids...\n");
 
-	FILE*	fp = fopen(".\\data\\pozzer.raw", "rb");  //513x513
-	fread(data, sizeof(unsigned char), dim*dim, fp);
- 	fclose(fp);
+//	FILE*	fp = fopen("c:\\temp\\pozzer.raw", "rb");  //513x513
+//	fread(data, sizeof(unsigned char), dim*dim, fp);
+// 	fclose(fp);
 
    /*for(i=0; i<dim; i++)
    {
@@ -58,8 +58,8 @@ void CharackTerrain::init_quad()
   
    //allocates the tree
    quad = (Quadtree*)malloc(size * sizeof(Quadtree));
-   build_quad(data);
-   free(data);
+//   build_quad(data);
+//   free(data);
 
 
    printf("Alocou %.3f Mb na arvore\n", size * sizeof(Quadtree)/(1024*1024.0) );

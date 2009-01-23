@@ -33,6 +33,21 @@ bool  cullingB = false;
 
 //int TriangleCounter;
 
+void setupLights(void) {
+	// Create light components
+	GLfloat aAmbientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat aDiffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+	GLfloat aSpecularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat aPosition[] = { 0.0f, 500.0f, 0.0f, 1.0f };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, aAmbientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, aDiffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, aSpecularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, aPosition);
+}
+
+
 //faz a geracao da cena. Esta funcao e' chamada apenas no inicio da execucao.
 void init()
 {
@@ -74,37 +89,46 @@ void init()
 ////////////////////////////////////////////////////////////////////////////////////////
 void display (void)
 {
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   glDepthFunc(GL_LESS);
-   glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);		
+	glEnable(GL_NORMALIZE);		
+	glEnable(GL_COLOR_MATERIAL); 
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-   //camera->render( );
+	setupLights();
 
-  // glColor3f(1, 1, 1);
-   //terrain->renderMain();
-   
-   //if( terrain->contErro > 0)
-      //printf(" %d", terrain->contErro);
+	//camera->render( );
+
+	// glColor3f(1, 1, 1);
+	//terrain->renderMain();
+
+	//if( terrain->contErro > 0)
+	//printf(" %d", terrain->contErro);
 
 	gWorld.render();
 
 
-   static char text[50];
-   float fps = frames->getFrames();
+	static char text[50];
+	float fps = frames->getFrames();
 
-   glColor3f (1,0,0);
-   font->startText();
-   //glColor3f(1,1,1);
-   sprintf(text, "Fps: %.2f ", fps);
-   font->print(20.0f, 15.0f, text);
-   sprintf(text, "TRI: %d ", gWorld.getTerrain()->triangulos);
-   font->print(20.0f, 45.0f, text);
-   sprintf(text, "camPos: (%2.f, %2.f,%2.f)", gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
-   font->print(20.0f, 75.0f, text);
-   font->endText();
-//   TriangleCounter += gWorld.getTerrain()->triangulos;
-   glutSwapBuffers();
+	glColor3f (1,0,0);
+	font->startText();
+	//glColor3f(1,1,1);
+	sprintf(text, "Fps: %.2f ", fps);
+	font->print(20.0f, 15.0f, text);
+	sprintf(text, "TRI: %d ", gWorld.getTerrain()->triangulos);
+	font->print(20.0f, 45.0f, text);
+	sprintf(text, "camPos: (%2.f, %2.f,%2.f)", gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
+	font->print(20.0f, 75.0f, text);
+	sprintf(text, "observer: (%2.f, %2.f,%2.f)", gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->y, gWorld.getObserver()->getPosition()->z);
+	font->print(20.0f, 105.0f, text);
+	font->endText();
+	//   TriangleCounter += gWorld.getTerrain()->triangulos;
+	glutSwapBuffers();
 }
 
 

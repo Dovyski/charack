@@ -31,6 +31,7 @@ class CharackWorld {
 		int mSample;
 		float mScale;
 		Perlin *mPerlinNoise;
+		unsigned char *mData;
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 		void applyColorByHeight(Vector3 thePoint);
