@@ -99,7 +99,7 @@ void display (void)
 	glEnable(GL_COLOR_MATERIAL); 
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-	setupLights();
+//	setupLights();
 
 	//camera->render( );
 
@@ -127,6 +127,7 @@ void display (void)
 	sprintf(text, "observer: (%2.f, %2.f,%2.f)", gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->y, gWorld.getObserver()->getPosition()->z);
 	font->print(20.0f, 105.0f, text);
 	font->endText();
+	
 	//   TriangleCounter += gWorld.getTerrain()->triangulos;
 	glutSwapBuffers();
 }

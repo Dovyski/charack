@@ -1,7 +1,7 @@
 #include "CharackWorld.h"
 
 CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
-//	mData = (unsigned char *)malloc((DIM_TERRAIN + 1) * (DIM_TERRAIN + 1));
+	mData = (unsigned char *)malloc((DIM_TERRAIN + 1) * (DIM_TERRAIN + 1));
 
 	mObserver		= new CharackObserver();
 	mCamera			= new CharackCamera();
@@ -136,11 +136,11 @@ void CharackWorld::render(void) {
 	unsigned char *aData;
 	static int flag = 0;
 	
-	if(flag == 0) {
+//	if(flag == 0) {
 
 
 
-		aData = (unsigned char *)malloc(aDim*aDim);
+		//aData = (unsigned char *)malloc(aDim*aDim);
 	/*
 		for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
 			for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
@@ -154,20 +154,25 @@ void CharackWorld::render(void) {
 	*/
 		for(zMesh = 0, zObserver = getObserver()->getPositionZ(); zMesh < aDim; zMesh++, zObserver += getSample()){ 
 			for(xMesh = 0, xObserver = getObserver()->getPositionX(); xMesh < aDim; xMesh++, xObserver += getSample()){ 
-				aData[i++] = (char)getHeight(xObserver, zObserver);
+				mData[i++] = (char)getHeight(xObserver, zObserver);
 			}
-			printf("i=%d\n", i);
+			//printf("i=%d\n", i);
 		}
 
 	//	for(i = 0; i < aDim*aDim; i++) {
 	//		printf("%d = %d\n", i, mData[i]);
 	//	}
 
-			printf("tam=%d Kb (%d bytes)\n", i/1024, i);
-		getTerrain()->build_quad(aData);
+			//printf("tam=%d Kb (%d bytes)\n", i/1024, i);
+//		for(i = 0; i < 50; i++) {
+//			printf("executando %d\n", i);
+//			getTerrain()->build_quad(mData);
+//		}
 		//free(aData);
-	}
-	flag = 1;
+//	}
+//	flag = 1;
+
+	getTerrain()->build_quad(mData);
 
 	getCamera()->render();
 	glColor3f(1, 1, 1);

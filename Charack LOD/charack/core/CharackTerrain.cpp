@@ -31,6 +31,7 @@ void CharackTerrain::setCamera( CharackCamera *cam )
    camera = cam;
 }
 
+
 //ver funcao recorrente para determinar o numero de elementos
 void CharackTerrain::init_quad()
 {
@@ -57,7 +58,7 @@ void CharackTerrain::init_quad()
       size += i*i;
   
    //allocates the tree
-   quad = (Quadtree*)malloc(size * sizeof(Quadtree));
+   quadOriginal = (Quadtree*)malloc(size * sizeof(Quadtree));
 //   build_quad(data);
 //   free(data);
 
@@ -72,6 +73,8 @@ void CharackTerrain::build_quad(unsigned char *data)
    int dim = DIM_TERRAIN, n_blocks = 1, linha = (DIM_TERRAIN+1);//number of coordinates of each line of the matrix
    int l, c, index, offset1 = 0, offset2 = 0, oldDim = 0;
    int baseAddr;
+
+   quad = quadOriginal;
 
    while(dim >= 1)
    {

@@ -57,11 +57,12 @@ public:
    //main routine to render the mesh.
    void renderMain(void);
    void setCamera( CharackCamera *camera );
-   void build_quad(unsigned char *data);
+	void build_quad(unsigned char *data);
 private:
    char DIAG2, DIAG3, UP2, UP3, UP4, LEFT1, LEFT2, LEFT4, mipmap;
    Textura  *texTerrain;   //pointer to the texture object
    Quadtree *quad;         //pointer to the root of the three
+   Quadtree *quadOriginal;         //pointer to the root of the three
    int       traversal;    //rendering travelsal number
    int       n_quadrantes; //used for debuging
 
@@ -80,6 +81,7 @@ private:
    void build_vertexes(int x, int z, int level, Quadtree *q);
    float computeError(Quadtree *q, int level);
    void init_quad();
+  
    
    //float computeError2(int i, int level); //versao 25
    //void LoadData();  //versao 25
