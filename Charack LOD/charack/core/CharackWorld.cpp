@@ -7,7 +7,7 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	mCamera			= new CharackCamera();
 	mTerrain		= new CharackTerrain();
 	mMapGenerator	= new CharackMapGenerator();
-	mPerlinNoise	= new Perlin(8, 8, 1, 10);
+	mPerlinNoise	= new Perlin(16, 8, 1, 10);
 	
 	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
 	// world, like oceans and continents, then the other Charack classes will use that "guide"
@@ -19,6 +19,8 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	setScale(1);
 
 	mTerrain->setCamera(mCamera);
+
+	mOldObserverPos = Vector3(CK_MAX_WIDTH, 0, CK_MAX_WIDTH);
 }
 
 CharackWorld::~CharackWorld() {
@@ -131,52 +133,48 @@ void CharackWorld::displayMap(void) {
 }
 
 void CharackWorld::render(void) {
-	int xMesh, zMesh, aDim = DIM_TERRAIN + 1, i = 0;
-	float xObserver, zObserver;
-	unsigned char *aData;
-	static int flag = 0;
+	// First of all, we get a slice of the world to render
+	generateWorldSlice();
+
+	getCamera()->render();
 	
-//	if(flag == 0) {
+	glColor3f(1, 1, 1);
+	getTerrain()->renderMain();
+}
 
+void CharackWorld::generateWorldSlice(void) {
+	int xMesh, zMesh, aDim = DIM_TERRAIN + 1, i = 0;
+	float xObserver = getObserver()->getPositionX(), zObserver = getObserver()->getPositionZ();
+	
+	// If the observer has changed its location since last update, then we recreate the terrain again, otherwise
+	// we can use the old data (which has no modifications).
 
-
-		//aData = (unsigned char *)malloc(aDim*aDim);
-	/*
-		for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
-			for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
-				if(getMapGenerator()->isLand(aMapX,aMapZ)) {
-					mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * normilizeHeight(), z, 1);
-				} else {
-					mMap[x][z] = Vector3(x, CK_SEA_LEVEL, z, 0);
-				}
-			}
+	if(mOldObserverPos.x != xObserver || mOldObserverPos.z != zObserver) {
+		if(xObserver > mOldObserverPos.x) {
+			// Moving to the right
+			printf("generateWorldSlice: RIGHT\n");
+		} else if (xObserver < mOldObserverPos.x) {
+			// Moving to the left
+			printf("generateWorldSlice: LEFT\n");
+		} else if (zObserver > mOldObserverPos.z) {
+			// Moving backward
+			printf("generateWorldSlice: BACKWARD\n");
+		} else if (zObserver < mOldObserverPos.z) {
+			// Moving forward
+			printf("generateWorldSlice: FORWARD\n");
 		}
-	*/
-		for(zMesh = 0, zObserver = getObserver()->getPositionZ(); zMesh < aDim; zMesh++, zObserver += getSample()){ 
+
+		for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += getSample()){ 
 			for(xMesh = 0, xObserver = getObserver()->getPositionX(); xMesh < aDim; xMesh++, xObserver += getSample()){ 
 				mData[i++] = (char)getHeight(xObserver, zObserver);
 			}
-			//printf("i=%d\n", i);
 		}
-
-	//	for(i = 0; i < aDim*aDim; i++) {
-	//		printf("%d = %d\n", i, mData[i]);
-	//	}
-
-			//printf("tam=%d Kb (%d bytes)\n", i/1024, i);
-//		for(i = 0; i < 50; i++) {
-//			printf("executando %d\n", i);
-//			getTerrain()->build_quad(mData);
-//		}
-		//free(aData);
-//	}
-//	flag = 1;
-
-	getTerrain()->build_quad(mData);
-
-	getCamera()->render();
-	glColor3f(1, 1, 1);
-	getTerrain()->renderMain();
+		getTerrain()->build_quad(mData);
+		
+		printf("limpando cache old:(%.2f,%.2f), pos:(%.2f,%.2f)...\n", mOldObserverPos.x, mOldObserverPos.z, getObserver()->getPositionX(), getObserver()->getPositionZ());
+		mOldObserverPos.x = getObserver()->getPositionX();
+		mOldObserverPos.z = getObserver()->getPositionZ();
+	}
 }
 
 void CharackWorld::applyColorByHeight(Vector3 thePoint) {

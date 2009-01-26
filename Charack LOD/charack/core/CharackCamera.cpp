@@ -10,8 +10,8 @@
 
 CharackCamera::CharackCamera()
 {
-	camPos.set(10000.0f, 10000.0f, 10000);
-	camDir.set(0.0f, -1.0f, 1.0f);
+	camPos.set(26000.0f, 21600.0f, 50000);
+	camDir.set(0.0f, -1.0f, -1.0f);
 	camVel = 0;
 
 	abertura = 40.0;

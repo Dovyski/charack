@@ -16,22 +16,10 @@ Timer       *timer;
 GLFont      *font;
 Frames      *frames;
 int         polygonMode=1;
-//float       mousex, mousey;
+bool		texture = false;
+bool		cullingB = false;
 
 CharackWorld gWorld(300, 1);
-
-
-//float rotacao   = 0.0;
-//bool  arrayList = true;
-//bool  debug = false;
-bool  texture = false;
-bool  cullingB = false;
-//int   cont_erros=0;
-
-//int oldX = 0, oldY = 0;
-//int max_render   = 0; //usado pelo mouse
-
-//int TriangleCounter;
 
 void setupLights(void) {
 	// Create light components
@@ -54,8 +42,6 @@ void init()
 	frames     = new Frames();
 	font       = new GLFont();
 	timer      = new Timer();
-
-//	mousex=mousey=0;
 
 	//inicializacao do OpenGL
 	glClearColor(0, 0, 0, 1);
@@ -99,18 +85,9 @@ void display (void)
 	glEnable(GL_COLOR_MATERIAL); 
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-//	setupLights();
-
-	//camera->render( );
-
-	// glColor3f(1, 1, 1);
-	//terrain->renderMain();
-
-	//if( terrain->contErro > 0)
-	//printf(" %d", terrain->contErro);
+	setupLights();
 
 	gWorld.render();
-
 
 	static char text[50];
 	float fps = frames->getFrames();
@@ -219,41 +196,10 @@ void keyboard(unsigned char key, int x, int y)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
 			break;
-/*
-		case 'o': //debug
-			if(debug==true)
-				debug=false;
-			else
-				debug=true;
-			break;*/
 
 		case 'l':
 			gWorld.getCamera()->lockPosition();
 			break;
-/*
-		case 'p': {
-			int	StartTicks = glutGet(GLUT_ELAPSED_TIME);
-			int	ticks;
-			TriangleCounter = 0;
-			int	FrameCounter = 0;
-			int	TrisPerFrame = 0;
-
-			// For approximately one second, render frames as fast as we can.
-			for (;;) {
-				display();
-				FrameCounter++;
-				if (FrameCounter == 1) TrisPerFrame = TriangleCounter;
-
-				ticks = glutGet(GLUT_ELAPSED_TIME);
-				if (ticks - StartTicks > 1000) break;
-			}
-
-			// Show the fps and tps results.
-			float	dt = (ticks - StartTicks) / 1000.0;
-			printf("\nRendered %0.1f frames/sec, %d tris/frame, %d tris/sec\n", FrameCounter / dt, TrisPerFrame, int(TriangleCounter / dt));
-		}
-		break;
-*/
 
 		case 'k': //texture
 			if(texture==true)
@@ -267,6 +213,38 @@ void keyboard(unsigned char key, int x, int y)
 				cullingB=false;
 			else
 				cullingB=true;
+			break;
+	}
+}  
+
+// Numpad stuff
+void keyboardSpecial(int key, int x, int y)
+{
+	switch(key)	{
+		case GLUT_KEY_UP:
+			gWorld.getObserver()->moveForward(10);
+			break;
+
+		case GLUT_KEY_DOWN:
+			gWorld.getObserver()->moveBackward(10);
+			break;
+
+		case GLUT_KEY_RIGHT:
+			gWorld.getObserver()->moveRight(10);
+			break;
+
+		case GLUT_KEY_LEFT:
+			gWorld.getObserver()->moveLeft(10);
+			break;
+
+		case GLUT_KEY_PAGE_UP:
+			// Increase the sample size
+			gWorld.setSample(gWorld.getSample() + 1);
+			break;
+
+		case GLUT_KEY_PAGE_DOWN:
+			// Decrease the sample size
+			gWorld.setSample(gWorld.getSample() - 1);
 			break;
 	}
 }  
@@ -347,14 +325,16 @@ int main (int argc, char* argv[])
    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
    glutInitWindowSize (SCREEN_X, SCREEN_Y);
    glutInitWindowPosition (350, 100);
-
    glutCreateWindow ("Pseudo-infinite virtual world");
+
+//	glutGameModeString( "990x768:32@75" ); //the settings for fullscreen mode
+//	glutEnterGameMode(); //set glut to fullscreen using the settings in the line above
 
    init();
 
    glutDisplayFunc(display);
    glutKeyboardFunc(keyboard);
-//   glutSpecialFunc(specialFunc);
+   glutSpecialFunc(keyboardSpecial);
 //   glutPassiveMotionFunc(passiveMotionFunc);
    //glutMotionFunc(MotionFunc);
    glutIdleFunc(display);

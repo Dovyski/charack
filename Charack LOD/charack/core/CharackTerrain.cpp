@@ -35,37 +35,20 @@ void CharackTerrain::setCamera( CharackCamera *cam )
 //ver funcao recorrente para determinar o numero de elementos
 void CharackTerrain::init_quad()
 {
- 	//open height field map
-   int dim = DIM_TERRAIN+1, i;
-//	unsigned char *data = (unsigned char *)malloc(dim*dim);
+	//open height field map
+	int dim = DIM_TERRAIN+1, i, size = 0;
 	printf("Loading height grids...\n");
 
-//	FILE*	fp = fopen("c:\\temp\\pozzer.raw", "rb");  //513x513
-//	fread(data, sizeof(unsigned char), dim*dim, fp);
-// 	fclose(fp);
+	//calculate the number of nodes of the tree
+	for(i=DIM_TERRAIN; i>=1; i/=2) {
+		size += i*i;
+	}
 
-   /*for(i=0; i<dim; i++)
-   {
-      for(int j=0; j<dim; j++)
-      {
-         data[j+i*dim] = 100*(1+sin(j/10.0)*sin(i/10.0));//rand()%10;  
-      }
-   }/**/
+	//allocates the tree
+	quadOriginal = (Quadtree*)malloc(size * sizeof(Quadtree));
 
-   int size=0;
-   //calculate the number of nodes of the tree
-   for(i=DIM_TERRAIN; i>=1; i/=2)
-      size += i*i;
-  
-   //allocates the tree
-   quadOriginal = (Quadtree*)malloc(size * sizeof(Quadtree));
-//   build_quad(data);
-//   free(data);
-
-
-   printf("Alocou %.3f Mb na arvore\n", size * sizeof(Quadtree)/(1024*1024.0) );
-   printf("Quadtree %d bytes x %d nos\n", sizeof(Quadtree), size );
-
+	printf("Alocou %.3f Mb na arvore\n", size * sizeof(Quadtree)/(1024*1024.0) );
+	printf("Quadtree %d bytes x %d nos\n", sizeof(Quadtree), size );
 }
 
 void CharackTerrain::build_quad(unsigned char *data)

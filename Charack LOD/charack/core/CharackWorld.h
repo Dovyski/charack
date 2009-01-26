@@ -23,6 +23,8 @@ class CharackWorld {
 		CharackCamera *mCamera;
 		CharackTerrain *mTerrain;
 
+		Vector3 mOldObserverPos;
+
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
 		float (*mHeightFunctionX)(float); // generate the height coordinates for X axis
 		float (*mHeightFunctionZ)(float); // generate the height coordinates for X axis
@@ -36,6 +38,7 @@ class CharackWorld {
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 		void applyColorByHeight(Vector3 thePoint);
 		float normilizeHeight();
+		void generateWorldSlice(void);
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);

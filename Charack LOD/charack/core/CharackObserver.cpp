@@ -11,30 +11,22 @@ CharackObserver::~CharackObserver() {
 }
 
 void CharackObserver::moveForward(int theHowMuch) {
-	mPosition->z = (float)(mPosition->z + theHowMuch * cos(CK_DEG2RAD(360 - mRotY)));
-	mPosition->x = (float)(mPosition->x + theHowMuch * sin(CK_DEG2RAD(360 - mRotY)));
-
+	mPosition->z -= theHowMuch;
 	nomalizePosition();
 }
 
 void CharackObserver::moveBackward(int theHowMuch){
-	mPosition->z = (float)(mPosition->z - theHowMuch * cos(CK_DEG2RAD(360 - mRotY)));
-	mPosition->x = (float)(mPosition->x - theHowMuch * sin(CK_DEG2RAD(360 - mRotY)));
-
+	mPosition->z += theHowMuch;
 	nomalizePosition();
 }
 
 void CharackObserver::moveLeft(int theHowMuch){
-	mPosition->z = (float)(mPosition->z + theHowMuch * cos(CK_DEG2RAD(90 - mRotY)));
-	mPosition->x = (float)(mPosition->x + theHowMuch * sin(CK_DEG2RAD(90 - mRotY)));
-
+	mPosition->x -= theHowMuch;
 	nomalizePosition();
 }
 
 void CharackObserver::moveRight(int theHowMuch){
-	mPosition->z = (float)(mPosition->z + theHowMuch * cos(CK_DEG2RAD(270 - mRotY)));
-	mPosition->x = (float)(mPosition->x + theHowMuch * sin(CK_DEG2RAD(270 - mRotY)));
-
+	mPosition->x += theHowMuch;
 	nomalizePosition();
 }
 
@@ -43,11 +35,13 @@ void CharackObserver::moveUpDown(int theHowMuch) {
 }
 
 void CharackObserver::nomalizePosition(void) {
-	mPosition->x = mPosition->x > 0 ? 0 : mPosition->x;
-	mPosition->z = mPosition->z > 0 ? 0 : mPosition->z;
+	// TODO: fix?
+	return;
+	mPosition->x = mPosition->x < 0 ? 0 : mPosition->x;
+	mPosition->z = mPosition->z < 0 ? 0 : mPosition->z;
 
-	mPosition->x = (float)(abs(mPosition->x) >= CK_MAX_WIDTH ? -CK_MAX_WIDTH : mPosition->x);
-	mPosition->z = (float)(abs(mPosition->z) >= CK_MAX_WIDTH ? -CK_MAX_WIDTH : mPosition->z);
+	mPosition->x = mPosition->x > CK_MAX_WIDTH ? CK_MAX_WIDTH : mPosition->x;
+	mPosition->z = mPosition->z < CK_MAX_WIDTH ? CK_MAX_WIDTH : mPosition->z;
 }
 
 /**
