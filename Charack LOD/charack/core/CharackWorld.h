@@ -8,10 +8,13 @@
 #include <math.h>
 #include <iostream>
 
+class CharackWorldSlice;
+
 #include "CharackObserver.h"
 #include "CharackMapGenerator.h"
 #include "CharackCamera.h"
 #include "CharackTerrain.h"
+#include "CharackWorldSlice.h"
 
 #include "../tools/perlin.h"
 
@@ -22,8 +25,7 @@ class CharackWorld {
 		CharackMapGenerator *mMapGenerator;
 		CharackCamera *mCamera;
 		CharackTerrain *mTerrain;
-
-		Vector3 mOldObserverPos;
+		CharackWorldSlice *mWorldSlice;
 
 		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
 		float (*mHeightFunctionX)(float); // generate the height coordinates for X axis
@@ -33,12 +35,10 @@ class CharackWorld {
 		int mSample;
 		float mScale;
 		Perlin *mPerlinNoise;
-		unsigned char *mData;
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
 		void applyColorByHeight(Vector3 thePoint);
 		float normilizeHeight();
-		void generateWorldSlice(void);
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);

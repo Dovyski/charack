@@ -221,6 +221,10 @@
 						RelativePath=".\charack\core\CharackWorld.cpp"
 						>
 					</File>
+					<File
+						RelativePath=".\charack\core\CharackWorldSlice.cpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -317,6 +321,10 @@
 					</File>
 					<File
 						RelativePath=".\charack\core\CharackWorld.h"
+						>
+					</File>
+					<File
+						RelativePath=".\charack\core\CharackWorldSlice.h"
 						>
 					</File>
 					<File
