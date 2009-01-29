@@ -62,6 +62,8 @@ class CharackWorld {
 		void setScale(float theScale);
 		float getScale();
 
+		CharackWorldSlice *getWorldSlice(void);
+
 		void setHeightFunctionX(float (*theFunction)(float));
 		void setHeightFunctionZ(float (*theFunction)(float));
 

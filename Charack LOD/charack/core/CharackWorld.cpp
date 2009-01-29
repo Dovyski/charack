@@ -258,3 +258,7 @@ CharackCamera *CharackWorld::getCamera(void) {
 CharackTerrain *CharackWorld::getTerrain(void) {
 	return mTerrain;
 }
+
+CharackWorldSlice *CharackWorld::getWorldSlice(void) {
+	return mWorldSlice;
+}

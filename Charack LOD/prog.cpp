@@ -214,6 +214,11 @@ void keyboard(unsigned char key, int x, int y)
 			else
 				cullingB=true;
 			break;
+
+		case 'b': // dumb world slice
+			printf("Fazendo dump...\n");
+			gWorld.getWorldSlice()->dumpToFile("C:\\Temp\\dump-world-slice.txt");
+			break;
 	}
 }  
 

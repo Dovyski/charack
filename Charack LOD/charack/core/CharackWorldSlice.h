@@ -20,11 +20,19 @@ class CharackWorldSlice {
 		CharackWorld *mWorld;
 
 	public:
+		static const int MOVE_RIGHT		= 0;
+		static const int MOVE_LEFT		= 1;
+		static const int MOVE_FORWARD	= 2;
+		static const int MOVE_BACKWARD	= 3;
+
 		CharackWorldSlice(CharackWorld *theWorld);		
 		~CharackWorldSlice();
 
 		unsigned char *getData();
 		int updateData();
+		void shiftData(int theDirection);
+		void recreateAllData();
+		void dumpToFile(char *thePath);
 };
 
 #endif
