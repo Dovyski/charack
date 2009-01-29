@@ -34,9 +34,9 @@ int CharackWorldSlice::updateData() {
 
 		} else if (xObserver < mOldObserverPos.x) {
 			shiftData(CharackWorldSlice::MOVE_LEFT);
-			recreateAllData();
 
 		} else if (zObserver > mOldObserverPos.z) {
+			recreateAllData();
 			shiftData(CharackWorldSlice::MOVE_BACKWARD);
 
 		} else if (zObserver < mOldObserverPos.z) {
@@ -74,6 +74,19 @@ void CharackWorldSlice::shiftData(int theDirection) {
 			break;
 
 		case CharackWorldSlice::MOVE_LEFT:
+			i = aDim * aDim - 1;
+			zObserver = zObserver + aDim * aSample;
+
+			for(zMesh = aDim - 1; zMesh >= 0; zMesh--, zObserver -= aSample){ 
+				for(xMesh = aDim - 1, xObserver = aObserver->getPositionX() + aDim * aSample; xMesh >= 0; xMesh--, xObserver -= aSample, i--){ 
+					if((i - aJump >= 0) && (xMesh >= aJump)) {
+						mData[i] = mData[i - aJump];
+					} else if(i >= 0){
+						mData[i] = (char)mWorld->getHeight(xObserver, zObserver);
+					}
+				}
+			}
+
 			printf("CharackWorldSlice::shiftData: LEFT\n");
 			break;
 
