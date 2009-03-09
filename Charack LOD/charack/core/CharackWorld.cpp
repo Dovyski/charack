@@ -7,6 +7,7 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	mMapGenerator	= new CharackMapGenerator();
 	mWorldSlice		= new CharackWorldSlice(this);
 	mPerlinNoise	= new Perlin(16, 8, 1, 10);
+	mCoastGen		= new CharackCoastGenerator();
 	
 	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
 	// world, like oceans and continents, then the other Charack classes will use that "guide"
@@ -23,117 +24,20 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 CharackWorld::~CharackWorld() {
 }
 
-
-void CharackWorld::generateMap(void) {
-	int aMapX, aMapZ, x, z;
-	int aXNow = (int)getObserver()->getPositionX();
-	int aZNow = (int)getObserver()->getPositionZ();
-
-	// TODO: comment this
-	/*
-	getMapGenerator()->applyCoast(abs(aXNow) - (getViewFrustum()/2) * getSample(),
-								  abs(aZNow) - (getViewFrustum()/2) * getSample(),
-								  getViewFrustum(),
-								  getSample());*/
-
-	// What we have here is this:
-	//
-	// aXNow and aZNow hold the value of our current position in the Charack world. To populate
-	// mMap with data, we will collect all points localized within the square centered at (aXNow, aZNow) (in the figure
-	// below, the square has A, B, C and D as its corners).
-	//
-	// The size of the square is determinated by getViewFrustum(). We will iterate from A to B (X axis) and, for each step,
-	// we will iterare from A to D (or B to C) (Z axis) collecting points.
-	//
-	// Each of these collected points will be stored at mMap[x][y]. x and y will just be used to index
-	// the mMap array, they have no relation with the world coordinates.
-	//
-	// -------------D------------|------------C    -
-	// |            |            |            |    |
-	// |            |            |            |    |
-	// |------------|-------(aXNow,aZNow)-----| -- | getViewFrustum()
-	// |            |            |            |    |
-	// |            |            |            |    |
-	// -------------A------------|------------B    -
-	//        (aMapX, aMapZ)			|
-	//									|
-	//							 |------------|
-	//							 getViewFrustum()/2
-
-	for(aMapX = abs(aXNow) - (getViewFrustum()/2) * getSample(), x = 0; x < getViewFrustum(); x++, aMapX+=getSample()){ 
-		for(aMapZ = abs(aZNow) - (getViewFrustum()/2) * getSample(), z = 0; z < getViewFrustum(); z++, aMapZ+=getSample()){ 
-			if(getMapGenerator()->isLand(aMapX,aMapZ)) {
-				mMap[x][z] = Vector3(x, getHeight(aMapX, aMapZ) * normilizeHeight(), z, 1);
-			} else {
-				mMap[x][z] = Vector3(x, CK_SEA_LEVEL, z, 0);
-			}
-		}
-	}
-}
-
-float CharackWorld::normilizeHeight() {
-	return getSample() > CK_SAMPLE_CORRECTION_LIMIT ? CK_SAMPLE_CORRECTION : getSample();
-}
-
-
-void CharackWorld::displayMap(void) {
-	Vector3 aNormal;
-	int aHalfViewFrustum = getViewFrustum()/2;
-
-	glRotatef(getObserver()->getRotationY(), 0,1,0);
-	glRotatef(getObserver()->getRotationX(), 1,0,0);
-
-	glScalef(getScale(), getScale(), getScale());
-
-	glTranslatef(-aHalfViewFrustum, -getObserver()->getPosition()->y, -aHalfViewFrustum);
-
-	generateMap();
-
-	glBegin(GL_TRIANGLE_STRIP);
-
-	aNormal = calculateNormal(mMap[0][1], mMap[0][0], mMap[1][0]);
-	glNormal3f(aNormal.x, aNormal.y, aNormal.z);
-
-	applyColorByHeight(mMap[0][0]);	
-	glVertex3f(0, mMap[0][0].y,	0);
-	
-	applyColorByHeight(mMap[1][0]);	
-	glVertex3f(1, mMap[1][0].y,	0);
-
-	for(int x = 0; x < getViewFrustum() - 1; x++){ 
-		for(int z = 1; z < getViewFrustum(); z++){
-			applyColorByHeight(mMap[x][z]);
-			glVertex3f(x, mMap[x][z].y,	z);
-
-			aNormal = calculateNormal(mMap[x-1][z], mMap[x][z], mMap[x][z-1]);
-			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
-
-			applyColorByHeight(mMap[x+1][z]);	
-			glVertex3f(mMap[x+1][z].x, mMap[x+1][z].y, mMap[x+1][z].z);
-		}
-		
-		glEnd();
-		glBegin(GL_TRIANGLE_STRIP);
-
-		if((x + 1) < (getViewFrustum() - 1)) {
-			aNormal = calculateNormal(mMap[x+1][1], mMap[x+1][0], mMap[x+2][0]);
-			glNormal3f(aNormal.x, aNormal.y, aNormal.z);
-
-			applyColorByHeight(mMap[x+1][0]);				
-			glVertex3f(mMap[x+1][0].x, mMap[x+1][0].y, mMap[x+1][0].z);
-			
-			applyColorByHeight(mMap[x+2][0]);				
-			glVertex3f(mMap[x+2][0].x, mMap[x+2][0].y, mMap[x+2][0].z);
-		}
-	}
-	glEnd();
-}
-
 void CharackWorld::render(void) {
-	if(mWorldSlice->updateData()) {
-		// The slice we have has changed. We must update the terrain mesh
+	if(getWorldSlice()->updateData()) {
+		// The slice has changed. We must update the terrain mesh
 		// and all its friends.
-		getTerrain()->build_quad(mWorldSlice->getData());
+
+		// Before we send the terrain info to the LOD manager, we must edit
+		// the info matrix to insert the water information and, after that,
+		// make the coast line a litte bit more realistic.
+		// So, lets do that:
+		getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getWorldSlice()->getLandAndWaterData());
+
+		// All information we have are smooth and ready to be displayed. 
+		// Lets update the LOD manager...
+		getTerrain()->build_quad(mWorldSlice->getHeightData());
 	}
 
 	getCamera()->render();
@@ -143,23 +47,7 @@ void CharackWorld::render(void) {
 }
 
 
-void CharackWorld::applyColorByHeight(Vector3 thePoint) {
-	float aRand = (1.0 * (rand() / (RAND_MAX + 1.0)));
-
-	// The "alpha" value tell us if the point is land or not.
-	if(!thePoint.a) {
-		glColor3f(0.0f, 0.0f, 0.5f);
-	} else {
-		//glColor3f(thePoint.y/500, (200 - thePoint.y)/3000, 0.0f);
-		//if(aRand < 0.5) {
-		//	printf("%.8f\n", abs(thePoint.x/(CK_MAX_WIDTH/2000)));
-		//}
-		glColor3f(0.0f, abs(mPerlinNoise->Get(0.22, abs(thePoint.y)))*0.7, 0.0f);
-	}
-}
-
 float CharackWorld::getHeight(float theX, float theZ) {
-	//return mHeightFunctionX(theX) + mHeightFunctionZ(theZ);
 	return mPerlinNoise->Get(theX/2000, theZ/2000) * 200;
 }
 
@@ -261,4 +149,8 @@ CharackTerrain *CharackWorld::getTerrain(void) {
 
 CharackWorldSlice *CharackWorld::getWorldSlice(void) {
 	return mWorldSlice;
+}
+
+CharackCoastGenerator *CharackWorld::getCoastGenerator(void) {
+	return mCoastGen;
 }

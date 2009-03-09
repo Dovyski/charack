@@ -1,94 +1,32 @@
 #include "CharackCoastGenerator.h"
 
-bool __comparePointsX(Vector3 theFirst, Vector3 theSecond) {
-	return theFirst.x < theSecond.x;
-}
-
-bool __comparePointsY(Vector3 theFirst, Vector3 theSecond) {
-	return theFirst.y < theSecond.y;
-}
-
 CharackCoastGenerator::CharackCoastGenerator() {
-	mMaxDivision	= 4;
-	mMaxVariation	= 10;
+	mMaxDistance = 5;
 }
 
 CharackCoastGenerator::~CharackCoastGenerator() {
 }
 
-void CharackCoastGenerator::setMaxDivisions(int theHowMany) {
-	mMaxDivision = theHowMany <= 0 ? 0 : theHowMany;
+void CharackCoastGenerator::setMaxDistance(int theDistance) {
+	mMaxDistance = theDistance <= 0 ? 0 : theDistance;
 }
 
-int CharackCoastGenerator::getMaxDivisions() {
-	return mMaxDivision;
-}
-
-void CharackCoastGenerator::setVariation(int theHowMuch) {
-	mMaxVariation = theHowMuch;
-}
-
-int CharackCoastGenerator::getVariation() {
-	return mMaxVariation;
+int CharackCoastGenerator::getMaxDistance() {
+	return mMaxDistance;
 }
 
 void CharackCoastGenerator::setRandSeed(int theSeed) {
 	srand(theSeed);
 }
 
-std::list<Vector3> CharackCoastGenerator::generate(Vector3 thePointA, Vector3 thePointB, int thePerturbationAxis) {
-	std::list<Vector3> aResult;	
-	std::list<Vector3> aSegments;
 
-	aSegments.push_back(thePointA);
-	aSegments.push_back(thePointB);
-	aSegments.push_back(Vector3((float)mMaxVariation, (float)mMaxDivision, 0));
+void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightData,unsigned char *theLandAndWaterData) {
+	int aDim = DIM_TERRAIN + 1, i;
 
-	aResult.push_back(thePointA);
-	
-	while(aSegments.size() > 0) {
-		Vector3 aPointA = aSegments.front();
-		aSegments.pop_front();
-
-		Vector3 aPointB = aSegments.front();
-		aSegments.pop_front();
-
-		Vector3 aSettings = aSegments.front();
-		aSegments.pop_front();
-
-		Vector3 aMidPoint = (aPointA + aPointB)/2.0;
-
-		if(thePerturbationAxis == CharackCoastGenerator::AXIS_X) {
-			aMidPoint.x = aMidPoint.x - _CK_CG_RRAND(-aSettings.x, aSettings.x);
-
-		} else if(thePerturbationAxis == CharackCoastGenerator::AXIS_Y) {
-			aMidPoint.y = aMidPoint.y - _CK_CG_RRAND(-aSettings.x, aSettings.x);
-		}
-
-		aSettings.x = aSettings.x/2;
-		aSettings.y = aSettings.y - 1;
-
-		if(aSettings.y > 0) {
-			aSegments.push_back(aPointA);
-			aSegments.push_back(aMidPoint);
-			aSegments.push_back(aSettings);
-
-			aSegments.push_back(aMidPoint);
-			aSegments.push_back(aPointB);
-			aSegments.push_back(aSettings);
-		}
-
-		aResult.push_back(aMidPoint);		
+	for(i = 0; i < aDim * aDim; i++){ 
+		//theHeightData[i] = theLandAndWaterData[i] ? theHeightData[i] : theHeightData[i] + 50;
+		// TODO: the method
 	}
 
-	aResult.push_back(thePointB);
-	
-	if(thePerturbationAxis == CharackCoastGenerator::AXIS_X) {
-		aResult.sort(__comparePointsY);
-
-	} else if(thePerturbationAxis == CharackCoastGenerator::AXIS_Y) {
-		aResult.sort(__comparePointsX);
-	}
-
-	return aResult;
+	printf("CharackCoastGenerator::disturbStraightCoastLines()\n");
 }

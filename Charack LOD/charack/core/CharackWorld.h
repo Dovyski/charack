@@ -26,8 +26,8 @@ class CharackWorld {
 		CharackCamera *mCamera;
 		CharackTerrain *mTerrain;
 		CharackWorldSlice *mWorldSlice;
+		CharackCoastGenerator *mCoastGen;
 
-		Vector3 mMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
 		float (*mHeightFunctionX)(float); // generate the height coordinates for X axis
 		float (*mHeightFunctionZ)(float); // generate the height coordinates for X axis
 		
@@ -37,8 +37,6 @@ class CharackWorld {
 		Perlin *mPerlinNoise;
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
-		void applyColorByHeight(Vector3 thePoint);
-		float normilizeHeight();
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);
@@ -52,6 +50,7 @@ class CharackWorld {
 		CharackMapGenerator *getMapGenerator(void);
 		CharackCamera *getCamera(void);
 		CharackTerrain *getTerrain(void);
+		CharackCoastGenerator *getCoastGenerator(void);
 
 		void setViewFrustum(int theViewFrustum);
 		int getViewFrustum();

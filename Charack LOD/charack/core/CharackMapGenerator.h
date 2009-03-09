@@ -45,9 +45,6 @@ typedef int CTable[MAXCOL][3];
  */
 class CharackMapGenerator {
 	private:
-		CharackCoastGenerator mCoastGen;
-		int mCoastMap[CK_VIEW_FRUSTUM][CK_VIEW_FRUSTUM];
-
 		int altColors;
 		int BLUE1, LAND0, LAND1, LAND2, LAND4;
 		int GREEN1, BROWN0, GREY0;
@@ -101,90 +98,18 @@ class CharackMapGenerator {
 		void printbmpBW(FILE *outfile);
 		double log_2(double x);
 
-		// Globaly check if a specific position is land or water. The test is made against the macro world information,
-		// which means coast lines and similar things are not analyzed. The method isLand() will use the information
-		// of globalIsLand() as a "clue" to identify the coast lines, so it can generate a highly detailed map
-		// (with noised coast lines) that can be used to check if a specific position is land or water.
-		int globalIsLand(float theX, float theZ);
-
-		// Clean up all the information in the coast map. After this method invocation, every call
-		// to isLand() will return false until applyCoast() is called (which will regenerate the land/water info).
-		void clearCoastMap();
-
-		// Find all coast lines visible on the screen.
-		std::list<CharackLineSegment> findCoastLines(int theMapX, int theMapZ, int theViewFrustum, int theSample);
-
-		// Apply all the cost point to the coast map, creating the lines among the points.
-		void updateCoastMap(std::list<Vector3> theCoastPoints);
-
-		// Starting in thePoint, this method will "walk" over the line thePoint belongs to, adding all found corners
-		// to theCorners. To avoid walk over the lines already visited, the third parameter "theDirection" will guide
-		// the movement direction. e.g: if the method is walkin in a vertical line, when a corner is found, the method
-		// will switch the moviment direction to a horizontal one. When another corner is found on the horizontal line,
-		// the moviment direction will be switched to vertical again, and so on.
-		void findCorners(std::list<Vector3> theCorners, Vector3 thePoint, int theDirection, int theListInsertOrder);
-		
-		// Checks if theElement is in theList.
-		int inList(std::list<Vector3> theList, Vector3 theElement);
-
-		// Find a point that belongs to a coast line. The method will return the firt cost point found.
-		Vector3 findCoast(int theMapX, int theMapZ, int theViewFrustum, int theSample);
-
-		// Checks if a point is a corner or not.
-		int isCorner(Vector3 thePoint);
-
-		// Starting in theStart, the method will walk over the line thePoint belongs to until it finds the
-		// corner at the end of the line. The param theGuideAxis tells which axis the method must use
-		// to walk over. theDirection tells the direction in the axis, e.g: theGuieAxis=X, theDirection=RIGHT means
-		// "walk over z axis of theStart, walking to the right, until you find a corver".
-		//
-		// theStart must belongs to a coast line.
-		Vector3 findLineCorner(Vector3 theStart, int theDirection, int theGuideAxis);
-
-		// thePoint must be a corner; the method will check if, starting with thePoint, is there a possibility
-		// to "walk" down in a line. e.g:
-		// 
-		//   A --------
-		//   |  land  |
-		//   |        | 
-		//   B --------
-		//      water
-		//
-		// If thePoint is B, canGoDown() will return false. If thePoint is A, canGoDown() will return true.
-		int canGoDown(Vector3 thePoint);
-
-		// The same as canGoDown(), but checking left/right instead of up/down.
-		int canGoLeft(Vector3 thePoint);
-
-		// Checks if thePoint is inside the user view frustum.
-		int isInsideViewFrustum(Vector3 thePoint);
-
-		CharackCoastGenerator getCoastGenerator(void);
-
 	public:
-		static enum CLASS_DEFS {
-			MOVE_DOWN		= -1,
-			MOVE_UP			= 1,
-			
-			MOVE_LEFT		= -1,
-			MOVE_RIGHT		= 1,
-
-			AXIS_X			= 2,
-			AXIS_Z			= 3,
-			VERTICAL		= 4,
-			HORIZONTAL		= 5,
-			INSERT_BEGIN	= 6,
-			INSERT_END		= 7
-		};
-
 		CharackMapGenerator();
 		~CharackMapGenerator();
 
 		// Generate the world (land and water)
 		void generate();
-		
-		// Check if a specific position is land or water. 
-		int isLand(float theX, float theZ);		
+
+		// Globaly check if a specific position is land or water. The test is made against the macro world information,
+		// which means coast lines and similar things are not analyzed. The method isLand() will use the information
+		// of globalIsLand() as a "clue" to identify the coast lines, so it can generate a highly detailed map
+		// (with noised coast lines) that can be used to check if a specific position is land or water.
+		int isLand(float theX, float theZ);
 
 		// This method will find all coast lines (which are straight lines before the method call) and, for each one,
 		// generate a much more real coast line, adding some noise to the lines.

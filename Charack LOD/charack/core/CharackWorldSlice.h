@@ -14,10 +14,13 @@ class CharackWorld;
 
 class CharackWorldSlice {
 	private:
-		unsigned char *mData;
+		unsigned char *mHeightData;
+		unsigned char *mLandWaterData;
 		Vector3 mOldObserverPos;
 		int mOldSample;
 		CharackWorld *mWorld;
+
+		void generateLandAndWaterData();
 
 	public:
 		static const int MOVE_RIGHT		= 0;
@@ -28,7 +31,8 @@ class CharackWorldSlice {
 		CharackWorldSlice(CharackWorld *theWorld);		
 		~CharackWorldSlice();
 
-		unsigned char *getData();
+		unsigned char *getHeightData();
+		unsigned char *getLandAndWaterData();
 		int updateData();
 		void shiftData(int theDirection);
 		void recreateAllData();
