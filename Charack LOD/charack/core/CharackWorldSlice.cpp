@@ -31,8 +31,6 @@ void CharackWorldSlice::generateLandAndWaterData() {
 			mLandWaterData[i++] = mWorld->getMapGenerator()->isLand(xObserver, zObserver);
 		}
 	}
-
-	printf("CharackWorldSlice::generateLandAndWaterData()\n");
 }
 
 int CharackWorldSlice::updateData() {
@@ -51,10 +49,12 @@ int CharackWorldSlice::updateData() {
 			recreateAllData();
 
 		} else if(xObserver > mOldObserverPos.x) {
-			shiftData(CharackWorldSlice::MOVE_RIGHT);
+			//shiftData(CharackWorldSlice::MOVE_RIGHT);
+			recreateAllData();
 
 		} else if (xObserver < mOldObserverPos.x) {
-			shiftData(CharackWorldSlice::MOVE_LEFT);
+			//shiftData(CharackWorldSlice::MOVE_LEFT);
+			recreateAllData();
 
 		} else if (zObserver > mOldObserverPos.z) {
 			shiftData(CharackWorldSlice::MOVE_BACKWARD);
@@ -93,7 +93,7 @@ void CharackWorldSlice::shiftData(int theDirection) {
 				}
 			}
 			
-			printf("CharackWorldSlice::shiftData: RIGHT\n");
+			//printf("CharackWorldSlice::shiftData: RIGHT\n");
 			break;
 
 		case CharackWorldSlice::MOVE_LEFT:
@@ -111,16 +111,16 @@ void CharackWorldSlice::shiftData(int theDirection) {
 				}
 			}
 
-			printf("CharackWorldSlice::shiftData: LEFT\n");
+			//printf("CharackWorldSlice::shiftData: LEFT\n");
 			break;
 
 		case CharackWorldSlice::MOVE_FORWARD:
-			printf("CharackWorldSlice::shiftData: FORWARD\n");
+			//printf("CharackWorldSlice::shiftData: FORWARD\n");
 			recreateAllData();
 			break;
 
 		case CharackWorldSlice::MOVE_BACKWARD:
-			printf("CharackWorldSlice::shiftData: BACKWARD\n");
+			//printf("CharackWorldSlice::shiftData: BACKWARD\n");
 			recreateAllData();
 			break;
 
@@ -141,7 +141,7 @@ void CharackWorldSlice::recreateAllData() {
 		}
 	}
 
-	printf("CharackWorldSlice::recreateAllData()\n");
+	//printf("CharackWorldSlice::recreateAllData()\n");
 }
 
 

@@ -69,6 +69,8 @@ void init()
 	glEnable(GL_TEXTURE_GEN_T);
 
 	glEnable(GL_TEXTURE_2D);
+
+	gWorld.placeObserverOnLand();
 }
 
 
@@ -103,6 +105,8 @@ void display (void)
 	font->print(20.0f, 75.0f, text);
 	sprintf(text, "observer: (%2.f, %2.f,%2.f)", gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->y, gWorld.getObserver()->getPosition()->z);
 	font->print(20.0f, 105.0f, text);
+	sprintf(text, "sample: %d", gWorld.getSample());
+	font->print(20.0f, 135.0f, text);
 	font->endText();
 	
 	//   TriangleCounter += gWorld.getTerrain()->triangulos;
@@ -225,103 +229,37 @@ void keyboard(unsigned char key, int x, int y)
 // Numpad stuff
 void keyboardSpecial(int key, int x, int y)
 {
+	int aSpeedUp	= (int)(gWorld.getSample() * 1.10);
+
 	switch(key)	{
 		case GLUT_KEY_UP:
-			gWorld.getObserver()->moveForward(10);
+			gWorld.getObserver()->moveForward(10 * aSpeedUp);
 			break;
 
 		case GLUT_KEY_DOWN:
-			gWorld.getObserver()->moveBackward(10);
+			gWorld.getObserver()->moveBackward(10 * aSpeedUp);
 			break;
 
 		case GLUT_KEY_RIGHT:
-			gWorld.getObserver()->moveRight(10);
+			gWorld.getObserver()->moveRight(10 * aSpeedUp);
 			break;
 
 		case GLUT_KEY_LEFT:
-			gWorld.getObserver()->moveLeft(10);
+			gWorld.getObserver()->moveLeft(10 * aSpeedUp);
 			break;
 
 		case GLUT_KEY_PAGE_UP:
 			// Increase the sample size
-			gWorld.setSample(gWorld.getSample() + 1);
+			gWorld.setSample(gWorld.getSample() + gWorld.getSample() * 1.10);
 			break;
 
 		case GLUT_KEY_PAGE_DOWN:
 			// Decrease the sample size
-			gWorld.setSample(gWorld.getSample() - 1);
+			gWorld.setSample(gWorld.getSample() - gWorld.getSample()*0.10);
 			break;
 	}
 }  
 
-/*
-//funcao para leitura do mouse e rotacao de toda cena. 
-void mouseFunc(int button, int state, int x, int y) {
-}
-*/
-
-/*
-void specialFunc(int key, int x, int y)
-{
-	//printf("%c", key);
-   //   printf("\n ");
-	switch(key)
-	{
-		case 'd':  //seta esquerda
-         camera->move(-200);
-		break;
-		case 'f': //seta direita
-         camera->move(200);
-		break;
-	
-      case 'h': ////pg up
-         camera->elevate(200);
-		break;
-		case 'i': ////pg down
-         camera->elevate(-200);
-		break;
-
-		case 'e': //seta cima
-         camera->walk(200);
-		break;
-		case 'g': ////seta baixo
-         camera->walk(-200);
-		break;
-	}
-}
-*/
-/*
-//retorna parametro [0,1] da posicao do mouse na tela
-void passiveMotionFunc(int x, int y)
-{
-   oldX = x;
-   oldY = y;
-   max_render = (x+y);
-   printf("\nMax_render %d", max_render);
-}
-*/
-/*
-void MotionFunc(int x, int y)
-{
-   float rx, rz;
-   rx = x-oldX;
-   rz = y-oldY;
-
-   rx = rx/100.0;
-   rz = rz/100.0;
-
-   rx = x/100.0;
-   rz = y/100.0;
-
-
-
-   camera->rotate(rz, rx, 0);
-   printf("\n(x, y, z) = (%f, %f, 0)", rz, rx);
-   oldX = x;
-   oldY = y;
-
-}
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char* argv[])

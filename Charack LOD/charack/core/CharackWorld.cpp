@@ -31,11 +31,11 @@ void CharackWorld::render(void) {
 
 		// Before we send the terrain info to the LOD manager, we must edit
 		// the info matrix to insert the water information and, after that,
-		// make the coast line a litte bit more realistic.
+		// make the coast lines a litte bit more realistic.
 		// So, lets do that:
 		getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getWorldSlice()->getLandAndWaterData());
 
-		// All information we have are smooth and ready to be displayed. 
+		// All information we have is smooth and ready to be displayed. 
 		// Lets update the LOD manager...
 		getTerrain()->build_quad(mWorldSlice->getHeightData());
 	}
@@ -102,7 +102,7 @@ void CharackWorld::placeObserverOnLand() {
 	for(int z=0; z < CK_MAX_WIDTH; z++) {
 		for(int x=0; x < CK_MAX_WIDTH; x++) {
 			if(getMapGenerator()->isLand(x, z)) {
-				getObserver()->setPosition(-x, getObserver()->getPositionY(), -z);
+				getObserver()->setPosition(x, getObserver()->getPositionY(), z);
 				return;
 			}
 		}

@@ -21,12 +21,12 @@ void CharackCoastGenerator::setRandSeed(int theSeed) {
 
 
 void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightData,unsigned char *theLandAndWaterData) {
-	int aDim = DIM_TERRAIN + 1, i;
+	int aDim = DIM_TERRAIN + 1, i, aIsLand;
 
 	for(i = 0; i < aDim * aDim; i++){ 
-		//theHeightData[i] = theLandAndWaterData[i] ? theHeightData[i] : theHeightData[i] + 50;
-		// TODO: the method
+		// theLandAndWaterData == 1 means land...
+		theHeightData[i] = theLandAndWaterData[i] ? theHeightData[i] : 0;
 	}
 
-	printf("CharackCoastGenerator::disturbStraightCoastLines()\n");
+	//printf("CharackCoastGenerator::disturbStraightCoastLines()\n");
 }
