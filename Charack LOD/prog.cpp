@@ -70,7 +70,7 @@ void init()
 
 	glEnable(GL_TEXTURE_2D);
 
-	gWorld.placeObserverOnLand();
+	//gWorld.placeObserverOnLand();
 }
 
 
@@ -221,7 +221,7 @@ void keyboard(unsigned char key, int x, int y)
 
 		case 'b': // dumb world slice
 			printf("Fazendo dump...\n");
-			gWorld.getWorldSlice()->dumpToFile("C:\\Temp\\dump-world-slice.txt");
+			gWorld.getWorldSlice()->dumpToFile("C:\\Temp\\heightdovyski.raw");
 			break;
 	}
 }  
@@ -229,7 +229,7 @@ void keyboard(unsigned char key, int x, int y)
 // Numpad stuff
 void keyboardSpecial(int key, int x, int y)
 {
-	int aSpeedUp	= (int)(gWorld.getSample() * 1.10);
+	int aSpeedUp = (int)(gWorld.getSample() * 1.10);
 
 	switch(key)	{
 		case GLUT_KEY_UP:

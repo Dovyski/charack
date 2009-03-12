@@ -38,7 +38,7 @@ void CharackCamera::render()
 	gluLookAt(x + camPos.x,          camPos.y,          z + camPos.z, 
              x + camPos.x+camDir.x, camPos.y+camDir.y, z + camPos.z+camDir.z, 
              0, 1, 0);
-   setupFrustum();
+   //setupFrustum();
 }
 
 //verificar na minha funcao original em camera.h

@@ -9,6 +9,11 @@ CharackWorldSlice::CharackWorldSlice(CharackWorld *theWorld) {
 }
 
 CharackWorldSlice::~CharackWorldSlice() {
+	free(mHeightData);
+	mHeightData = NULL;
+	
+	free(mLandWaterData);
+	mLandWaterData = NULL;
 }
 
 unsigned char *CharackWorldSlice::getHeightData() {
@@ -88,7 +93,7 @@ void CharackWorldSlice::shiftData(int theDirection) {
 					if((i + aJump < aDim * aDim) && (xMesh + aJump < aDim)) {
 						mHeightData[i] = mHeightData[i + aJump];
 					} else {
-						mHeightData[i] = (char)mWorld->getHeight(xObserver, zObserver);
+						mHeightData[i] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
 					}
 				}
 			}
@@ -106,7 +111,7 @@ void CharackWorldSlice::shiftData(int theDirection) {
 					if((i - aJump >= 0) && (xMesh >= aJump)) {
 						mHeightData[i] = mHeightData[i - aJump];
 					} else if(i >= 0){
-						mHeightData[i] = (char)mWorld->getHeight(xObserver, zObserver);
+						mHeightData[i] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
 					}
 				}
 			}
@@ -137,7 +142,7 @@ void CharackWorldSlice::recreateAllData() {
 
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += aSample){ 
 		for(xMesh = 0, xObserver = aObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += aSample){ 
-			mHeightData[i++] = (char)mWorld->getHeight(xObserver, zObserver);
+			mHeightData[i++] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
 		}
 	}
 
@@ -147,21 +152,12 @@ void CharackWorldSlice::recreateAllData() {
 
 void CharackWorldSlice::dumpToFile(char *thePath) {
 	FILE *aFile;
-	int xMesh,zMesh, aDim = DIM_TERRAIN + 1, i = 0, aSample = mWorld->getSample();
-	
-	CharackObserver *aObserver =  mWorld->getObserver();
-	float xObserver = aObserver->getPositionX(), zObserver = aObserver->getPositionZ();
+	int aDim = DIM_TERRAIN + 1;
 
 	aFile = fopen(thePath, "w+");
 
 	if(aFile != NULL) {
-		for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += aSample){ 
-			for(xMesh = 0, xObserver = aObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += aSample){ 
-				fprintf(aFile, "mHeightData[%d] = %d  [zMesh = %d, xMesh = %d] (xObserver = %.2f, zObserver = %.2f)\n", i, mHeightData[i++], zMesh, xMesh, xObserver, zObserver);
-			}
-			fprintf(aFile, "--------\n");
-		}
-		
+		fwrite(mHeightData, sizeof(unsigned char), aDim*aDim, aFile);
 		fclose(aFile);
 	} else {
 		printf("CharackWorldSlice::dumpToFile - Could not open dump file [%s]\n", thePath);

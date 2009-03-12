@@ -72,8 +72,8 @@ CharackMapGenerator::CharackMapGenerator() {
 
 	latic = 0; /* flag for latitude based colour */
 
-	Width = 800;
-	Height = 800;
+	Width = 100; // FIX: constantes
+	Height = 100; // FIX: constantes
 
 	do_outline = 0;
 	do_bw = 0;

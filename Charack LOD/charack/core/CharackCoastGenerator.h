@@ -4,13 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <list>
+#include <math.h>
 
 #include "config.h"
 #include "../tools/vector3.h"
 #include "../defs.h"
 
-#define _CK_CG_RRAND(a, b) (int)((a) + rand()/(RAND_MAX + 1.0) * ((b) - (a) + 1))
+#define _CK_CG_GET(theMatrix, i, j)					(theMatrix[(i)*(DIM_TERRAIN + 1) + (j)])
+#define _CK_CG_CONSTRAINT_CHECK(z)					(z >= 0 && z < (DIM_TERRAIN + 1))
+#define _CK_CG_CALCULATE_I(theIndex)				(int)floor((theIndex)/(DIM_TERRAIN + 1.))
+#define _CK_CG_CALCULATE_J(theIndex)				(int)floor((theIndex/(DIM_TERRAIN + 1.) - floor(theIndex/(DIM_TERRAIN + 1.)))*(DIM_TERRAIN + 1.))
 
 /**
  * Generates the coast for a continent. Using the midpoint displacement fractal, the class can transform
@@ -19,8 +22,14 @@
 class CharackCoastGenerator {
 	private:
 		int mMaxDistance;
+		int distanceFromWater(unsigned char *theLandAndWaterData, int theIndex, int theDirection);
 
 	public:
+		static const int MOVE_RIGHT		= 1;
+		static const int MOVE_LEFT		= -1;
+		static const int MOVE_UP		= -1;
+		static const int MOVE_DOWN		= 1;
+
 		CharackCoastGenerator();
 		~CharackCoastGenerator();
 
