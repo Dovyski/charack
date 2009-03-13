@@ -48,7 +48,8 @@ void CharackWorld::render(void) {
 
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return abs(mPerlinNoise->Get(theX/200, theZ/200) * 255);
+	int aLimit = 255 - CK_COAST_BEACH_HEIGHT;
+	return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/200, theZ/200) * aLimit);
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {
