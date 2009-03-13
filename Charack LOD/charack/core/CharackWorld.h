@@ -18,7 +18,6 @@ class CharackWorldSlice;
 
 #include "../tools/perlin.h"
 
-// TODO: comment this?
 class CharackWorld {
 	private:
 		CharackObserver *mObserver;

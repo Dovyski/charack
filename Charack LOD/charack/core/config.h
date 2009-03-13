@@ -9,8 +9,10 @@
 #define CK_SEA_LEVEL					400
 #define CK_SEA_BOTTON					0
 
-#define CK_COAST_MAX_STEP				10
+#define CK_COAST_MAX_STEP				150
+#define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
+#define CK_COAST_BEACH_HEIGHT			200
 
 // Max world width/height
 #define CK_MAX_WIDTH					3000000.0

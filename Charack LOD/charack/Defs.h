@@ -6,7 +6,6 @@
 #define SCREEN_Y  480
 
 #define DIM_TERRAIN      512
-//#define DIM_TERRAIN      2
 
 #define N_TRI            DIM_TERRAIN*DIM_TERRAIN*2
 #define N_VERT           (DIM_TERRAIN+1)*(DIM_TERRAIN+1)
@@ -22,13 +21,10 @@
 
 
 #define SUAVIZACAO  (2.0)
-#define ESCALA 2
+#define ESCALA 4
 
 #define PI2 PI/2
 
-//extern int viewer[3];
-//extern int max_render;
-//extern bool debug;
 extern bool  cullingB;
 
 #endif

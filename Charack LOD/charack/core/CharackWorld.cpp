@@ -48,7 +48,7 @@ void CharackWorld::render(void) {
 
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	return mPerlinNoise->Get(theX/2000, theZ/2000) * 255;
+	return abs(mPerlinNoise->Get(theX/200, theZ/200) * 255);
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {

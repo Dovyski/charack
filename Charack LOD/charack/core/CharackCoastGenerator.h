@@ -21,7 +21,8 @@
  */
 class CharackCoastGenerator {
 	private:
-		int mMaxDistance;
+		int mMaxSteps;
+		int mMaxBeachHeight;
 		int distanceFromWater(unsigned char *theLandAndWaterData, int theIndex, int theDirection);
 
 	public:
@@ -33,10 +34,11 @@ class CharackCoastGenerator {
 		CharackCoastGenerator();
 		~CharackCoastGenerator();
 
-		void setMaxDistance(int theDistance);
-		int getMaxDistance();
+		void setMaxSteps(int theValue);
+		int getMaxSteps();
 
-		void setRandSeed(int theSeed);
+		void setMaxBeachHeight(int theValue);
+		int getMaxBeachHeight();
 
 		void disturbStraightCoastLines(unsigned char *theHeightData,unsigned char *theLandAndWaterData);
 };

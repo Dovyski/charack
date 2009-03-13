@@ -1,28 +1,33 @@
 #include "CharackCoastGenerator.h"
 
 CharackCoastGenerator::CharackCoastGenerator() {
-	mMaxDistance = 5;
+	mMaxSteps = CK_COAST_MAX_STEP;
+	mMaxBeachHeight = CK_COAST_BEACH_HEIGHT;
 }
 
 CharackCoastGenerator::~CharackCoastGenerator() {
 }
 
-void CharackCoastGenerator::setMaxDistance(int theDistance) {
-	mMaxDistance = theDistance <= 0 ? 0 : theDistance;
+void CharackCoastGenerator::setMaxSteps(int theValue) {
+	mMaxSteps = theValue <= 0 ? 0 : theValue;
 }
 
-int CharackCoastGenerator::getMaxDistance() {
-	return mMaxDistance;
+int CharackCoastGenerator::getMaxSteps() {
+	return mMaxSteps;
 }
 
-void CharackCoastGenerator::setRandSeed(int theSeed) {
-	srand(theSeed);
+void CharackCoastGenerator::setMaxBeachHeight(int theValue) {
+	mMaxBeachHeight = theValue <= 0 ? 0 : theValue;
 }
 
+int CharackCoastGenerator::getMaxBeachHeight() {
+	return mMaxBeachHeight;
+}
 
 void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightData,unsigned char *theLandAndWaterData) {
 	int aDim = DIM_TERRAIN + 1, i, aDistanceLeft, aDistanceRight, aDistanceUp, aDistanceDown;
 	unsigned char aHeight;
+	float aBeachHeight = 0, aTotalDistance = 0;
 
 	for(i = 0; i < aDim * aDim; i++){
 		aDistanceLeft	= distanceFromWater(theLandAndWaterData, i, MOVE_LEFT);
@@ -30,10 +35,16 @@ void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightDa
 		aDistanceUp		= distanceFromWater(theLandAndWaterData, i, MOVE_UP);
 		aDistanceDown	= distanceFromWater(theLandAndWaterData, i, MOVE_DOWN);
 
-		aHeight = theHeightData[i]; //+ (aDistanceRight*25 /*+ aDistanceRight + aDistanceUp + aDistanceDown*/);		
-		//aHeight = (aDistanceLeft + aDistanceRight + aDistanceUp + aDistanceDown) * 100;
+		aTotalDistance	= aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown;
+		aBeachHeight	= floor((aTotalDistance/CK_COAST_MAX_SEA_DISTANCE) * getMaxBeachHeight());
+
+		// If we are far away from the coast, we use the height information of the land portion.
+		// If wr are close to the coast, we use the beach height, so we can produce a smooth transition
+		// between land and water.
+		aHeight = (unsigned char)(aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i]);
+		
+		// Avoid negative heights... 
 		aHeight = aHeight < 0 ? 0 : aHeight;
-		//printf("%u, ", aHeight);
 
 		theHeightData[i] = theLandAndWaterData[i] ? aHeight : (unsigned char)CK_SEA_BOTTON;
 	}
@@ -46,7 +57,7 @@ int CharackCoastGenerator::distanceFromWater(unsigned char *theLandAndWaterData,
 	aJump	= theDirection == MOVE_RIGHT || theDirection == MOVE_LEFT ? 1 : DIM_TERRAIN;
 	aJump  *= theDirection;
 
-	while(_CK_CG_CONSTRAINT_CHECK(z) && aSteps < CK_COAST_MAX_STEP) {		
+	while(_CK_CG_CONSTRAINT_CHECK(z) && aSteps < getMaxSteps()) {		
 		if(theLandAndWaterData[theIndex] == 0) {
 			break; // water have been found
 		} else {
