@@ -21,7 +21,7 @@
 
 
 #define SUAVIZACAO  (2.0)
-#define ESCALA 4
+#define ESCALA 2
 
 #define PI2 PI/2
 

@@ -33,7 +33,7 @@ void CharackWorld::render(void) {
 		// the info matrix to insert the water information and, after that,
 		// make the coast lines a litte bit more realistic.
 		// So, lets do that:
-		getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getWorldSlice()->getLandAndWaterData());
+		getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getMapGenerator(), getObserver(), getSample());
 
 		// All information we have is smooth and ready to be displayed. 
 		// Lets update the LOD manager...
@@ -48,8 +48,12 @@ void CharackWorld::render(void) {
 
 
 float CharackWorld::getHeight(float theX, float theZ) {
-	int aLimit = 255 - CK_COAST_BEACH_HEIGHT;
-	return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/200, theZ/200) * aLimit);
+	if(CK_COAST_MANGLE_HEIGHT) {
+		int aLimit = 255 - CK_COAST_BEACH_HEIGHT;
+		return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/200, theZ/200) * aLimit);
+	} else {
+		return abs(mPerlinNoise->Get(theX/200, theZ/200)) * 255;
+	}
 }
 
 float CharackWorld::getHeightAtObserverPosition(void) {

@@ -12,9 +12,10 @@
 #define CK_COAST_MAX_STEP				100
 #define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
-#define CK_COAST_BEACH_HEIGHT			100
+#define CK_COAST_BEACH_HEIGHT			70
+#define CK_COAST_MANGLE_HEIGHT			0
 
-// Max world width/height
+// Max world width/	height
 #define CK_MAX_WIDTH					3000000.0
 
 // Useful macros
