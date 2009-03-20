@@ -304,10 +304,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\charack\util\Textura.h"
-						>
-					</File>
-					<File
 						RelativePath=".\charack\util\Timer.h"
 						>
 					</File>
