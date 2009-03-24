@@ -69,6 +69,8 @@ CharackWorld::~CharackWorld() {
 }
 
 void CharackWorld::render(void) {
+	getCamera()->render();
+
 	if(getWorldSlice()->updateData()) {
 		// The slice has changed. We must update the terrain mesh
 		// and all its friends.
@@ -84,9 +86,6 @@ void CharackWorld::render(void) {
 		getTerrain()->loadData(getWorldSlice()->getHeightData());
 	}
 
-	//getCamera()->render();
-	
-	glColor3f(1, 1, 1);
 	getTerrain()->render();
 }
 
@@ -144,10 +143,10 @@ void CharackWorld::renderReferenceAxis() {
 
 float CharackWorld::getHeight(float theX, float theZ) {
 	if(CK_COAST_MANGLE_HEIGHT) {
-		int aLimit = 255 - CK_COAST_BEACH_HEIGHT;
+		int aLimit = CK_MAX_HEIGHT - CK_COAST_BEACH_HEIGHT;
 		return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/200, theZ/200) * aLimit);
 	} else {
-		return abs(mPerlinNoise->Get(theX/200, theZ/200)) * 10;
+		return abs(mPerlinNoise->Get(theX/200, theZ/200)) * CK_MAX_HEIGHT;
 	}
 }
 

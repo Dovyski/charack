@@ -44,6 +44,7 @@
 
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
+#define CK_MAX_HEIGHT					255
 
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)

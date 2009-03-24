@@ -34,8 +34,8 @@
 
 CharackCamera::CharackCamera()
 {
-	camPos.set(0.0f, 0.0f, -0.0f);
-	camDir.set(0.0f, -1.0f, 1.0f);
+	camPos.set(65.0f, 375.0f, 648.0f);
+	camDir.set(0.0f, -1.0f, -1.0f);
 	camVel = 0;
 
 	abertura = 40.0;
@@ -56,8 +56,8 @@ void CharackCamera::render()
 	setupCamera();
 
    float x, z;
-   x = camDir.x*2000;
-   z = camDir.z*2000;
+   x = camDir.x;
+   z = camDir.z;
 
 	gluLookAt(x + camPos.x,          camPos.y,          z + camPos.z, 
              x + camPos.x+camDir.x, camPos.y+camDir.y, z + camPos.z+camDir.z, 

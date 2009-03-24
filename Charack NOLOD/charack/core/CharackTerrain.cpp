@@ -194,7 +194,10 @@ void CharackTerrain::loadData(unsigned char *theData) {
 	int i = 0;
 	for(int y = 0; y < CK_DIM_TERRAIN; y++) {
 		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
-			setHeight(x, y, theData[i++]);
+			//if(theData[i] > 3) {
+			//	printf("theData[%d] = %u, ", i, theData[i]);
+			//}
+			setHeight(x, y, (float)theData[i++]);
 		}
 	}
 	
@@ -215,10 +218,10 @@ void CharackTerrain::render() {
 		for(int x = 0; x < width(); x++) {
 			Vec3f normal = getNormal(x, z);
 			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x, getHeight(x, z), z);
+			glVertex3f(x*10, getHeight(x, z), z * 10);
 			normal = getNormal(x, z + 1);
 			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x, getHeight(x, z + 1), z + 1);
+			glVertex3f(x*10, getHeight(x, z + 1), (z + 1)*10);
 		}
 		glEnd();
 	}

@@ -218,8 +218,8 @@ void drawScene() {
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
-	glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
+	//glTranslatef(gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
+	//glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef(-_angle, 0.0f, 1.0f, 0.0f);
 	
 	setupLights();
