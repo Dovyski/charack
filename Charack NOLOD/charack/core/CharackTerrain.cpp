@@ -194,9 +194,6 @@ void CharackTerrain::loadData(unsigned char *theData) {
 	int i = 0;
 	for(int y = 0; y < CK_DIM_TERRAIN; y++) {
 		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
-			//if(theData[i] > 3) {
-			//	printf("theData[%d] = %u, ", i, theData[i]);
-			//}
 			setHeight(x, y, (float)theData[i++]);
 		}
 	}
@@ -204,8 +201,8 @@ void CharackTerrain::loadData(unsigned char *theData) {
 	computeNormals();
 }
 
-void CharackTerrain::render() {
-	float scale = 50.0f / max(width() - 1, length() - 1);
+void CharackTerrain::render(float theScale) {
+	float scale = theScale / max(width() - 1, length() - 1);
 	glScalef(scale, scale, scale);
 	glTranslatef(-(float)(width() - 1) / 2,
 				 0.0f,
@@ -218,10 +215,10 @@ void CharackTerrain::render() {
 		for(int x = 0; x < width(); x++) {
 			Vec3f normal = getNormal(x, z);
 			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x*10, getHeight(x, z), z * 10);
+			glVertex3f(x*CK_MESH_SPACE, getHeight(x, z), z * CK_MESH_SPACE);
 			normal = getNormal(x, z + 1);
 			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x*10, getHeight(x, z + 1), (z + 1)*10);
+			glVertex3f(x*CK_MESH_SPACE, getHeight(x, z + 1), (z + 1)*CK_MESH_SPACE);
 		}
 		glEnd();
 	}

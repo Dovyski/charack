@@ -98,6 +98,7 @@ class CharackWorld {
 		void placeObserverOnLand(void);
 		void render(void);
 		void renderReferenceAxis(void);
+		void renderOcean(void);
 };
 
 #endif

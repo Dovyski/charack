@@ -60,7 +60,7 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	
 	setViewFrustum(theViewFrustum);
 	setSample(theSample);
-	setScale(1);
+	setScale(CK_SCALE);
 
 	//mTerrain->setCamera(mCamera);
 }
@@ -86,7 +86,7 @@ void CharackWorld::render(void) {
 		getTerrain()->loadData(getWorldSlice()->getHeightData());
 	}
 
-	getTerrain()->render();
+	getTerrain()->render(getScale());
 }
 
 void CharackWorld::renderReferenceAxis() {
@@ -138,6 +138,20 @@ void CharackWorld::renderReferenceAxis() {
     glVertex3f(0,0,-aLength);
     glEnd();
     glDisable(GL_LINE_STIPPLE); // Disable the line stipple
+}
+
+void CharackWorld::renderOcean() {
+	float aLength = 2000;
+	float aHeight = 20;
+	
+    glColor3f (0.0, 0.0, 1.0);
+
+	glBegin(GL_QUADS);
+	glVertex3f(0.0f, aHeight, 0.0f);
+	glVertex3f(0.0f, aHeight, aLength);
+	glVertex3f(aLength, aHeight, aLength);
+	glVertex3f(aLength, aHeight, 0.0f);
+	glEnd();
 }
 
 

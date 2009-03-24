@@ -225,6 +225,8 @@ void drawScene() {
 	setupLights();
 	gWorld.render();
 	gWorld.renderReferenceAxis();
+	gWorld.renderOcean();
+
 	displayHud();
 	
 	glutPostRedisplay();	

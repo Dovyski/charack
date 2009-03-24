@@ -71,9 +71,7 @@ void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightDa
 			// If we are close to the coast, we use the beach height, so we can produce a smooth transition
 			// between land and water.
 			aHeight = (unsigned char)(aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i]);
-			//if(aHeight > 3) {
-			//	printf("aHeight = %u (%u), ", aHeight, theHeightData[i]);
-			//}			
+	
 			// Avoid negative heights... 
 			aHeight = aHeight < 0 ? 0 : aHeight;
 

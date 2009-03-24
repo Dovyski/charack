@@ -91,7 +91,7 @@ class CharackTerrain {
 		//Returns the normal at (x, z)
 		Vec3f getNormal(int x, int z);
 
-		void render();
+		void render(float theScale);
 
 		void loadData(unsigned char *theData);
 };
