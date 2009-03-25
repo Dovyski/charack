@@ -61,6 +61,7 @@
 #include <GL/glut.h>
 
 #include "../util/vec3f.h"
+#include "../util/perlin.h"
 #include "config.h"
 
 class CharackTerrain {
@@ -70,6 +71,7 @@ class CharackTerrain {
 		float** hs; //Heights
 		Vec3f** normals;
 		bool computedNormals; //Whether normals is up-to-date
+		Perlin *mPerlinNoise;
 	public:
 		CharackTerrain(int w2, int l2);
 		
@@ -94,6 +96,7 @@ class CharackTerrain {
 		void render(float theScale);
 
 		void loadData(unsigned char *theData);
+		void applyColorByHeight(float theX, float theY, float theZ);
 };
 
 #endif

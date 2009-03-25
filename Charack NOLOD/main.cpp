@@ -48,34 +48,38 @@ CharackWorld gWorld(300, 1);
 
 void keyboard(unsigned char key, int x, int y)
 {
-	key = tolower(key);
+	int aSpeed;
+	
+	aSpeed	= 10;
+	key		= tolower(key);
+
 	switch(key)	{
 		case 27:
 			exit(0);
 			break;
 
 		case 'a':  //seta esquerda
-			gWorld.getCamera()->move(1);
+			gWorld.getCamera()->move(aSpeed);
 			break;
 
 		case 'd': //seta direita
-			gWorld.getCamera()->move(-1); //TODO: fix the minus...
+			gWorld.getCamera()->move(-aSpeed); //TODO: fix the minus...
 			break;
 
 		case 'w': //seta cima
-			gWorld.getCamera()->walk(1);
+			gWorld.getCamera()->walk(aSpeed);
 			break;
 
 		case 's': ////seta baixo
-			gWorld.getCamera()->walk(-1);
+			gWorld.getCamera()->walk(-aSpeed);
 			break;
 
 		case 't': ////pg up
-			gWorld.getCamera()->elevate(1);
+			gWorld.getCamera()->elevate(aSpeed);
 			break;
 
 		case 'g': ////pg down
-			gWorld.getCamera()->elevate(-1);
+			gWorld.getCamera()->elevate(-aSpeed);
 			break;
 
 		case 'r': ////rotate up
@@ -201,14 +205,14 @@ void displayHud() {
 
 	sprintf(text, "Fps: %.2f ", fps);
 	font->print(20.0f, 15.0f, text);
-	//sprintf(text, "TRI: %d ", gWorld.getTerrain()->triangulos);
-	//font->print(20.0f, 45.0f, text);
 	sprintf(text, "camPos: (%2.f, %2.f,%2.f)", gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
 	font->print(20.0f, 75.0f, text);
 	sprintf(text, "observer: (%2.f, %2.f,%2.f)", gWorld.getObserver()->getPosition()->x, gWorld.getObserver()->getPosition()->y, gWorld.getObserver()->getPosition()->z);
 	font->print(20.0f, 105.0f, text);
 	sprintf(text, "sample: %d", gWorld.getSample());
 	font->print(20.0f, 135.0f, text);
+	sprintf(text, "camDir: (%.2f, %.2f,%.2f)", gWorld.getCamera()->camDir.x, gWorld.getCamera()->camDir.y, gWorld.getCamera()->camDir.z);
+	font->print(20.0f, 170.0f, text);
 	font->endText();
 }
 
@@ -218,14 +222,12 @@ void drawScene() {
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//glTranslatef(gWorld.getCamera()->camPos.x, gWorld.getCamera()->camPos.y, gWorld.getCamera()->camPos.z);
-	//glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
-	//glRotatef(-_angle, 0.0f, 1.0f, 0.0f);
 	
 	setupLights();
+
 	gWorld.render();
 	gWorld.renderReferenceAxis();
-	gWorld.renderOcean();
+	//gWorld.renderOcean();
 
 	displayHud();
 	

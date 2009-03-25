@@ -66,6 +66,7 @@ CharackTerrain::CharackTerrain(int w2, int l2) {
 	}
 	
 	computedNormals = false;
+	mPerlinNoise = new Perlin(16, 8, 0.25, 20);
 }
 		
 CharackTerrain::~CharackTerrain() {
@@ -208,18 +209,39 @@ void CharackTerrain::render(float theScale) {
 				 0.0f,
 				 -(float)(length() - 1) / 2);
 	
-	glColor3f(0.3f, 0.9f, 0.0f);
+	applyColorByHeight(0, 0, 0);
 	for(int z = 0; z < length() - 1; z++) {
 		//Makes OpenGL draw a triangle at every three consecutive vertices
 		glBegin(GL_TRIANGLE_STRIP);
 		for(int x = 0; x < width(); x++) {
 			Vec3f normal = getNormal(x, z);
 			glNormal3f(normal[0], normal[1], normal[2]);
+			applyColorByHeight(x*CK_MESH_SPACE, getHeight(x, z), z * CK_MESH_SPACE);
 			glVertex3f(x*CK_MESH_SPACE, getHeight(x, z), z * CK_MESH_SPACE);
+
 			normal = getNormal(x, z + 1);
 			glNormal3f(normal[0], normal[1], normal[2]);
+			applyColorByHeight(x*CK_MESH_SPACE, getHeight(x, z + 1), (z + 1)*CK_MESH_SPACE);
 			glVertex3f(x*CK_MESH_SPACE, getHeight(x, z + 1), (z + 1)*CK_MESH_SPACE);
 		}
 		glEnd();
+	}
+}
+
+void CharackTerrain::applyColorByHeight(float theX, float theY, float theZ) {
+	if(theY > (CK_MAX_HEIGHT * 0.50)) {
+		glColor3f(1.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.8f, 1.0f);
+
+	} else if(theY > (CK_MAX_HEIGHT * 0.30)) {
+		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f, 0.0f);
+
+	} else if(theY > (CK_MAX_HEIGHT * 0.10)) {
+		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.3f, 0.0f);
+
+	} else if(theY > (CK_MAX_HEIGHT * 0.05)) {
+		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.5f, 0.0f);
+
+	} else {
+		glColor3f(0.50f, 0.8f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f);
 	}
 }

@@ -39,7 +39,7 @@
 #define CK_MAX_HEIGHT					255
 
 // OpenGL scale behavior
-#define CK_SCALE						50.0f
+#define CK_SCALE						100.0f
 
 #define CK_SEA_LEVEL					600
 #define CK_SEA_BOTTON					0
