@@ -28,7 +28,7 @@
 #include "CharackCoastGenerator.h"
 
 CharackCoastGenerator::CharackCoastGenerator() {
-	mMaxSteps = CK_COAST_MAX_STEP;
+	mMaxSteps		= CK_COAST_MAX_STEP;
 	mMaxBeachHeight = CK_COAST_BEACH_HEIGHT;
 }
 

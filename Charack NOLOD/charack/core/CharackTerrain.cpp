@@ -202,6 +202,46 @@ void CharackTerrain::loadData(float *theData) {
 	computeNormals();
 }
 
+void CharackTerrain::makeDataSmooth() {
+	float aTemp[CK_DIM_TERRAIN + 2][CK_DIM_TERRAIN + 2];
+	int aSizeTemp = CK_DIM_TERRAIN + 2;
+
+	// Lets duplicate the heightmap
+	for(int y = 1; y <= CK_DIM_TERRAIN; y++) {
+		for(int x = 1; x <= CK_DIM_TERRAIN; x++) {
+			aTemp[x][y] = hs[x-1][y-1];
+		}
+	}
+
+	// Make it seamless
+	for (int x=1; x< (aSizeTemp -1); x++) {
+		aTemp[0			   ][x			  ] = aTemp[CK_DIM_TERRAIN][x];
+		aTemp[aSizeTemp - 1][x			  ] = aTemp[1][x];
+		aTemp[x			   ][0			  ] = aTemp[x][CK_DIM_TERRAIN];
+		aTemp[x			   ][aSizeTemp - 1] = aTemp[x][1];
+	}
+
+	aTemp[0			   ][0			  ]	= aTemp[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
+	aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[1][1];
+	aTemp[0			   ][aSizeTemp - 1]	= aTemp[CK_DIM_TERRAIN][1];
+	aTemp[aSizeTemp - 1][0			  ]	= aTemp[1][CK_DIM_TERRAIN];
+
+
+	// Smooth them all
+	for(int y = 1; y < (aSizeTemp - 1); y++) {
+		for(int x = 1; x < (aSizeTemp - 1); x++) {
+			float aCenter = aTemp[x][y]/4.0f;
+			float aSides = (aTemp[x+1][y] + aTemp[x-1][y] + aTemp[x][y+1] + aTemp[x][y-1])/8.0f;
+			float aCorners = (aTemp[x+1][y+1] + aTemp[x+1][y-1] + aTemp[x-1][y+1] + aTemp[x-1][y-1])/16.0f;
+
+			hs[x-1][y-1] = aCenter + aSides + aCorners;
+		}
+	}
+
+	computeNormals();
+}
+
+
 void CharackTerrain::render(float theScale) {
 	float scale = theScale / max(width() - 1, length() - 1);
 	glScalef(scale, scale, scale);
@@ -239,9 +279,9 @@ void CharackTerrain::applyColorByHeight(float theX, float theY, float theZ) {
 		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.3f, 0.0f);
 
 	} else if(theY > (CK_MAX_HEIGHT * 0.05)) {
-		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.5f, 0.0f);
+		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.4f, 0.0f);
 
 	} else {
-		glColor3f(0.50f, 0.8f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f);
+		glColor3f(1.0f, 0.8f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f);
 	}
 }

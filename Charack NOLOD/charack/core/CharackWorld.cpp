@@ -66,6 +66,9 @@ void CharackWorld::render(void) {
 		// All information we have is smooth and ready to be displayed. 
 		// Lets update the terrain mesh...
 		getTerrain()->loadData(getWorldSlice()->getHeightData());
+
+		// Make all data smooth to avoid sharp corners 
+		getTerrain()->makeSmooth();
 	}
 
 	getTerrain()->render(getScale());

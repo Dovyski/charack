@@ -97,6 +97,7 @@ class CharackTerrain {
 
 		void loadData(float *theData);
 		void applyColorByHeight(float theX, float theY, float theZ);
+		void makeDataSmooth();
 };
 
 #endif
