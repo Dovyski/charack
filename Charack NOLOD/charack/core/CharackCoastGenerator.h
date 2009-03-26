@@ -52,7 +52,7 @@ class CharackObserver;
 class CharackCoastGenerator {
 	private:
 		int mMaxSteps;
-		int mMaxBeachHeight;
+		float mMaxBeachHeight;
 		int distanceFromWater(CharackMapGenerator *theMapGenerator, float theXObserver, float theZObserver, int theSample, int theDirection);
 
 	public:
@@ -67,10 +67,10 @@ class CharackCoastGenerator {
 		void setMaxSteps(int theValue);
 		int getMaxSteps();
 
-		void setMaxBeachHeight(int theValue);
-		int getMaxBeachHeight();
+		void setMaxBeachHeight(float theValue);
+		float getMaxBeachHeight();
 
-		void disturbStraightCoastLines(unsigned char *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample);
+		void disturbStraightCoastLines(float *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample);
 };
 
 #endif

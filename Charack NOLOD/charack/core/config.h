@@ -36,22 +36,22 @@
 
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
-#define CK_MAX_HEIGHT					255
+#define CK_MAX_HEIGHT					255.0f
 
 // OpenGL scale behavior
 #define CK_SCALE						100.0f
 
-#define CK_SEA_LEVEL					600
-#define CK_SEA_BOTTON					0
+#define CK_SEA_LEVEL					600.0f
+#define CK_SEA_BOTTON					0.0f
 
 #define CK_COAST_MAX_STEP				15
 #define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
-#define CK_COAST_BEACH_HEIGHT			25
+#define CK_COAST_BEACH_HEIGHT			25.0f
 #define CK_COAST_MANGLE_HEIGHT			0
 
 // Distance from one vertex to another
-#define CK_MESH_SPACE					20
+#define CK_MESH_SPACE					40
 
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)

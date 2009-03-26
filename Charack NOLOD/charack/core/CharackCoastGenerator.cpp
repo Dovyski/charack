@@ -43,17 +43,17 @@ int CharackCoastGenerator::getMaxSteps() {
 	return mMaxSteps;
 }
 
-void CharackCoastGenerator::setMaxBeachHeight(int theValue) {
+void CharackCoastGenerator::setMaxBeachHeight(float theValue) {
 	mMaxBeachHeight = theValue <= 0 ? 0 : theValue;
 }
 
-int CharackCoastGenerator::getMaxBeachHeight() {
+float CharackCoastGenerator::getMaxBeachHeight() {
 	return mMaxBeachHeight;
 }
 
-void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample) {
+void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample) {
 	int aDim = CK_DIM_TERRAIN, i = 0, aDistanceLeft, aDistanceRight, aDistanceUp, aDistanceDown, xMesh,zMesh;
-	unsigned char aHeight = 0;
+	float aHeight = 0;
 	float xObserver = theObserver->getPositionX(), zObserver = theObserver->getPositionZ(), aBeachHeight = 0, aTotalDistance = 0;
 
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += theSample){ 
@@ -70,12 +70,12 @@ void CharackCoastGenerator::disturbStraightCoastLines(unsigned char *theHeightDa
 			// If we are far away from the coast, we use the height information of the land portion.
 			// If we are close to the coast, we use the beach height, so we can produce a smooth transition
 			// between land and water.
-			aHeight = (unsigned char)(aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i]);
+			aHeight = aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i];
 	
 			// Avoid negative heights... 
 			aHeight = aHeight < 0 ? 0 : aHeight;
 
-			theHeightData[i] = theMapGenerator->isLand(xObserver, zObserver) ? aHeight : (unsigned char)CK_SEA_BOTTON;
+			theHeightData[i] = theMapGenerator->isLand(xObserver, zObserver) ? aHeight : CK_SEA_BOTTON;
 		}
 	}
 }

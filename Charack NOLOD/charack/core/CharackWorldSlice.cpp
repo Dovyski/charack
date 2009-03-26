@@ -31,8 +31,8 @@ CharackWorldSlice::CharackWorldSlice(CharackWorld *theWorld) {
 	mWorld			= theWorld;
 	mOldObserverPos = Vector3(CK_MAX_WIDTH, 0, CK_MAX_WIDTH);
 	mOldSample		= -1;
-	mHeightData		= (unsigned char *)malloc((CK_DIM_TERRAIN) * (CK_DIM_TERRAIN));
-	mLandWaterData	= (unsigned char *)malloc((CK_DIM_TERRAIN) * (CK_DIM_TERRAIN));
+	mHeightData		= (float *)malloc(CK_DIM_TERRAIN * CK_DIM_TERRAIN * sizeof(float));
+	mLandWaterData	= (float *)malloc(CK_DIM_TERRAIN * CK_DIM_TERRAIN * sizeof(float));
 }
 
 CharackWorldSlice::~CharackWorldSlice() {
@@ -43,11 +43,11 @@ CharackWorldSlice::~CharackWorldSlice() {
 	mLandWaterData = NULL;
 }
 
-unsigned char *CharackWorldSlice::getHeightData() {
+float *CharackWorldSlice::getHeightData() {
 	return mHeightData;
 }
 
-unsigned char *CharackWorldSlice::getLandAndWaterData() {
+float *CharackWorldSlice::getLandAndWaterData() {
 	return mLandWaterData;
 }
 
@@ -120,7 +120,7 @@ void CharackWorldSlice::shiftData(int theDirection) {
 					if((i + aJump < aDim * aDim) && (xMesh + aJump < aDim)) {
 						mHeightData[i] = mHeightData[i + aJump];
 					} else {
-						mHeightData[i] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
+						mHeightData[i] = mWorld->getHeight(xObserver, zObserver);
 					}
 				}
 			}
@@ -138,7 +138,7 @@ void CharackWorldSlice::shiftData(int theDirection) {
 					if((i - aJump >= 0) && (xMesh >= aJump)) {
 						mHeightData[i] = mHeightData[i - aJump];
 					} else if(i >= 0){
-						mHeightData[i] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
+						mHeightData[i] = mWorld->getHeight(xObserver, zObserver);
 					}
 				}
 			}
@@ -169,7 +169,7 @@ void CharackWorldSlice::recreateAllData() {
 
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += aSample){ 
 		for(xMesh = 0, xObserver = aObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += aSample){ 
-			mHeightData[i++] = (unsigned char)mWorld->getHeight(xObserver, zObserver);
+			mHeightData[i++] = mWorld->getHeight(xObserver, zObserver);
 		}
 	}
 
@@ -184,7 +184,7 @@ void CharackWorldSlice::dumpToFile(char *thePath) {
 	aFile = fopen(thePath, "w+");
 
 	if(aFile != NULL) {
-		fwrite(mHeightData, sizeof(unsigned char), aDim*aDim, aFile);
+		fwrite(mHeightData, sizeof(float), aDim*aDim, aFile);
 		fclose(aFile);
 	} else {
 		printf("CharackWorldSlice::dumpToFile - Could not open dump file [%s]\n", thePath);

@@ -191,11 +191,11 @@ Vec3f CharackTerrain::getNormal(int x, int z) {
 	return normals[z][x];
 }
 
-void CharackTerrain::loadData(unsigned char *theData) {
+void CharackTerrain::loadData(float *theData) {
 	int i = 0;
 	for(int y = 0; y < CK_DIM_TERRAIN; y++) {
 		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
-			setHeight(x, y, (float)theData[i++]);
+			setHeight(x, y, theData[i++]);
 		}
 	}
 	

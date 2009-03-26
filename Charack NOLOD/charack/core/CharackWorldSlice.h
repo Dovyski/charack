@@ -40,8 +40,8 @@ class CharackWorld;
 
 class CharackWorldSlice {
 	private:
-		unsigned char *mHeightData;
-		unsigned char *mLandWaterData;
+		float *mHeightData;
+		float *mLandWaterData;
 		Vector3 mOldObserverPos;
 		int mOldSample;
 		CharackWorld *mWorld;
@@ -57,8 +57,8 @@ class CharackWorldSlice {
 		CharackWorldSlice(CharackWorld *theWorld);		
 		~CharackWorldSlice();
 
-		unsigned char *getHeightData();
-		unsigned char *getLandAndWaterData();
+		float *getHeightData();
+		float *getLandAndWaterData();
 		int updateData();
 		void shiftData(int theDirection);
 		void recreateAllData();

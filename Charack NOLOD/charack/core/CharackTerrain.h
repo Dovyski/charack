@@ -95,7 +95,7 @@ class CharackTerrain {
 
 		void render(float theScale);
 
-		void loadData(unsigned char *theData);
+		void loadData(float *theData);
 		void applyColorByHeight(float theX, float theY, float theZ);
 };
 

@@ -29,22 +29,6 @@
 #include "../util/imageloader.h"
 
 CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
-	/*
-	Image* image = loadBMP("heightmap.bmp");
-	mTerrain = new CharackTerrain(image->width, image->height);
-
-	for(int y = 0; y < image->height; y++) {
-		for(int x = 0; x < image->width; x++) {
-			unsigned char color =
-				(unsigned char)image->pixels[3 * (y * image->width + x)];
-			float h = 20.0 * ((color / 255.0f) - 0.5f);
-			mTerrain->setHeight(x, y, h);
-		}
-	}
-	
-	delete image;
-	mTerrain->computeNormals();*/
-
 	mObserver		= new CharackObserver();
 	mCamera			= new CharackCamera();
 	mMapGenerator	= new CharackMapGenerator();
@@ -61,8 +45,6 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	setViewFrustum(theViewFrustum);
 	setSample(theSample);
 	setScale(CK_SCALE);
-
-	//mTerrain->setCamera(mCamera);
 }
 
 CharackWorld::~CharackWorld() {
