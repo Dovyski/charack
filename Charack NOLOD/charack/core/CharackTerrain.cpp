@@ -179,17 +179,17 @@ void CharackTerrain::makeDataSmooth(int theHowManyTimes) {
 		}
 
 		// Make it seamless
-		for (int x=1; x< (aSizeTemp -1); x++) {
-			aTemp[0			   ][x			  ] = aTemp[CK_DIM_TERRAIN][x];
-			aTemp[aSizeTemp - 1][x			  ] = aTemp[1][x];
-			aTemp[x			   ][0			  ] = aTemp[x][CK_DIM_TERRAIN];
-			aTemp[x			   ][aSizeTemp - 1] = aTemp[x][1];
+		for (int x=1; x < (aSizeTemp -1); x++) {
+			aTemp[0			   ][x			  ] = aTemp[1][x];
+			aTemp[aSizeTemp - 1][x			  ] = aTemp[aSizeTemp - 2][x];
+			aTemp[x			   ][0			  ] = aTemp[x][1];
+			aTemp[x			   ][aSizeTemp - 1] = aTemp[x][aSizeTemp - 2];
 		}
 
-		aTemp[0			   ][0			  ]	= aTemp[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
-		aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[1][1];
-		aTemp[0			   ][aSizeTemp - 1]	= aTemp[CK_DIM_TERRAIN][1];
-		aTemp[aSizeTemp - 1][0			  ]	= aTemp[1][CK_DIM_TERRAIN];
+		aTemp[0			   ][0			  ]	= aTemp[1][1];
+		aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[aSizeTemp - 2][aSizeTemp - 2];
+		aTemp[0			   ][aSizeTemp - 1]	= aTemp[1][aSizeTemp - 2];
+		aTemp[aSizeTemp - 1][0			  ]	= aTemp[aSizeTemp - 2][1];
 
 
 		// Smooth them all

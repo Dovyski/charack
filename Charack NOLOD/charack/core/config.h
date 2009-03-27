@@ -39,7 +39,7 @@
 #define CK_MAX_HEIGHT					400.0f
 
 // OpenGL scale behavior
-#define CK_SCALE						100.0f
+#define CK_SCALE						2000.0f
 
 #define CK_SEA_LEVEL					600.0f
 #define CK_SEA_BOTTON					0.0f
@@ -48,13 +48,13 @@
 #define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
 #define CK_COAST_BEACH_HEIGHT			25.0f
-#define CK_COAST_MANGLE_HEIGHT			1
+#define CK_COAST_MANGLE_HEIGHT			0
 
 // Distance from one vertex to another
 #define CK_MESH_SPACE					10
 
 // How many times the terrain manager should smoothfy the collected data before displaying it.
-#define CK_HOW_SMOOTH					15
+#define CK_HOW_SMOOTH					10
 
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)
