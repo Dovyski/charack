@@ -53,6 +53,9 @@
 // Distance from one vertex to another
 #define CK_MESH_SPACE					10
 
+// How many times the terrain manager should smoothfy the collected data before displaying it.
+#define CK_HOW_SMOOTH					15
+
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)
 

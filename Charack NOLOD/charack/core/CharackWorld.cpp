@@ -35,7 +35,7 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 	mWorldSlice		= new CharackWorldSlice(this);
 	mPerlinNoise	= new Perlin(16, 8, 1, 10);
 	mCoastGen		= new CharackCoastGenerator();
-	mTerrain		= new CharackTerrain(CK_DIM_TERRAIN, CK_DIM_TERRAIN);
+	mTerrain		= new CharackTerrain();
 	
 	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
 	// world, like oceans and continents, then the other Charack classes will use that "guide"
@@ -67,8 +67,8 @@ void CharackWorld::render(void) {
 		// Lets update the terrain mesh...
 		getTerrain()->loadData(getWorldSlice()->getHeightData());
 
-		// Make all data smooth to avoid sharp corners 
-		getTerrain()->makeSmooth();
+		// Make all data smooth to avoid sharpen edges.
+		getTerrain()->makeDataSmooth(CK_HOW_SMOOTH);
 	}
 
 	getTerrain()->render(getScale());

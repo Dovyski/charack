@@ -66,20 +66,13 @@
 
 class CharackTerrain {
 	private:
-		int w; //Width
-		int l; //Length
-		float** hs; //Heights
-		Vec3f** normals;
+		float hs[CK_DIM_TERRAIN][CK_DIM_TERRAIN]; //Heights
+		Vec3f normals[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
 		bool computedNormals; //Whether normals is up-to-date
 		Perlin *mPerlinNoise;
 	public:
-		CharackTerrain(int w2, int l2);
-		
+		CharackTerrain();
 		~CharackTerrain();
-		
-		int width();
-		
-		int length();
 		
 		//Sets the height at (x, z) to y
 		void setHeight(int x, int z, float y);
@@ -97,7 +90,7 @@ class CharackTerrain {
 
 		void loadData(float *theData);
 		void applyColorByHeight(float theX, float theY, float theZ);
-		void makeDataSmooth();
+		void makeDataSmooth(int theHowManyTimes);
 };
 
 #endif

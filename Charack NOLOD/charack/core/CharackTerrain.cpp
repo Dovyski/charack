@@ -51,44 +51,14 @@
 
 #include "CharackTerrain.h"
 
-CharackTerrain::CharackTerrain(int w2, int l2) {
-	w = w2;
-	l = l2;
-	
-	hs = new float*[l];
-	for(int i = 0; i < l; i++) {
-		hs[i] = new float[w];
-	}
-	
-	normals = new Vec3f*[l];
-	for(int i = 0; i < l; i++) {
-		normals[i] = new Vec3f[w];
-	}
-	
+CharackTerrain::CharackTerrain() {	
 	computedNormals = false;
-	mPerlinNoise = new Perlin(16, 8, 0.25, 20);
+	mPerlinNoise	= new Perlin(16, 8, 0.25, 20);
 }
 		
 CharackTerrain::~CharackTerrain() {
-	for(int i = 0; i < l; i++) {
-		delete[] hs[i];
-	}
-	delete[] hs;
-	
-	for(int i = 0; i < l; i++) {
-		delete[] normals[i];
-	}
-	delete[] normals;
 }
 		
-int CharackTerrain::width() {
-	return w;
-}
-
-int CharackTerrain::length() {
-	return l;
-}
-
 
 void CharackTerrain::setHeight(int x, int z, float y) {
 	hs[z][x] = y;
@@ -106,13 +76,10 @@ void CharackTerrain::computeNormals() {
 	}
 	
 	//Compute the rough version of the normals
-	Vec3f** normals2 = new Vec3f*[l];
-	for(int i = 0; i < l; i++) {
-		normals2[i] = new Vec3f[w];
-	}
+	Vec3f normals2[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
 	
-	for(int z = 0; z < l; z++) {
-		for(int x = 0; x < w; x++) {
+	for(int z = 0; z < CK_DIM_TERRAIN; z++) {
+		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
 			Vec3f sum(0.0f, 0.0f, 0.0f);
 			
 			Vec3f out;
@@ -120,7 +87,7 @@ void CharackTerrain::computeNormals() {
 				out = Vec3f(0.0f, hs[z - 1][x] - hs[z][x], -1.0f);
 			}
 			Vec3f in;
-			if (z < l - 1) {
+			if (z < CK_DIM_TERRAIN - 1) {
 				in = Vec3f(0.0f, hs[z + 1][x] - hs[z][x], 1.0f);
 			}
 			Vec3f left;
@@ -128,20 +95,20 @@ void CharackTerrain::computeNormals() {
 				left = Vec3f(-1.0f, hs[z][x - 1] - hs[z][x], 0.0f);
 			}
 			Vec3f right;
-			if (x < w - 1) {
+			if (x < CK_DIM_TERRAIN - 1) {
 				right = Vec3f(1.0f, hs[z][x + 1] - hs[z][x], 0.0f);
 			}
 			
 			if (x > 0 && z > 0) {
 				sum += out.cross(left).normalize();
 			}
-			if (x > 0 && z < l - 1) {
+			if (x > 0 && z < CK_DIM_TERRAIN - 1) {
 				sum += left.cross(in).normalize();
 			}
-			if (x < w - 1 && z < l - 1) {
+			if (x < CK_DIM_TERRAIN - 1 && z < CK_DIM_TERRAIN - 1) {
 				sum += in.cross(right).normalize();
 			}
-			if (x < w - 1 && z > 0) {
+			if (x < CK_DIM_TERRAIN - 1 && z > 0) {
 				sum += right.cross(out).normalize();
 			}
 			
@@ -151,20 +118,20 @@ void CharackTerrain::computeNormals() {
 	
 	//Smooth out the normals
 	const float FALLOUT_RATIO = 0.5f;
-	for(int z = 0; z < l; z++) {
-		for(int x = 0; x < w; x++) {
+	for(int z = 0; z < CK_DIM_TERRAIN; z++) {
+		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
 			Vec3f sum = normals2[z][x];
 			
 			if (x > 0) {
 				sum += normals2[z][x - 1] * FALLOUT_RATIO;
 			}
-			if (x < w - 1) {
+			if (x < CK_DIM_TERRAIN - 1) {
 				sum += normals2[z][x + 1] * FALLOUT_RATIO;
 			}
 			if (z > 0) {
 				sum += normals2[z - 1][x] * FALLOUT_RATIO;
 			}
-			if (z < l - 1) {
+			if (z < CK_DIM_TERRAIN - 1) {
 				sum += normals2[z + 1][x] * FALLOUT_RATIO;
 			}
 			
@@ -174,11 +141,6 @@ void CharackTerrain::computeNormals() {
 			normals[z][x] = sum;
 		}
 	}
-	
-	for(int i = 0; i < l; i++) {
-		delete[] normals2[i];
-	}
-	delete[] normals2;
 	
 	computedNormals = true;
 }
@@ -202,39 +164,43 @@ void CharackTerrain::loadData(float *theData) {
 	computeNormals();
 }
 
-void CharackTerrain::makeDataSmooth() {
+void CharackTerrain::makeDataSmooth(int theHowManyTimes) {
 	float aTemp[CK_DIM_TERRAIN + 2][CK_DIM_TERRAIN + 2];
 	int aSizeTemp = CK_DIM_TERRAIN + 2;
 
-	// Lets duplicate the heightmap
-	for(int y = 1; y <= CK_DIM_TERRAIN; y++) {
-		for(int x = 1; x <= CK_DIM_TERRAIN; x++) {
-			aTemp[x][y] = hs[x-1][y-1];
+	theHowManyTimes = theHowManyTimes <= 0 ? 1 : theHowManyTimes;
+
+	while(theHowManyTimes--) {
+		// Lets duplicate the heightmap
+		for(int y = 1; y <= CK_DIM_TERRAIN; y++) {
+			for(int x = 1; x <= CK_DIM_TERRAIN; x++) {
+				aTemp[x][y] = hs[x-1][y-1];
+			}
 		}
-	}
 
-	// Make it seamless
-	for (int x=1; x< (aSizeTemp -1); x++) {
-		aTemp[0			   ][x			  ] = aTemp[CK_DIM_TERRAIN][x];
-		aTemp[aSizeTemp - 1][x			  ] = aTemp[1][x];
-		aTemp[x			   ][0			  ] = aTemp[x][CK_DIM_TERRAIN];
-		aTemp[x			   ][aSizeTemp - 1] = aTemp[x][1];
-	}
+		// Make it seamless
+		for (int x=1; x< (aSizeTemp -1); x++) {
+			aTemp[0			   ][x			  ] = aTemp[CK_DIM_TERRAIN][x];
+			aTemp[aSizeTemp - 1][x			  ] = aTemp[1][x];
+			aTemp[x			   ][0			  ] = aTemp[x][CK_DIM_TERRAIN];
+			aTemp[x			   ][aSizeTemp - 1] = aTemp[x][1];
+		}
 
-	aTemp[0			   ][0			  ]	= aTemp[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
-	aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[1][1];
-	aTemp[0			   ][aSizeTemp - 1]	= aTemp[CK_DIM_TERRAIN][1];
-	aTemp[aSizeTemp - 1][0			  ]	= aTemp[1][CK_DIM_TERRAIN];
+		aTemp[0			   ][0			  ]	= aTemp[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
+		aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[1][1];
+		aTemp[0			   ][aSizeTemp - 1]	= aTemp[CK_DIM_TERRAIN][1];
+		aTemp[aSizeTemp - 1][0			  ]	= aTemp[1][CK_DIM_TERRAIN];
 
 
-	// Smooth them all
-	for(int y = 1; y < (aSizeTemp - 1); y++) {
-		for(int x = 1; x < (aSizeTemp - 1); x++) {
-			float aCenter = aTemp[x][y]/4.0f;
-			float aSides = (aTemp[x+1][y] + aTemp[x-1][y] + aTemp[x][y+1] + aTemp[x][y-1])/8.0f;
-			float aCorners = (aTemp[x+1][y+1] + aTemp[x+1][y-1] + aTemp[x-1][y+1] + aTemp[x-1][y-1])/16.0f;
+		// Smooth them all
+		for(int y = 1; y < (aSizeTemp - 1); y++) {
+			for(int x = 1; x < (aSizeTemp - 1); x++) {
+				float aCenter = aTemp[x][y]/4.0f;
+				float aSides = (aTemp[x+1][y] + aTemp[x-1][y] + aTemp[x][y+1] + aTemp[x][y-1])/8.0f;
+				float aCorners = (aTemp[x+1][y+1] + aTemp[x+1][y-1] + aTemp[x-1][y+1] + aTemp[x-1][y-1])/16.0f;
 
-			hs[x-1][y-1] = aCenter + aSides + aCorners;
+				hs[x-1][y-1] = aCenter + aSides + aCorners;
+			}
 		}
 	}
 
@@ -243,17 +209,17 @@ void CharackTerrain::makeDataSmooth() {
 
 
 void CharackTerrain::render(float theScale) {
-	float scale = theScale / max(width() - 1, length() - 1);
+	float scale = theScale / max(CK_DIM_TERRAIN - 1, CK_DIM_TERRAIN - 1);
 	glScalef(scale, scale, scale);
-	glTranslatef(-(float)(width() - 1) / 2,
+	glTranslatef(-(float)(CK_DIM_TERRAIN - 1) / 2,
 				 0.0f,
-				 -(float)(length() - 1) / 2);
+				 -(float)(CK_DIM_TERRAIN - 1) / 2);
 	
 	applyColorByHeight(0, 0, 0);
-	for(int z = 0; z < length() - 1; z++) {
+	for(int z = 0; z < CK_DIM_TERRAIN - 1; z++) {
 		//Makes OpenGL draw a triangle at every three consecutive vertices
 		glBegin(GL_TRIANGLE_STRIP);
-		for(int x = 0; x < width(); x++) {
+		for(int x = 0; x < CK_DIM_TERRAIN; x++) {
 			Vec3f normal = getNormal(x, z);
 			glNormal3f(normal[0], normal[1], normal[2]);
 			applyColorByHeight(x*CK_MESH_SPACE, getHeight(x, z), z * CK_MESH_SPACE);
