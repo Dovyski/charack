@@ -40,7 +40,7 @@ CharackCamera::CharackCamera()
 
 	abertura = 40.0;
 	znear  = 1;
-	zfar   = 2000000;
+	zfar   = 10000000;
 	aspect = 1;
    lock = false;
 	mTopView = false;

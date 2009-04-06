@@ -50,7 +50,7 @@ void keyboard(unsigned char key, int x, int y)
 {
 	int aSpeed;
 	
-	aSpeed	= floor(gWorld.getScale() * 0.10);
+	aSpeed	= floor(gWorld.getScale() * 2);
 	key		= tolower(key);
 
 	switch(key)	{
@@ -171,11 +171,18 @@ void initRendering() {
 	glEnable(GL_LIGHT0);
 	glEnable(GL_NORMALIZE);
 	glShadeModel(GL_SMOOTH);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	//glEnable(GL_FOG);
+	//glClearColor(0.5f, 0.5f, 0.5f, 1);
 
 	frames     = new Frames();
 	font       = new GLFont();
 	timer      = new Timer();
 
+	gWorld.init();
 	gWorld.placeObserverOnLand();
 }
 
@@ -228,6 +235,7 @@ void drawScene() {
 	gWorld.render();
 	gWorld.renderReferenceAxis();
 	gWorld.renderOcean();
+	//gWorld.renderFog();
 
 	displayHud();
 	

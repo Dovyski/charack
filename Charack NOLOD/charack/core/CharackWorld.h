@@ -44,6 +44,7 @@ class CharackWorldSlice;
 #include "CharackWorldSlice.h"
 
 #include "../util/perlin.h"
+#include "../util/imageloader.h"
 
 class CharackWorld {
 	private:
@@ -61,8 +62,10 @@ class CharackWorld {
 		int mSample;
 		float mScale;
 		Perlin *mPerlinNoise;
+		GLuint mTextureId; //The id of the texture (ocean)
 
 		Vector3 calculateNormal(Vector3 theLeftPoint, Vector3 theMiddlePoint, Vector3 theRightPoint);
+		GLuint CharackWorld::loadTexture(Image* theImage);
 
 	public:
 		CharackWorld(int theViewFrustum, int theSample);
@@ -99,6 +102,9 @@ class CharackWorld {
 		void render(void);
 		void renderReferenceAxis(void);
 		void renderOcean(void);
+		void renderFog(void);
+
+		void init(void);
 };
 
 #endif

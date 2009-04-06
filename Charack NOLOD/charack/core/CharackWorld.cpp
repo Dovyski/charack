@@ -126,17 +126,44 @@ void CharackWorld::renderReferenceAxis() {
 }
 
 void CharackWorld::renderOcean() {
-	float aLength = 2000;
+	float aLength = 60000;
 	float aHeight = 20;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, mTextureId);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
     glColor3f (0.0, 0.0, 1.0);
 
 	glBegin(GL_QUADS);
+
+	glNormal3f(0.0, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(0.0f, aHeight, 0.0f);
+
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(0.0f, aHeight, aLength);
+
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(aLength, aHeight, aLength);
+
+	glTexCoord2f(0.0f, 1.0f);	
 	glVertex3f(aLength, aHeight, 0.0f);
+
 	glEnd();
+}
+
+void CharackWorld::renderFog() {
+	GLfloat fogColor[] = {0.5f, 0.5f, 0.5f, 1};
+    glFogfv(GL_FOG_COLOR, fogColor);
+
+    glFogi(GL_FOG_MODE, GL_LINEAR);
+    glFogf(GL_FOG_START, 10000.0f);
+    glFogf(GL_FOG_END, 30000.0f);
 }
 
 
@@ -251,4 +278,31 @@ CharackWorldSlice *CharackWorld::getWorldSlice(void) {
 
 CharackCoastGenerator *CharackWorld::getCoastGenerator(void) {
 	return mCoastGen;
+}
+
+void CharackWorld::init(void) {
+	Image* aImage	= loadBMP("./data/ocean2.bmp");
+	mTextureId		= loadTexture(aImage);
+	delete aImage;
+}
+
+//Makes the image into a texture, and returns the id of the texture
+GLuint CharackWorld::loadTexture(Image* theImage) {
+	GLuint aTextureId;
+
+	glGenTextures(1, &aTextureId); //Make room for our texture
+	glBindTexture(GL_TEXTURE_2D, aTextureId); //Tell OpenGL which texture to edit
+
+	//Map the theImage to the texture
+	glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+				 0,                            //0 for now
+				 GL_RGB,                       //Format OpenGL uses for image
+				 theImage->width, theImage->height,  //Width and height
+				 0,                            //The border of the theImage
+				 GL_RGB, //GL_RGB, because pixels are stored in RGB format
+				 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+				                   //as unsigned numbers
+				 theImage->pixels);               //The actual pixel data
+
+	return aTextureId; //Returns the id of the texture
 }
