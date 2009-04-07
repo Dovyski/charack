@@ -248,6 +248,6 @@ void CharackTerrain::applyColorByHeight(float theX, float theY, float theZ) {
 		glColor3f(0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.4f, 0.0f);
 
 	} else {
-		glColor3f(1.0f, 0.8f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f);
+		glColor3f(0.0f, 0.0f, abs(mPerlinNoise->Get(0.45, theY)) + 0.2f);
 	}
 }

@@ -127,7 +127,7 @@ void CharackWorld::renderReferenceAxis() {
 
 void CharackWorld::renderOcean() {
 	float aLength = 60000;
-	float aHeight = 20;
+	float aHeight = 80;
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, mTextureId);

@@ -42,12 +42,12 @@
 #define CK_SCALE						2000.0f
 
 #define CK_SEA_LEVEL					600.0f
-#define CK_SEA_BOTTON					0.0f
+#define CK_SEA_BOTTON					-200.0f
 
-#define CK_COAST_MAX_STEP				15
+#define CK_COAST_MAX_STEP				10
 #define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
-#define CK_COAST_BEACH_HEIGHT			30.0f
+#define CK_COAST_BEACH_HEIGHT			700.0f
 #define CK_COAST_MANGLE_HEIGHT			1
 
 // Distance from one vertex to another
