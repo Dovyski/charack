@@ -39,8 +39,8 @@ CharackCamera::CharackCamera()
 	camVel = 0;
 
 	abertura = 40.0;
-	znear  = 5000;
-	zfar   = 1000000;
+	znear  = 100;
+	zfar   = 2000000;
 	aspect = 1;
    lock = false;
 	mTopView = false;
