@@ -34,13 +34,13 @@
 
 CharackCamera::CharackCamera()
 {
-	camPos.set(486447.0f, 226103.0f, 855730.0f);
-	camDir.set(0.0f, -0.66f, -1.25f);
+	camPos.set(367448.0f, 1390103.0f, 840268.0f);
+	camDir.set(1.24f, -0.66f, 0.16f);
 	camVel = 0;
 
 	abertura = 40.0;
 	znear  = 100;
-	zfar   = 2000000;
+	zfar   = 20000000;
 	aspect = 1;
    lock = false;
 	mTopView = false;

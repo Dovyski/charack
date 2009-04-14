@@ -99,8 +99,8 @@ CharackMapGenerator::CharackMapGenerator() {
 
 	latic = 0; /* flag for latitude based colour */
 
-	Width = 100; // FIX: constantes
-	Height = 100; // FIX: constantes
+	Width = 20; // FIX: constantes
+	Height = 20; // FIX: constantes
 
 	do_outline = 0;
 	do_bw = 0;
@@ -171,6 +171,7 @@ void CharackMapGenerator::generate() {
 
   mercator();
   makeoutline(1);
+  findborder();
 	
   printbmpBW(outfile);
 }
@@ -323,6 +324,25 @@ void CharackMapGenerator::makeoutline(int do_bw)
 	else col[i][j] = BLACK;
       }
   while (k-->0) col[outx[k]][outy[k]] = BLACK;
+}
+
+
+void CharackMapGenerator::findborder() {
+	int i,j, aHasWaterNeighbor = 0;
+
+	for(i = 0; i < Width; i++) {
+		for(j = 0; j < Height; j++) {
+			aHasWaterNeighbor =	isWater(i, j-1) || isWater(i-1, j) || isWater(i+1, j) || isWater(i, j+1);
+			
+			if(!isWater(i, j) && aHasWaterNeighbor) {
+				printf("border at (%d,%d), ", i, j);
+			}
+		}
+	}
+}
+
+int CharackMapGenerator::isWater(int theI, int theJ) {
+	return theI < 0 || theI >= Width || theJ < 0 || theJ >= Height || col[theI][theJ] != BLACK;
 }
 
 void CharackMapGenerator::mercator()

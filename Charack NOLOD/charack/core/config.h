@@ -36,7 +36,7 @@
 
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
-#define CK_MAX_HEIGHT					10000.0f
+#define CK_MAX_HEIGHT					50000.0f
 
 // OpenGL scale behavior
 #define CK_SCALE						2000.0f
@@ -51,7 +51,7 @@
 #define CK_COAST_MANGLE_HEIGHT			1
 
 // Distance from one vertex to another
-#define CK_MESH_SPACE					400
+#define CK_MESH_SPACE					2000
 
 // How many times the terrain manager should smoothfy the collected data before displaying it.
 #define CK_HOW_SMOOTH					1

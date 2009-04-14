@@ -122,7 +122,9 @@ class CharackMapGenerator {
 		double rand2(double p, double q);
 		void printbmp(FILE *outfile);
 		void printbmpBW(FILE *outfile);
+		void findborder();
 		double log_2(double x);
+		int isWater(int theI, int theJ);
 
 	public:
 		CharackMapGenerator();
