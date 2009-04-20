@@ -34,8 +34,8 @@
 
 CharackCamera::CharackCamera()
 {
-	camPos.set(367448.0f, 1390103.0f, 840268.0f);
-	camDir.set(1.24f, -0.66f, 0.16f);
+	camPos.set(2067448.0f, 1510103.0f, 5015268.0f);
+	camDir.set(0.0f, -0.66f, -1.25f);
 	camVel = 0;
 
 	abertura = 40.0;
@@ -200,8 +200,8 @@ void CharackCamera::topView(int theStatus) {
 			camPosOld = camPos;
 			camDirOld = camDir;
 
-			camPos = Vector3(632989, 4970103, 1927577);
-			camDir = Vector3(0.32, -1.41, 0.00);
+			camPos = Vector3(1866758, 5070103, 1980730);
+			camDir = Vector3(0.01, -1.38, -0.28);
 		} else {
 			camPos = camPosOld;
 			camDir = camDirOld;
