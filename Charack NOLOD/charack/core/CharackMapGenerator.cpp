@@ -86,6 +86,8 @@ CTable alt_colors =
 		 {0,0,0}};	    /* Black - gridlines	*/
 
 CharackMapGenerator::CharackMapGenerator() {
+	mPerlinNoise	= new Perlin(16, 8, 1, 10);
+
 	altColors = 0;
 	back = BACK;
 	    
@@ -99,9 +101,6 @@ CharackMapGenerator::CharackMapGenerator() {
 
 	latic = 0; /* flag for latitude based colour */
 
-	Width = 20; // FIX: constantes
-	Height = 20; // FIX: constantes
-
 	do_outline = 0;
 	do_bw = 0;
 
@@ -114,8 +113,6 @@ CharackMapGenerator::~CharackMapGenerator() {
 
 
 void CharackMapGenerator::generate() {
-  int i;
-
   FILE *outfile, *colfile = NULL;
   char filename[256] = "C:\\temp\\p.bmp";
   int do_file = 0;
@@ -140,27 +137,10 @@ void CharackMapGenerator::generate() {
 
   sla = sin(lat); cla = cos(lat);
   slo = sin(longi); clo = cos(longi);
-
-// TODO: fix this malloc. It must be done just once, not every method call...
-
-	col = (unsigned char**)calloc(Width,sizeof(unsigned char*));
-	if (col == 0) {
-	  fprintf(stderr, "Memory allocation failed.");
-	  exit(1);
-	}
-	for (i=0; i<Width; i++) {
-	  col[i] = (unsigned char*)calloc(Height,sizeof(unsigned char));
-	  if (col[i] == 0) {
-	fprintf(stderr, 
-		"Memory allocation failed at %d out of %d cols\n", 
-		i+1,Width);
-	exit(1);
-	  }
-	}
   
   setcolours();
 
-  Depth = 3*((int)(log_2(scale*Height)))+6;
+  Depth = 3*((int)(log_2(scale*CK_MACRO_MATRIX_WIDTH)))+6;
 
   r1 = rseed;
 
@@ -171,7 +151,7 @@ void CharackMapGenerator::generate() {
 
   mercator();
   makeoutline(1);
-  findborder();
+  buildDescriptionMatrix();
 	
   printbmpBW(outfile);
 }
@@ -304,11 +284,11 @@ void CharackMapGenerator::makeoutline(int do_bw)
 {
   int i,j,k;
 
-  outx = (int*)calloc(Width*Height,sizeof(int));
-  outy = (int*)calloc(Width*Height,sizeof(int));
+  outx = (int*)calloc(CK_MACRO_MATRIX_WIDTH*CK_MACRO_MATRIX_WIDTH,sizeof(int));
+  outy = (int*)calloc(CK_MACRO_MATRIX_WIDTH*CK_MACRO_MATRIX_WIDTH,sizeof(int));
   k=0;
-  for (i=1; i<Width-1; i++)
-    for (j=1; j<Height-1; j++)
+  for (i=1; i<CK_MACRO_MATRIX_WIDTH-1; i++)
+    for (j=1; j<CK_MACRO_MATRIX_WIDTH-1; j++)
       if ((col[i][j] >= BLUE0 && col[i][j] <= BLUE1) &&
 	  (col[i-1][j] >= LAND0 || col[i+1][j] >= LAND0 ||
 	   col[i][j-1] >= LAND0 || col[i][j+1] >= LAND0 ||
@@ -317,8 +297,8 @@ void CharackMapGenerator::makeoutline(int do_bw)
 	outx[k] = i; outy[k++] =j;
       }
   if (do_bw)
-    for (i=0; i<Width; i++)
-      for (j=0; j<Height; j++) {
+    for (i=0; i<CK_MACRO_MATRIX_WIDTH; i++)
+      for (j=0; j<CK_MACRO_MATRIX_WIDTH; j++) {
 	if (col[i][j] >= BLUE0 && col[i][j] <= BLUE1)
 	  col[i][j] = WHITE;
 	else col[i][j] = BLACK;
@@ -327,22 +307,8 @@ void CharackMapGenerator::makeoutline(int do_bw)
 }
 
 
-void CharackMapGenerator::findborder() {
-	int i,j, aHasWaterNeighbor = 0;
-
-	for(i = 0; i < Width; i++) {
-		for(j = 0; j < Height; j++) {
-			aHasWaterNeighbor =	isWater(i, j-1) || isWater(i-1, j) || isWater(i+1, j) || isWater(i, j+1);
-			
-			if(!isWater(i, j) && aHasWaterNeighbor) {
-				printf("border at (%d,%d), ", i, j);
-			}
-		}
-	}
-}
-
 int CharackMapGenerator::isWater(int theI, int theJ) {
-	return theI < 0 || theI >= Width || theJ < 0 || theJ >= Height || col[theI][theJ] != BLACK;
+	return theI < 0 || theI >= CK_MACRO_MATRIX_WIDTH || theJ < 0 || theJ >= CK_MACRO_MATRIX_WIDTH || col[theI][theJ] != BLACK;
 }
 
 void CharackMapGenerator::mercator()
@@ -353,16 +319,16 @@ void CharackMapGenerator::mercator()
   y = sin(lat);
   y = (1.0+y)/(1.0-y);
   y = 0.5*log(y);
-  k = (int)(0.5*y*Width*scale/PI);
-  for (j = 0; j < Height; j++) {
-    y = PI*(2.0*(j-k)-Height)/Width/scale;
+  k = (int)(0.5*y*CK_MACRO_MATRIX_WIDTH*scale/PI);
+  for (j = 0; j < CK_MACRO_MATRIX_WIDTH; j++) {
+    y = PI*(2.0*(j-k)-CK_MACRO_MATRIX_WIDTH)/CK_MACRO_MATRIX_WIDTH/scale;
     y = exp(2.*y);
     y = (y-1.)/(y+1.);
-    scale1 = scale*Width/Height/sqrt(1.0-y*y)/PI;
+    scale1 = scale*CK_MACRO_MATRIX_WIDTH/CK_MACRO_MATRIX_WIDTH/sqrt(1.0-y*y)/PI;
     cos2 = sqrt(1.0-y*y);
-    Depth = 3*((int)(log_2(scale1*Height)))+3;
-    for (i = 0; i < Width ; i++) {
-      theta1 = longi-0.5*PI+PI*(2.0*i-Width)/Width/scale;
+    Depth = 3*((int)(log_2(scale1*CK_MACRO_MATRIX_WIDTH)))+3;
+    for (i = 0; i < CK_MACRO_MATRIX_WIDTH ; i++) {
+      theta1 = longi-0.5*PI+PI*(2.0*i-CK_MACRO_MATRIX_WIDTH)/CK_MACRO_MATRIX_WIDTH/scale;
       col[i][j] = planet0(cos(theta1)*cos2,y,-sin(theta1)*cos2);
     }
   }
@@ -616,9 +582,9 @@ void CharackMapGenerator::printbmpBW(FILE *outfile) /* prints picture in b/w BMP
 
   fprintf(outfile,"BM");
 
-  W1 = (Width+31);
+  W1 = (CK_MACRO_MATRIX_WIDTH+31);
   W1 -= W1 % 32;
-  s = 62+(W1*Height)/8; /* file size */
+  s = 62+(W1*CK_MACRO_MATRIX_WIDTH)/8; /* file size */
   putc(s&255,outfile);
   putc((s>>8)&255,outfile);
   putc((s>>16)&255,outfile);
@@ -639,15 +605,15 @@ void CharackMapGenerator::printbmpBW(FILE *outfile) /* prints picture in b/w BMP
   putc(0,outfile);
   putc(0,outfile);
 
-  putc(Width&255,outfile);
-  putc((Width>>8)&255,outfile);
-  putc((Width>>16)&255,outfile);
-  putc(Width>>24,outfile);
+  putc(CK_MACRO_MATRIX_WIDTH&255,outfile);
+  putc((CK_MACRO_MATRIX_WIDTH>>8)&255,outfile);
+  putc((CK_MACRO_MATRIX_WIDTH>>16)&255,outfile);
+  putc(CK_MACRO_MATRIX_WIDTH>>24,outfile);
 
-  putc(Height&255,outfile);
-  putc((Height>>8)&255,outfile);
-  putc((Height>>16)&255,outfile);
-  putc(Height>>24,outfile);
+  putc(CK_MACRO_MATRIX_WIDTH&255,outfile);
+  putc((CK_MACRO_MATRIX_WIDTH>>8)&255,outfile);
+  putc((CK_MACRO_MATRIX_WIDTH>>16)&255,outfile);
+  putc(CK_MACRO_MATRIX_WIDTH>>24,outfile);
 
   putc(1,outfile);  /* no. of planes = 1 */
   putc(0,outfile);
@@ -696,31 +662,31 @@ void CharackMapGenerator::printbmpBW(FILE *outfile) /* prints picture in b/w BMP
   putc(255,outfile);
   putc(255,outfile);
 
-  for (j=Height-1; j>=0; j--)
+  for (j=CK_MACRO_MATRIX_WIDTH-1; j>=0; j--)
     for (i=0; i<W1; i+=8) {
-      if (i<Width && col[i][j] != BLACK && col[i][j] != GRID
+      if (i<CK_MACRO_MATRIX_WIDTH && col[i][j] != BLACK && col[i][j] != GRID
 	  && col[i][j] != BACK)
 	c=128;
       else c=0;
-      if (i+1<Width && col[i+1][j] != BLACK && col[i+1][j] != GRID
+      if (i+1<CK_MACRO_MATRIX_WIDTH && col[i+1][j] != BLACK && col[i+1][j] != GRID
 	  && col[i+1][j] != BACK)
 	c+=64;
-      if (i+2<Width && col[i+2][j] != BLACK && col[i+2][j] != GRID
+      if (i+2<CK_MACRO_MATRIX_WIDTH && col[i+2][j] != BLACK && col[i+2][j] != GRID
 	  && col[i+2][j] != BACK)
 	c+=32;
-      if (i+3<Width && col[i+3][j] != BLACK && col[i+3][j] != GRID
+      if (i+3<CK_MACRO_MATRIX_WIDTH && col[i+3][j] != BLACK && col[i+3][j] != GRID
 	  && col[i+3][j] != BACK)
 	c+=16;
-      if (i+4<Width && col[i+4][j] != BLACK && col[i+4][j] != GRID
+      if (i+4<CK_MACRO_MATRIX_WIDTH && col[i+4][j] != BLACK && col[i+4][j] != GRID
 	  && col[i+4][j] != BACK)
 	c+=8;
-      if (i+5<Width && col[i+5][j] != BLACK && col[i+5][j] != GRID
+      if (i+5<CK_MACRO_MATRIX_WIDTH && col[i+5][j] != BLACK && col[i+5][j] != GRID
 	  && col[i+5][j] != BACK)
 	c+=4;
-      if (i+6<Width && col[i+6][j] != BLACK && col[i+6][j] != GRID
+      if (i+6<CK_MACRO_MATRIX_WIDTH && col[i+6][j] != BLACK && col[i+6][j] != GRID
 	  && col[i+6][j] != BACK)
 	c+=2;
-      if (i+7<Width && col[i+7][j] != BLACK && col[i+7][j] != GRID
+      if (i+7<CK_MACRO_MATRIX_WIDTH && col[i+7][j] != BLACK && col[i+7][j] != GRID
 	  && col[i+7][j] != BACK)
 	c+=1;
       putc(c,outfile);
@@ -746,18 +712,57 @@ double fmax_dov(double x, double y)
 { return(x<y ? y : x); }
 
 
+int CharackMapGenerator::hithResolutionIsLand(float theX, float theZ) {
+	return abs(mPerlinNoise->Get(theX/200, theZ/200)) * CK_MAX_HEIGHT > CK_MAX_HEIGHT*0.2;
+}
+
 int CharackMapGenerator::isLand(float theX, float theZ) {
+	int aRet = 0;
+	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+
+	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
+		aRet = 0;
+
+	} else if(getDescription(theX, theZ) == CharackMapGenerator::LAND_COAST) {
+		// We are over a pixel that represents a coast line. Lets provie a high resolution
+		// information about land and water here, in order to procude a non-sharp cost line.
+		aRet = hithResolutionIsLand(theX, theZ);
+
+	} else {
+		// We are over an ordinary pixel. Lets calculate the return using low resolution information.
+		aRet = col[aZ][aX] == BLACK;
+	}
+
+	return aRet;
+}
+
+
+void CharackMapGenerator::buildDescriptionMatrix() {
+	int i,j, aHasWaterNeighbor = 0;
+
+	for(i = 0; i < CK_MACRO_MATRIX_WIDTH; i++) {
+		for(j = 0; j < CK_MACRO_MATRIX_WIDTH; j++) {
+			mDescriptionMatrix[i][j]	= isWater(i, j) ? CharackMapGenerator::WATER : CharackMapGenerator::LAND;
+			aHasWaterNeighbor			= isWater(i, j-1) || isWater(i-1, j) || isWater(i+1, j) || isWater(i, j+1);
+			
+			if(!isWater(i, j) && aHasWaterNeighbor) {
+				mDescriptionMatrix[i][j] = CharackMapGenerator::LAND_COAST;
+			}
+		}
+	}
+}
+
+int CharackMapGenerator::getDescription(float theX, float theZ) {
 	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
 		return 0;
 	}
 
-	// Here we have an issue: the map generated by CharackMapGenerator is much more
-	// smaller then the virtual worl, so we have to convert the coordinates.
-	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * Width));
-	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * Height));
+	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
 
-	aX = aX >= Width	? Width	-1 : aX;
-	aZ = aZ >= Height	? Height -1 : aZ;
+	aX = aX >= CK_MACRO_MATRIX_WIDTH	? CK_MACRO_MATRIX_WIDTH	-1 : aX;
+	aZ = aZ >= CK_MACRO_MATRIX_WIDTH	? CK_MACRO_MATRIX_WIDTH -1 : aZ;
 
-	return col[aZ][aX] == BLACK;
+	return mDescriptionMatrix[aZ][aX];
 }

@@ -50,7 +50,7 @@ void keyboard(unsigned char key, int x, int y)
 {
 	int aSpeed;
 	
-	aSpeed	= floor(gWorld.getScale() * 2);
+	aSpeed	= floor(gWorld.getScale() * 10);
 	key		= tolower(key);
 
 	switch(key)	{
@@ -154,12 +154,12 @@ void keyboardSpecial(int key, int x, int y)
 
 		case GLUT_KEY_PAGE_UP:
 			// Increase the sample size
-			gWorld.setSample(gWorld.getSample() + gWorld.getSample() * 1.05);
+			gWorld.setSample(gWorld.getSample() + 1);
 			break;
 
 		case GLUT_KEY_PAGE_DOWN:
 			// Decrease the sample size
-			gWorld.setSample(gWorld.getSample() - gWorld.getSample()*0.05);
+			gWorld.setSample(gWorld.getSample() - 1);
 			break;
 	}
 }

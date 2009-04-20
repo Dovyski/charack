@@ -38,6 +38,7 @@
 #include "config.h"
 #include "CharackCoastGenerator.h"
 #include "../util/vector3.h"
+#include "../util/perlin.h"
 
 #define BLACK 0
 #define BACK 1
@@ -71,6 +72,8 @@ typedef int CTable[MAXCOL][3];
  */
 class CharackMapGenerator {
 	private:
+		Perlin *mPerlinNoise;
+
 		int altColors;
 		int BLUE1, LAND0, LAND1, LAND2, LAND4;
 		int GREEN1, BROWN0, GREY0;
@@ -90,10 +93,8 @@ class CharackMapGenerator {
 
 		int latic; /* flag for latitude based colour */
 
-		int Width;
-		int Height;
-
-		unsigned char **col;
+		int mDescriptionMatrix[CK_MACRO_MATRIX_WIDTH][CK_MACRO_MATRIX_HEIGHT];
+		unsigned char col[CK_MACRO_MATRIX_WIDTH][CK_MACRO_MATRIX_HEIGHT];
 		int **heights;
 		int cl0[60][30];
 
@@ -122,11 +123,17 @@ class CharackMapGenerator {
 		double rand2(double p, double q);
 		void printbmp(FILE *outfile);
 		void printbmpBW(FILE *outfile);
-		void findborder();
 		double log_2(double x);
+		
 		int isWater(int theI, int theJ);
+		void buildDescriptionMatrix();
+		int hithResolutionIsLand(float theX, float theZ);
 
 	public:
+		static const int WATER			= 0;
+		static const int LAND			= 1;
+		static const int LAND_COAST		= 2;
+
 		CharackMapGenerator();
 		~CharackMapGenerator();
 
@@ -139,9 +146,9 @@ class CharackMapGenerator {
 		// (with noised coast lines) that can be used to check if a specific position is land or water.
 		int isLand(float theX, float theZ);
 
-		// This method will find all coast lines (which are straight lines before the method call) and, for each one,
-		// generate a much more real coast line, adding some noise to the lines.
-		void applyCoast(int theMapX, int theMapZ, int theViewFrustum, int theSample);
+		// Get information about the specified position. The possible descriptions: CharackMapGenerator::WATER (ocean), 
+		// CharackMapGenerator::LAND (land within the coastline) and CharackMapGenerator::LAND_COAST (the coast line itself).
+		int getDescription(float theX, float theZ);
 };
 
 #endif

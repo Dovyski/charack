@@ -37,6 +37,8 @@
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
 #define CK_MAX_HEIGHT					50000.0f
+#define CK_MACRO_MATRIX_WIDTH			400
+#define CK_MACRO_MATRIX_HEIGHT			400
 
 // OpenGL scale behavior
 #define CK_SCALE						2000.0f
