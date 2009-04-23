@@ -50,7 +50,7 @@ void keyboard(unsigned char key, int x, int y)
 {
 	int aSpeed;
 	
-	aSpeed	= floor(gWorld.getScale() * 1000);
+	aSpeed	= floor(gWorld.getScale() * 10);
 	key		= tolower(key);
 
 	switch(key)	{

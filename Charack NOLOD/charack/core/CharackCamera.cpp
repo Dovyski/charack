@@ -200,7 +200,7 @@ void CharackCamera::topView(int theStatus) {
 			camPosOld = camPos;
 			camDirOld = camDir;
 
-			camPos = Vector3(1866758, 5070103, 1980730);
+			camPos = Vector3(1826758, 5070103, 3100730);
 			camDir = Vector3(0.01, -1.38, -0.28);
 		} else {
 			camPos = camPosOld;

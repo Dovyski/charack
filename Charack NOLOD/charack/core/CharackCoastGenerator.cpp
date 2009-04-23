@@ -58,24 +58,35 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += theSample){ 
 		for(xMesh = 0, xObserver = theObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += theSample, ++i){ 
-			
-			aDistanceLeft	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_LEFT);
-			aDistanceRight	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_RIGHT);
-			aDistanceUp		= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_UP);
-			aDistanceDown	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_DOWN);
+			// We must analyze "land pixels" and "water pixels" differently. For all the "land pixels", we must check the distance between
+			// them and the water and, according to this, apply the right erosion. It will produce beachs.
+			// For "water pixels", we check the distance between them and the coast line and, using that information, we disturb the pixels
+			// around to produce a disturbed coast line. It will produce more realistic coast lines.
 
-			aTotalDistance	= (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
-			aBeachHeight	= floor((aTotalDistance/CK_COAST_MAX_SEA_DISTANCE) * getMaxBeachHeight());
+			if(theMapGenerator->isLand(xObserver, zObserver)) {
+				// We have found a land pixel...
 
-			// If we are far away from the coast, we use the height information of the land portion.
-			// If we are close to the coast, we use the beach height, so we can produce a smooth transition
-			// between land and water.
-			aHeight = aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i];
-	
-			// Avoid negative heights... 
-			aHeight = aHeight < 0 ? 0 : aHeight;
+				aDistanceLeft	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_LEFT);
+				aDistanceRight	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_RIGHT);
+				aDistanceUp		= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_UP);
+				aDistanceDown	= distanceFromWater(theMapGenerator, xObserver, zObserver, theSample, MOVE_DOWN);
 
-			theHeightData[i] = theMapGenerator->isLand(xObserver, zObserver) ? aHeight : CK_SEA_BOTTON;
+				aTotalDistance	= (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
+				aBeachHeight	= floor((aTotalDistance/CK_COAST_MAX_SEA_DISTANCE) * getMaxBeachHeight());
+
+				// If we are far away from the coast, we use the height information of the land portion.
+				// If we are close to the coast, we use the beach height, so we can produce a smooth transition
+				// between land and water.
+				aHeight = aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? aBeachHeight : theHeightData[i];
+		
+				// Avoid negative heights... 
+				aHeight = aHeight < 0 ? 0 : aHeight;
+
+				theHeightData[i] = aHeight;
+			} else {
+				// We have found a water pixels...
+				theHeightData[i] = CK_SEA_BOTTON;
+			}
 		}
 	}
 }
