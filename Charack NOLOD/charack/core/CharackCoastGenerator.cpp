@@ -109,9 +109,9 @@ float CharackCoastGenerator::generateBeachHeight(float theTotalDistance) {
 float CharackCoastGenerator::generateDisturbedCoastLineHeight(float theTotalDistance, float theXObserver, float theZObserver) {
 	float aRet = CK_SEA_BOTTON;
 	
-	if(theTotalDistance < CK_COAST_DISTRB_MAX_DISTANCE) {
+	if(theTotalDistance < CK_COAST_DISTRB_MAX_DISTANCE && CK_COAST_DISTURBE) {
 		aRet = abs(mPerlinNoise->Get(theXObserver/200, theZObserver/200));
-		aRet = aRet > 0.03 ? aRet * getMaxBeachHeight() : CK_SEA_BOTTON;
+		aRet = aRet > CK_COAST_DISTURBE_RATE ? aRet * getMaxBeachHeight() : CK_SEA_BOTTON;
 	}
 
 	return aRet;
