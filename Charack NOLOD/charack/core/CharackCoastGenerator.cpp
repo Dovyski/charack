@@ -95,7 +95,6 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 
 				aTotalDistance	 = (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
 				theHeightData[i] = generateDisturbedCoastLineHeight(aTotalDistance, xObserver, zObserver);
-				//theHeightData[i] = CK_SEA_BOTTON;
 			}
 		}
 	}
@@ -108,14 +107,11 @@ float CharackCoastGenerator::generateBeachHeight(float theTotalDistance) {
 }
 
 float CharackCoastGenerator::generateDisturbedCoastLineHeight(float theTotalDistance, float theXObserver, float theZObserver) {
-	float aRet = CK_SEA_BOTTON, aHeight = 0;
+	float aRet = CK_SEA_BOTTON;
 	
 	if(theTotalDistance < CK_COAST_DISTRB_MAX_DISTANCE) {
-		aHeight = abs(mPerlinNoise->Get(theXObserver/200, theZObserver/200));
-		aHeight = aHeight > 0.01 ? aHeight * getMaxBeachHeight()*1000 : CK_SEA_BOTTON;
-		
-		// TODO: fix it!
-		aRet = 200.0f;
+		aRet = abs(mPerlinNoise->Get(theXObserver/200, theZObserver/200));
+		aRet = aRet > 0.03 ? aRet * getMaxBeachHeight() : CK_SEA_BOTTON;
 	}
 
 	return aRet;

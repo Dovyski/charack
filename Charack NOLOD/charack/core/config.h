@@ -54,7 +54,7 @@
 #define CK_COAST_MANGLE_HEIGHT			1
 
 // Distance between water and coast (moviment origin is water)
-#define CK_COAST_DISTRB_MAX_STEP		10
+#define CK_COAST_DISTRB_MAX_STEP		8
 #define CK_COAST_DISTRB_MAX_DISTANCE	(CK_COAST_DISTRB_MAX_STEP * 4)
 
 // Distance from one vertex to another
