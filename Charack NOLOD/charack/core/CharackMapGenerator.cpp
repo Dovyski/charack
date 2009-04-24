@@ -712,26 +712,26 @@ double fmax_dov(double x, double y)
 { return(x<y ? y : x); }
 
 
-int CharackMapGenerator::hithResolutionIsLand(float theX, float theZ) {
+int CharackMapGenerator::highResolutionIsLand(float theX, float theZ) {
 	return abs(mPerlinNoise->Get(theX/400, theZ/400)) > 0.2;
 }
 
-int CharackMapGenerator::isLand(float theX, float theZ) {
-	int aRet = 0;
+int CharackMapGenerator::isLand(float theX, float theZ, int theResolution) {
+	int aRet = CharackMapGenerator::LAND;
 	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
 	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
 
 	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
 		aRet = 0;
 
-	} else if(getDescription(theX, theZ) == CharackMapGenerator::LAND_COAST) {
+	} else if(getDescription(theX, theZ) == CharackMapGenerator::LAND_COAST && theResolution == CharackMapGenerator::RESOLUTION_HIGH) {
 		// We are over a pixel that represents a coast line. Lets provie a high resolution
-		// information about land and water here, in order to procude a non-sharp cost line.
-		aRet = hithResolutionIsLand(theX, theZ);
+		// information about land and water here in order to procude non-sharp cost lines.
+		aRet = highResolutionIsLand(theX, theZ);
 
 	} else {
 		// We are over an ordinary pixel. Lets calculate the return using low resolution information.
-		aRet = col[aZ][aX] == BLACK;
+		aRet = mDescriptionMatrix[aZ][aX];
 	}
 
 	return aRet;
@@ -765,4 +765,26 @@ int CharackMapGenerator::getDescription(float theX, float theZ) {
 	aZ = aZ >= CK_MACRO_MATRIX_WIDTH	? CK_MACRO_MATRIX_WIDTH -1 : aZ;
 
 	return mDescriptionMatrix[aZ][aX];
+}
+
+int CharackMapGenerator::distanceFrom(int theTargetType, int theResolution, float theXObserver, float theZObserver, int theSample, int theDirection, int theMaxSteps) {
+	int aDistance = 0, aSteps = 0;
+	
+	theSample  *= theDirection;
+
+	while(aSteps < theMaxSteps) {
+		if(isLand(theXObserver, theZObserver, theResolution) == theTargetType) {
+			break; // target have been found
+		} else {
+			if(theDirection == MOVE_RIGHT || theDirection == MOVE_LEFT) {
+				theXObserver += theSample;
+			} else {
+				theZObserver += theSample;
+			}
+			aDistance++;
+			aSteps++;
+		}
+	}
+
+	return aDistance;
 }

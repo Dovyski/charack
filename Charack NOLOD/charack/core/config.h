@@ -46,11 +46,16 @@
 #define CK_SEA_LEVEL					600.0f
 #define CK_SEA_BOTTON					-200.0f
 
+// Distance between coast and water (moviment origin is land)
 #define CK_COAST_MAX_STEP				10
 #define CK_COAST_MAX_SEA_DISTANCE		(CK_COAST_MAX_STEP * 4)
 #define CK_COAST_VARIATION				0.20
 #define CK_COAST_BEACH_HEIGHT			700.0f
 #define CK_COAST_MANGLE_HEIGHT			1
+
+// Distance between water and coast (moviment origin is water)
+#define CK_COAST_DISTRB_MAX_STEP		10
+#define CK_COAST_DISTRB_MAX_DISTANCE	(CK_COAST_DISTRB_MAX_STEP * 4)
 
 // Distance from one vertex to another
 #define CK_MESH_SPACE					2000

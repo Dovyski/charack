@@ -41,6 +41,7 @@ class CharackObserver;
 
 #include "config.h"
 #include "../util/vector3.h"
+#include "../util/perlin.h"
 
 #define _CK_CG_GET(theMatrix, i, j)					(theMatrix[(i)*(CK_DIM_TERRAIN) + (j)])
 #define _CK_CG_CONSTRAINT_CHECK(z)					(z < CK_MAX_WIDTH)
@@ -51,21 +52,23 @@ class CharackObserver;
  */
 class CharackCoastGenerator {
 	private:
-		int mMaxSteps;
+		Perlin *mPerlinNoise;
+		int mMaxStepsLand;
+		int mMaxStepsWater;
 		float mMaxBeachHeight;
-		int distanceFromWater(CharackMapGenerator *theMapGenerator, float theXObserver, float theZObserver, int theSample, int theDirection);
+
+		float generateBeachHeight(float theTotalDistance);
+		float generateDisturbedCoastLineHeight(float theTotalDistance, float theXObserver, float theZObserver);
 
 	public:
-		static const int MOVE_RIGHT		= 1;
-		static const int MOVE_LEFT		= -1;
-		static const int MOVE_UP		= -1;
-		static const int MOVE_DOWN		= 1;
-
 		CharackCoastGenerator();
 		~CharackCoastGenerator();
 
-		void setMaxSteps(int theValue);
-		int getMaxSteps();
+		void setMaxStepsLand(int theValue);
+		int getMaxStepsLand();
+
+		void setMaxStepsWater(int theValue);
+		int getMaxStepsWater();
 
 		void setMaxBeachHeight(float theValue);
 		float getMaxBeachHeight();

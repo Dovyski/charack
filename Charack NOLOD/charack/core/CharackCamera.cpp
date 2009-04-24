@@ -34,8 +34,8 @@
 
 CharackCamera::CharackCamera()
 {
-	camPos.set(2067448.0f, 1510103.0f, 5015268.0f);
-	camDir.set(0.0f, -0.66f, -1.25f);
+	camPos.set(2067448.0f, 1190103.0f, 4557097.0f);
+	camDir.set(0.0f, -0.78f, -1.18f);
 	camVel = 0;
 
 	abertura = 40.0;

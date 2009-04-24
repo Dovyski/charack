@@ -127,12 +127,20 @@ class CharackMapGenerator {
 		
 		int isWater(int theI, int theJ);
 		void buildDescriptionMatrix();
-		int hithResolutionIsLand(float theX, float theZ);
+		int highResolutionIsLand(float theX, float theZ);
 
 	public:
-		static const int WATER			= 0;
-		static const int LAND			= 1;
-		static const int LAND_COAST		= 2;
+		static const int WATER			= 0; // water
+		static const int LAND			= 1; // pure land, not a coast line.
+		static const int LAND_COAST		= 2; // land, but a coast line one.
+
+		static const int RESOLUTION_LOW		= 0;
+		static const int RESOLUTION_HIGH	= 1;
+
+		static const int MOVE_RIGHT		= 1;
+		static const int MOVE_LEFT		= -1;
+		static const int MOVE_UP		= -1;
+		static const int MOVE_DOWN		= 1;
 
 		CharackMapGenerator();
 		~CharackMapGenerator();
@@ -144,11 +152,14 @@ class CharackMapGenerator {
 		// which means coast lines and similar things are not analyzed. The method isLand() will use the information
 		// of globalIsLand() as a "clue" to identify the coast lines, so it can generate a highly detailed map
 		// (with noised coast lines) that can be used to check if a specific position is land or water.
-		int isLand(float theX, float theZ);
+		int isLand(float theX, float theZ, int theResolution = CharackMapGenerator::RESOLUTION_HIGH);
 
 		// Get information about the specified position. The possible descriptions: CharackMapGenerator::WATER (ocean), 
 		// CharackMapGenerator::LAND (land within the coastline) and CharackMapGenerator::LAND_COAST (the coast line itself).
 		int getDescription(float theX, float theZ);
+
+		// Calculates the distance between two world positions.
+		int distanceFrom(int theTargetType, int theResolution, float theXObserver, float theZObserver, int theSample, int theDirection, int theMaxSteps);
 };
 
 #endif
