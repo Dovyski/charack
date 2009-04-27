@@ -37,8 +37,8 @@
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
 #define CK_MAX_HEIGHT					50000.0f
-#define CK_MACRO_MATRIX_WIDTH			1000
-#define CK_MACRO_MATRIX_HEIGHT			1000
+#define CK_MACRO_MATRIX_WIDTH			400
+#define CK_MACRO_MATRIX_HEIGHT			400
 
 // OpenGL scale behavior
 #define CK_SCALE						2000.0f
@@ -55,7 +55,7 @@
 #define CK_COAST_HIGH_RES_ISLAND		0.2
 
 // Settings for disturbing coast lines
-#define CK_COAST_DISTURBE				1
+#define CK_COAST_DISTURBE				0
 #define CK_COAST_DISTURBE_RATE			0.03f
 #define CK_COAST_DISTRB_MAX_STEP		8
 #define CK_COAST_DISTRB_MAX_DISTANCE	(CK_COAST_DISTRB_MAX_STEP * 4)

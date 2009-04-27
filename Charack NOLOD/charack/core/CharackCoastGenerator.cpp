@@ -50,7 +50,7 @@ void CharackCoastGenerator::setMaxStepsWater(int theValue) {
 }
 
 int CharackCoastGenerator::getMaxStepsWater() {
-	return mMaxStepsLand;
+	return mMaxStepsWater;
 }
 
 void CharackCoastGenerator::setMaxBeachHeight(float theValue) {
