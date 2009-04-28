@@ -55,7 +55,7 @@
 #define CK_COAST_HIGH_RES_ISLAND		0.2
 
 // Settings for disturbing coast lines
-#define CK_COAST_DISTURBE				0
+#define CK_COAST_DISTURBE				1
 #define CK_COAST_DISTURBE_RATE			0.03f
 #define CK_COAST_DISTRB_MAX_STEP		8
 #define CK_COAST_DISTRB_MAX_DISTANCE	(CK_COAST_DISTRB_MAX_STEP * 4)

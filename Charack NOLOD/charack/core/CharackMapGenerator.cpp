@@ -713,7 +713,7 @@ double fmax_dov(double x, double y)
 
 
 int CharackMapGenerator::highResolutionIsLand(float theX, float theZ) {
-	return abs(mPerlinNoise->Get(theX/100000, theZ/100000)) > CK_COAST_HIGH_RES_ISLAND ? LAND : WATER;
+	return abs(mPerlinNoise->Get(theX/150000, theZ/150000)) > CK_COAST_HIGH_RES_ISLAND ? LAND : WATER;
 }
 
 int CharackMapGenerator::isLand(float theX, float theZ, int theResolution) {
