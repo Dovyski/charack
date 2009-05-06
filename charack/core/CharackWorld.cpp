@@ -50,8 +50,9 @@ CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
 CharackWorld::~CharackWorld() {
 }
 
-void CharackWorld::render(void) {
-	getCamera()->render();
+int CharackWorld::update(void) {
+//	getCamera()->render();
+	int aRet = 0;
 
 	if(getWorldSlice()->updateData()) {
 		// The slice has changed. We must update the terrain mesh
@@ -69,9 +70,12 @@ void CharackWorld::render(void) {
 
 		// Make all data smooth to avoid sharpen edges.
 		getTerrain()->makeDataSmooth(CK_HOW_SMOOTH);
+
+		aRet = 1;
 	}
 
-	getTerrain()->render(getScale());
+	return aRet;
+	//getTerrain()->render(getScale());
 }
 
 void CharackWorld::renderReferenceAxis() {

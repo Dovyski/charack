@@ -29,7 +29,7 @@
 #define __CHARACK_CONFIG_H_
 
 // How many points will be collected (in X and Z) to render the world
-#define CK_DIM_TERRAIN					128
+#define CK_DIM_TERRAIN					70
 
 // How far the user can see, in pixels
 #define CK_VIEW_FRUSTUM					1000

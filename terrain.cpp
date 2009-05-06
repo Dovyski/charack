@@ -74,7 +74,7 @@ void HeightMap::destroy()
     m_heights.clear();
 }
 
-void HeightMap::generateDiamondSquareFractal(float roughness)
+bool HeightMap::generateDiamondSquareFractal(float roughness)
 {
     // Generates a fractal height field using the diamond-square (midpoint
     // displacement) algorithm. Note that only square height fields work with
@@ -83,7 +83,7 @@ void HeightMap::generateDiamondSquareFractal(float roughness)
     // Based on article and associated code:
     // "Fractal Terrain Generation - Midpoint Displacement" by Jason Shankel
     // (Game Programming Gems I, pp.503-507).
-
+/*
     srand(static_cast<unsigned int>(time(0)));
 
     std::fill(m_heights.begin(), m_heights.end(), 0.0f);
@@ -151,28 +151,51 @@ void HeightMap::generateDiamondSquareFractal(float roughness)
 //	for (int i = 0; i < m_size * m_size; ++i) {
 //        m_heights[i] = 0;
 //	}
+*/
 
+/*
 FILE *aFile;
 aFile = fopen("log.txt", "w+");
 
 	if(aFile == NULL) {
         throw std::runtime_error("Failed to generate log file.");
 	}
-	
+*/
+
+/////////////////////////////////////////////////
+// FUNCIONANDO
+/////////////////////////////////////////////////
+/*
 	g_world.render();
 	float *aData =  g_world.getTerrain()->getData();
 
 	for (int i = 0; i < m_size * m_size; ++i) {
 		m_heights[i] = aData[i];
 	}
+*/
+
+
+	if(g_world.update()) {
+		float *aData =  g_world.getTerrain()->getData();
+
+		for (int i = 0; i < m_size * m_size; ++i) {
+			m_heights[i] = aData[i];
+		}
+
+		return true;
+	} else {
+
+		return false;
+	}
+
 
     // Normalize height field so altitudes fall into range [0,255].
-	for (int i = 0; i < m_size * m_size; ++i) {
+//	for (int i = 0; i < m_size * m_size; ++i) {
         //m_heights[i] = 255.0f * (m_heights[i] - minH) / (maxH - minH);
         //m_heights[i] = 255.0f * (m_heights[i] - CK_SEA_BOTTON) / (CK_MAX_HEIGHT - CK_SEA_BOTTON);
-		fprintf(aFile, "m_heights[%i] = %.2f\n", i, m_heights[i]);
-	}
-fclose(aFile);
+//		fprintf(aFile, "m_heights[%i] = %.2f\n", i, m_heights[i]);
+//	}
+//fclose(aFile);
 }
 
 float HeightMap::heightAt(float x, float z) const
@@ -449,8 +472,13 @@ void Terrain::draw()
 
 bool Terrain::generateUsingDiamondSquareFractal(float roughness)
 {
-    m_heightMap.generateDiamondSquareFractal(roughness);
-    return generateVertices();
+    bool aRet = true;
+
+	if(m_heightMap.generateDiamondSquareFractal(roughness)) {
+		aRet = generateVertices();
+	}
+
+	return aRet;
 }
 
 void Terrain::update(const Vector3 &cameraPos)

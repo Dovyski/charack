@@ -545,7 +545,7 @@ Vector3 GetMovementDirection()
     Vector3 velocity = g_camera.getCurrentVelocity();
     Keyboard &keyboard = Keyboard::instance();
 
-    if (keyboard.keyDown(Keyboard::KEY_UP) || keyboard.keyDown(Keyboard::KEY_W))
+    if (keyboard.keyDown(Keyboard::KEY_W))
     {
         if (!moveForwardsPressed)
         {
@@ -560,7 +560,7 @@ Vector3 GetMovementDirection()
         moveForwardsPressed = false;
     }
 
-    if (keyboard.keyDown(Keyboard::KEY_DOWN) || keyboard.keyDown(Keyboard::KEY_S))
+    if (keyboard.keyDown(Keyboard::KEY_S))
     {
         if (!moveBackwardsPressed)
         {
@@ -575,7 +575,7 @@ Vector3 GetMovementDirection()
         moveBackwardsPressed = false;
     }
 
-    if (keyboard.keyDown(Keyboard::KEY_RIGHT) || keyboard.keyDown(Keyboard::KEY_D))
+    if (keyboard.keyDown(Keyboard::KEY_D))
     {
         if (!moveRightPressed)
         {
@@ -590,7 +590,7 @@ Vector3 GetMovementDirection()
         moveRightPressed = false;
     }
 
-    if (keyboard.keyDown(Keyboard::KEY_LEFT) || keyboard.keyDown(Keyboard::KEY_A))
+    if (keyboard.keyDown(Keyboard::KEY_A))
     {
         if (!moveLeftPressed)
         {
@@ -605,7 +605,7 @@ Vector3 GetMovementDirection()
         moveLeftPressed = false;
     }
 
-    if (keyboard.keyDown(Keyboard::KEY_E) || keyboard.keyDown(Keyboard::KEY_PAGEUP))
+    if (keyboard.keyDown(Keyboard::KEY_PAGEUP))
     {
         if (!moveUpPressed)
         {
@@ -620,7 +620,7 @@ Vector3 GetMovementDirection()
         moveUpPressed = false;
     }
 
-    if (keyboard.keyDown(Keyboard::KEY_Q) || keyboard.keyDown(Keyboard::KEY_PAGEDOWN))
+    if (keyboard.keyDown(Keyboard::KEY_PAGEDOWN))
     {
         if (!moveDownPressed)
         {
@@ -945,13 +945,17 @@ void PerformCameraCollisionDetection()
     if (pos.z < g_cameraBoundsMin.z)
         newPos.z = g_cameraBoundsMin.z;
 
-    newPos.y = g_terrain.getHeightMap().heightAt(newPos.x, newPos.z) + CAMERA_Y_OFFSET;
+    //newPos.y = g_terrain.getHeightMap().heightAt(newPos.x, newPos.z) + CAMERA_Y_OFFSET;
+	newPos.y = g_world.getObserver()->getPositionY();
 
     g_camera.setPosition(newPos);
 }
 
 void ProcessUserInput()
 {
+	int aSpeed	 = 1;
+	int aSpeedUp = (int)(g_world.getSample() * 1.10);
+
     Keyboard &keyboard = Keyboard::instance();
 
     if (keyboard.keyPressed(Keyboard::KEY_ESCAPE))
@@ -993,6 +997,41 @@ void ProcessUserInput()
 
     if (keyboard.keyPressed(Keyboard::KEY_T))
         g_disableColorMaps = !g_disableColorMaps;
+
+
+	// Charack world movement
+
+    if(keyboard.keyDown(Keyboard::KEY_UP)) {
+		g_world.getObserver()->moveForward(aSpeed * aSpeedUp);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_DOWN)) {
+		g_world.getObserver()->moveBackward(aSpeed * aSpeedUp);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_RIGHT)) {
+		g_world.getObserver()->moveRight(aSpeed * aSpeedUp);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_LEFT)) {
+		g_world.getObserver()->moveLeft(aSpeed * aSpeedUp);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_R)) {
+		g_world.getObserver()->moveUpDown(aSpeed);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_F)) {
+		g_world.getObserver()->moveUpDown(-aSpeed);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_F12)) {
+		g_world.setSample(g_world.getSample() + 1);
+    }
+
+    if(keyboard.keyDown(Keyboard::KEY_F11)) {
+		g_world.setSample(g_world.getSample() - 1);
+    }
 }
 
 void ReadTextFile(const char *pszFilename, std::string &buffer)
@@ -1114,6 +1153,13 @@ void RenderText()
             << " z:" << g_camera.getCurrentVelocity().z << std::endl
             << "  Rotation speed: " << g_camera.getRotationSpeed() << std::endl
             << std::endl
+            << "Charack:" << std::endl
+            << "  Position:"
+            << " x:" << g_world.getObserver()->getPositionX()
+            << " y:" << g_world.getObserver()->getPositionY()
+            << " z:" << g_world.getObserver()->getPositionZ() << std::endl
+			<< "  Sample:" << g_world.getSample() << std::endl
+            << std::endl
             << "Press H to display help";
     }
 
@@ -1224,6 +1270,8 @@ void UpdateCamera(float elapsedTimeSec)
 void UpdateFrame(float elapsedTimeSec)
 {
     UpdateFrameRate(elapsedTimeSec);
+
+    GenerateTerrain();
 
     Mouse::instance().update();
     Keyboard::instance().update();

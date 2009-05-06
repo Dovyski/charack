@@ -99,7 +99,7 @@ class CharackWorld {
 		void printDebugInfo(void);
 
 		void placeObserverOnLand(void);
-		void render(void);
+		int update(void);
 		void renderReferenceAxis(void);
 		void renderOcean(void);
 		void renderFog(void);

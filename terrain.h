@@ -48,7 +48,7 @@ public:
     bool create(int size, int gridSpacing, float scale);
     void destroy();
 
-    void generateDiamondSquareFractal(float roughness);
+    bool generateDiamondSquareFractal(float roughness);
 
     float heightAt(float x, float z) const;
 
