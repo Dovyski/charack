@@ -158,6 +158,8 @@ class CharackMapGenerator {
 		// CharackMapGenerator::LAND (land within the coastline) and CharackMapGenerator::LAND_COAST (the coast line itself).
 		int getDescription(float theX, float theZ);
 
+		int **getDescriptionMatrix();
+
 		// Calculates the distance between two world positions.
 		int distanceFrom(int theTargetType, int theResolution, float theXObserver, float theZObserver, int theSample, int theDirection, int theMaxSteps);
 };

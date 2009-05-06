@@ -142,10 +142,10 @@ CharackWorld		g_world(300, 1);
 TerrainRegion g_regions[TERRAIN_REGIONS_COUNT] =
 {
     // Terrain region 1.
-    0.0f, 50.0f * HEIGHTMAP_SCALE, 0, "content/textures/dirt.jpg",
+    0.0f, 50.0f * HEIGHTMAP_SCALE, 0, "content/textures/grass.jpg",
 
     // Terrain region 2.
-    51.0f * HEIGHTMAP_SCALE, 101.0f * HEIGHTMAP_SCALE, 0, "content/textures/grass.jpg",
+    51.0f * HEIGHTMAP_SCALE, 101.0f * HEIGHTMAP_SCALE, 0, "content/textures/dirt.jpg",
 
     // Terrain region 3.
     102.0f * HEIGHTMAP_SCALE, 203.0f * HEIGHTMAP_SCALE, 0, "content/textures/rock.jpg",
@@ -182,6 +182,7 @@ void    ReadTextFile(const char *pszFilename, std::string &buffer);
 void    RenderFrame();
 void    RenderTerrain();
 void    RenderText();
+void    RenderWorldMap();
 void    SetProcessorAffinity();
 void    ToggleFullScreen();
 void    UpdateCamera(float elapsedTimeSec);
@@ -1069,6 +1070,7 @@ void RenderFrame()
 
     RenderTerrain();
     RenderText();
+	RenderWorldMap();
 }
 
 void RenderTerrain()
@@ -1167,6 +1169,57 @@ void RenderText()
     g_font.setColor(1.0f, 1.0f, 0.0f);
     g_font.drawText(1, 1, output.str().c_str());
     g_font.end();
+}
+
+void RenderWorldMap() {
+    HWND hWnd = GetForegroundWindow();
+    RECT rcClient;
+
+    GetClientRect(hWnd, &rcClient);
+
+    int w = rcClient.right - rcClient.left;
+    int h = rcClient.bottom - rcClient.top;
+
+    glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
+
+    glDisable(GL_LIGHTING);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //glEnable(GL_TEXTURE_2D);
+    //glBindTexture(GL_TEXTURE_2D, m_fontTexture);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0f, w, h, 0.0f, -1.0f, 1.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    //glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+
+    //drawTextBegin();
+
+	g_world.renderWorldMap();
+
+    //drawTextEnd();
+
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    //glDisable(GL_TEXTURE_2D);
+
+    glDisable(GL_BLEND);
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glPopAttrib();
 }
 
 void SetProcessorAffinity()

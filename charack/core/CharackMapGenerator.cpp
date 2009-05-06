@@ -788,3 +788,7 @@ int CharackMapGenerator::distanceFrom(int theTargetType, int theResolution, floa
 
 	return aDistance;
 }
+
+int **CharackMapGenerator::getDescriptionMatrix() {
+	return (int **)mDescriptionMatrix;
+}

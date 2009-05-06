@@ -129,6 +129,35 @@ void CharackWorld::renderReferenceAxis() {
     glDisable(GL_LINE_STIPPLE); // Disable the line stipple
 }
 
+
+void CharackWorld::renderWorldMap() {
+	int **aMatrix = getMapGenerator()->getDescriptionMatrix(), i, j, x, y;
+    glPushMatrix();
+
+    glRotatef(0.0f,1.0,0.0,0.0);
+    glRotatef(0.0f,0.0,1.0,0.0);
+    glRotatef(0.0f,0.0,0.0,1.0);
+    glTranslatef(0.0f, 0.0f, 0.0f);
+
+    glBegin(GL_POINTS);
+
+	for(i = 0, y = 0; i < CK_MACRO_MATRIX_WIDTH; i++, y++) {
+		for(j = 0, x = 0; j < CK_MACRO_MATRIX_WIDTH; j++, x++) {
+			if(aMatrix[i * CK_MACRO_MATRIX_WIDTH + j] == CharackMapGenerator::WATER) {
+				glColor3f (0.0, 0.0, 1.0);
+			} else {
+				// CharackMapGenerator::LAND or CharackMapGenerator::LAND_COAST
+				glColor3f (1.0, 0.0, 0.0);
+			}
+			glVertex3f(x,y,0);
+		}
+	}
+
+    glEnd();
+
+	glPopMatrix();
+}
+
 void CharackWorld::renderOcean() {
 	float aLength = 600000;
 	float aHeight = 80;
