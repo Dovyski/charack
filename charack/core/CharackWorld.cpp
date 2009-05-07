@@ -258,7 +258,7 @@ void CharackWorld::printDebugInfo(void) {
 
 void CharackWorld::placeObserverOnLand() {
 	// TODO: FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	getObserver()->setPosition(1124947.0f, -240.0f, 7710.0f); return;
+	getObserver()->setPosition(1124947.0f, 400.0f, 7710.0f); return;
 
 	for(int z=0; z < CK_MAX_WIDTH; z++) {
 		for(int x=0; x < CK_MAX_WIDTH; x++) {

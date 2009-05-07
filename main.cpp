@@ -94,7 +94,7 @@ const int       HEIGHTMAP_SIZE = 128;
 const int       HEIGHTMAP_GRID_SPACING = 16;
 
 const float     CAMERA_FOVX = 90.0f;
-const float     CAMERA_ZFAR = HEIGHTMAP_SIZE * HEIGHTMAP_GRID_SPACING * 2.0f;
+const float     CAMERA_ZFAR = CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 2.0f;
 const float     CAMERA_ZNEAR = 1.0f;
 const float     CAMERA_Y_OFFSET = 25.0f;
 const Vector3   CAMERA_ACCELERATION(400.0f, 400.0f, 400.0f);
@@ -129,6 +129,8 @@ bool                g_hasFocus;
 bool                g_enableVerticalSync;
 bool                g_displayHelp;
 bool                g_disableColorMaps;
+bool                g_worldMapEnabled;
+bool                g_isFlyingEnabled;
 float               g_lightDir[4] = {0.0f, 1.0f, 0.0f, 0.0f};
 GLuint              g_nullTexture;
 GLuint              g_terrainShader;
@@ -185,6 +187,7 @@ void    RenderText();
 void    RenderWorldMap();
 void    SetProcessorAffinity();
 void    ToggleFullScreen();
+void    GenerateNewWorld();
 void    UpdateCamera(float elapsedTimeSec);
 void    UpdateFrame(float elapsedTimeSec);
 void    UpdateFrameRate(float elapsedTimeSec);
@@ -703,8 +706,8 @@ void InitApp()
 
     Vector3 pos;
 
-    pos.x = HEIGHTMAP_SIZE * HEIGHTMAP_GRID_SPACING * 0.5f;
-    pos.z = HEIGHTMAP_SIZE * HEIGHTMAP_GRID_SPACING * 0.5f;
+    pos.x = CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 0.5f;
+    pos.z = CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 0.5f;
     pos.y = g_terrain.getHeightMap().heightAt(pos.x, pos.z) + CAMERA_Y_OFFSET;
 
     g_camera.setBehavior(Camera::CAMERA_BEHAVIOR_FIRST_PERSON);
@@ -716,7 +719,8 @@ void InitApp()
         static_cast<float>(g_windowWidth) / static_cast<float>(g_windowHeight),
         CAMERA_ZNEAR, CAMERA_ZFAR);
 
-    float upperBounds = (HEIGHTMAP_SIZE * HEIGHTMAP_GRID_SPACING - (2.0f * HEIGHTMAP_GRID_SPACING));
+    float upperBounds = (CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING - (2.0f * HEIGHTMAP_GRID_SPACING));
+	//float upperBounds = (HEIGHTMAP_SIZE * HEIGHTMAP_GRID_SPACING - (2.0f * HEIGHTMAP_GRID_SPACING));
     float lowerBounds = static_cast<float>(HEIGHTMAP_GRID_SPACING);
 
     g_cameraBoundsMax.x = upperBounds;
@@ -726,6 +730,10 @@ void InitApp()
     g_cameraBoundsMin.x = lowerBounds;
     g_cameraBoundsMin.y = 0.0f;
     g_cameraBoundsMin.z = lowerBounds;
+
+	// Camera control and GUI
+	g_worldMapEnabled = false;
+	g_isFlyingEnabled = false;
 
     // Setup input.
 
@@ -934,20 +942,24 @@ void PerformCameraCollisionDetection()
     const Vector3 &pos = g_camera.getPosition();
     Vector3 newPos(pos);
 
-    if (pos.x > g_cameraBoundsMax.x)
-        newPos.x = g_cameraBoundsMax.x;
+	if(g_isFlyingEnabled) {
+		newPos.y = g_world.getObserver()->getPositionY();
 
-    if (pos.x < g_cameraBoundsMin.x)
-        newPos.x = g_cameraBoundsMin.x;
+	} else {
+		if (pos.x > g_cameraBoundsMax.x)
+			newPos.x = g_cameraBoundsMax.x;
 
-    if (pos.z > g_cameraBoundsMax.z)
-        newPos.z = g_cameraBoundsMax.z;
+		if (pos.x < g_cameraBoundsMin.x)
+			newPos.x = g_cameraBoundsMin.x;
 
-    if (pos.z < g_cameraBoundsMin.z)
-        newPos.z = g_cameraBoundsMin.z;
+		if (pos.z > g_cameraBoundsMax.z)
+			newPos.z = g_cameraBoundsMax.z;
 
-    //newPos.y = g_terrain.getHeightMap().heightAt(newPos.x, newPos.z) + CAMERA_Y_OFFSET;
-	newPos.y = g_world.getObserver()->getPositionY();
+		if (pos.z < g_cameraBoundsMin.z)
+			newPos.z = g_cameraBoundsMin.z;
+
+		newPos.y = g_terrain.getHeightMap().heightAt(newPos.x, newPos.z) + CAMERA_Y_OFFSET;
+	}
 
     g_camera.setPosition(newPos);
 }
@@ -991,7 +1003,7 @@ void ProcessUserInput()
         EnableVerticalSync(!g_enableVerticalSync);
 
     if (keyboard.keyPressed(Keyboard::KEY_SPACE))
-        GenerateTerrain();
+        GenerateNewWorld();
 
     if (keyboard.keyPressed(Keyboard::KEY_M))
         Mouse::instance().smoothMouse(!Mouse::instance().mouseSmoothingIsEnabled());
@@ -1000,7 +1012,11 @@ void ProcessUserInput()
         g_disableColorMaps = !g_disableColorMaps;
 
 
-	// Charack world movement
+	/////////////////////////////////////////////////////
+	// Charack settings
+	/////////////////////////////////////////////////////
+
+	// World movement
 
     if(keyboard.keyDown(Keyboard::KEY_UP)) {
 		g_world.getObserver()->moveForward(aSpeed * aSpeedUp);
@@ -1026,12 +1042,24 @@ void ProcessUserInput()
 		g_world.getObserver()->moveUpDown(-aSpeed);
     }
 
+	// Sampling
+
     if(keyboard.keyDown(Keyboard::KEY_F12)) {
 		g_world.setSample(g_world.getSample() + 1);
     }
 
     if(keyboard.keyDown(Keyboard::KEY_F11)) {
 		g_world.setSample(g_world.getSample() - 1);
+    }
+
+	// World map
+    if(keyboard.keyPressed(Keyboard::KEY_F10)) {
+		g_worldMapEnabled = !g_worldMapEnabled;
+    }
+
+	// Walk orver the scene or fly over it
+    if(keyboard.keyPressed(Keyboard::KEY_F9)) {
+		g_isFlyingEnabled = !g_isFlyingEnabled;
     }
 }
 
@@ -1070,7 +1098,10 @@ void RenderFrame()
 
     RenderTerrain();
     RenderText();
-	RenderWorldMap();
+	
+	if(g_worldMapEnabled) {
+		RenderWorldMap();
+	}
 }
 
 void RenderTerrain()
@@ -1126,9 +1157,12 @@ void RenderText()
             << "Press M to enable/disable mouse smoothing" << std::endl
             << "Press T to enable/disable textures" << std::endl
             << "Press V to enable/disable vertical sync" << std::endl
-            << "Press SPACE to generate a new random terrain" << std::endl
+            << "Press SPACE to generate a new world" << std::endl
             << "Press +/- to change camera rotation speed" << std::endl
             << "Press ALT + ENTER to toggle full screen" << std::endl
+            << "Press F11/F12 to change world sample" << std::endl
+            << "Press F10 to show/hide world map" << std::endl
+            << "Press F9 to enable/disable flying camera" << std::endl
             << "Press ESC to exit" << std::endl
             << std::endl
             << "Press H to hide help";
@@ -1156,7 +1190,7 @@ void RenderText()
             << "  Rotation speed: " << g_camera.getRotationSpeed() << std::endl
             << std::endl
             << "Charack:" << std::endl
-            << "  Position:"
+            << "  Observer:"
             << " x:" << g_world.getObserver()->getPositionX()
             << " y:" << g_world.getObserver()->getPositionY()
             << " z:" << g_world.getObserver()->getPositionZ() << std::endl
@@ -1304,6 +1338,12 @@ void ToggleFullScreen()
     g_camera.perspective(CAMERA_FOVX,
         static_cast<float>(g_windowWidth) / static_cast<float>(g_windowHeight),
         CAMERA_ZNEAR, CAMERA_ZFAR);
+}
+
+
+
+void GenerateNewWorld() {
+
 }
 
 void UpdateCamera(float elapsedTimeSec)
