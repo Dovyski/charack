@@ -142,6 +142,9 @@ class CharackMapGenerator {
 		static const int MOVE_UP		= -1;
 		static const int MOVE_DOWN		= 1;
 
+		static const int AXIS_X			= 1;
+		static const int AXIS_Z			= 2;
+
 		CharackMapGenerator();
 		~CharackMapGenerator();
 
@@ -159,6 +162,7 @@ class CharackMapGenerator {
 		int getDescription(float theX, float theZ);
 
 		int **getDescriptionMatrix();
+		int getMatrixIndex(float theWorldPos, int theAxis);
 
 		// Calculates the distance between two world positions.
 		int distanceFrom(int theTargetType, int theResolution, float theXObserver, float theZObserver, int theSample, int theDirection, int theMaxSteps);

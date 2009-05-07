@@ -732,7 +732,7 @@ void InitApp()
     g_cameraBoundsMin.z = lowerBounds;
 
 	// Camera control and GUI
-	g_worldMapEnabled = false;
+	g_worldMapEnabled = true;
 	g_isFlyingEnabled = false;
 
     // Setup input.
@@ -967,7 +967,7 @@ void PerformCameraCollisionDetection()
 void ProcessUserInput()
 {
 	int aSpeed	 = 1;
-	int aSpeedUp = (int)(g_world.getSample() * 1.10);
+	int aSpeedUp = (int)(g_world.getSample() * 100);
 
     Keyboard &keyboard = Keyboard::instance();
 
@@ -1214,46 +1214,7 @@ void RenderWorldMap() {
     int w = rcClient.right - rcClient.left;
     int h = rcClient.bottom - rcClient.top;
 
-    glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
-
-    glDisable(GL_LIGHTING);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //glEnable(GL_TEXTURE_2D);
-    //glBindTexture(GL_TEXTURE_2D, m_fontTexture);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0f, w, h, 0.0f, -1.0f, 1.0f);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    //glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-    //drawTextBegin();
-
-	g_world.renderWorldMap();
-
-    //drawTextEnd();
-
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    //glBindTexture(GL_TEXTURE_2D, 0);
-    //glDisable(GL_TEXTURE_2D);
-
-    glDisable(GL_BLEND);
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-
-    glPopAttrib();
+	g_world.renderWorldMap(w, h);
 }
 
 void SetProcessorAffinity()

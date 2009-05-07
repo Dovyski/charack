@@ -130,32 +130,66 @@ void CharackWorld::renderReferenceAxis() {
 }
 
 
-void CharackWorld::renderWorldMap() {
-	int **aMatrix = getMapGenerator()->getDescriptionMatrix(), i, j, x, y;
-    glPushMatrix();
+void CharackWorld::renderWorldMap(int theScreenWidth, int theScreenHeight) {
+	int **aMatrix = getMapGenerator()->getDescriptionMatrix(), i, j, x, y, aIndexX, aIndexZ, aOffsetX, aOffsetY;
 
-    glRotatef(0.0f,1.0,0.0,0.0);
-    glRotatef(0.0f,0.0,1.0,0.0);
-    glRotatef(0.0f,0.0,0.0,1.0);
-    glTranslatef(0.0f, 0.0f, 0.0f);
+    glPushAttrib(GL_CURRENT_BIT | GL_LIGHTING_BIT);
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0f, theScreenWidth, theScreenHeight, 0.0f, -1.0f, 1.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+	aOffsetX = theScreenWidth - CK_MACRO_MATRIX_WIDTH;
+	aOffsetY = 0;
+
+	aIndexX = getMapGenerator()->getMatrixIndex(getObserver()->getPositionX(), CharackMapGenerator::AXIS_X);
+	aIndexZ = getMapGenerator()->getMatrixIndex(getObserver()->getPositionZ(), CharackMapGenerator::AXIS_Z);
 
     glBegin(GL_POINTS);
-
-	for(i = 0, y = 0; i < CK_MACRO_MATRIX_WIDTH; i++, y++) {
-		for(j = 0, x = 0; j < CK_MACRO_MATRIX_WIDTH; j++, x++) {
-			if(aMatrix[i * CK_MACRO_MATRIX_WIDTH + j] == CharackMapGenerator::WATER) {
-				glColor3f (0.0, 0.0, 1.0);
-			} else {
-				// CharackMapGenerator::LAND or CharackMapGenerator::LAND_COAST
-				glColor3f (1.0, 0.0, 0.0);
-			}
-			glVertex3f(x,y,0);
-		}
+	for(x = 0; x < CK_MACRO_MATRIX_WIDTH; x++) {
+		glColor4f (1.0, 0.0, 0.0, 0.9f);
+		glVertex3f(aOffsetX + x, aIndexZ, 0);
 	}
 
+	for(y = 0; y < CK_MACRO_MATRIX_HEIGHT; y++) {
+		glColor4f (1.0, 0.0, 0.0, 0.9f);
+		glVertex3f(aOffsetX + aIndexX, y, 0);
+	}
     glEnd();
 
-	glPopMatrix();
+    glBegin(GL_POINTS);
+	for(i = 0, y = 0; i < CK_MACRO_MATRIX_HEIGHT; i++, y++) {
+		for(j = 0, x = 0; j < CK_MACRO_MATRIX_WIDTH; j++, x++) {
+			if(aIndexX == x && aIndexZ == y) {
+				glColor4f (1.0, 0.0, 0.0, 0.9f);
+			} else {
+				if(aMatrix[i * CK_MACRO_MATRIX_WIDTH + j] == CharackMapGenerator::WATER) {
+					glColor4f (0.0, 0.0, 0.0, 0.9f);
+				} else {
+					glColor4f (0.0, 1.0, 0.0, 0.9f);
+				}
+			}
+			glVertex3f(theScreenWidth - CK_MACRO_MATRIX_WIDTH + x, y, 0);
+		}
+	}
+    glEnd();
+
+    glDisable(GL_BLEND);
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glPopAttrib();
 }
 
 void CharackWorld::renderOcean() {

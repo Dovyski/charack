@@ -101,7 +101,7 @@ class CharackWorld {
 		void placeObserverOnLand(void);
 		int update(void);
 		void renderReferenceAxis(void);
-		void renderWorldMap(void);
+		void renderWorldMap(int theScreenWidth, int theScreenHeight);
 		void renderOcean(void);
 		void renderFog(void);
 

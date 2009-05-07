@@ -716,6 +716,13 @@ int CharackMapGenerator::highResolutionIsLand(float theX, float theZ) {
 	return abs(mPerlinNoise->Get(theX/150000, theZ/150000)) > CK_COAST_HIGH_RES_ISLAND ? LAND : WATER;
 }
 
+int CharackMapGenerator::getMatrixIndex(float theWorldPos, int theAxis) {
+	int aX = (int)abs(floor((theWorldPos/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aZ = (int)abs(floor((theWorldPos/CK_MAX_WIDTH) * CK_MACRO_MATRIX_HEIGHT));
+
+	return theAxis == AXIS_X ? aX : aZ;
+}
+
 int CharackMapGenerator::isLand(float theX, float theZ, int theResolution) {
 	int aRet = CharackMapGenerator::LAND;
 	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
