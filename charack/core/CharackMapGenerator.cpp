@@ -123,13 +123,13 @@ void CharackMapGenerator::generate() {
   rseed = 0.123;
   
   vgrid = hgrid = 0.0;
-
+/*
 	outfile = fopen(filename,"wb");
 
 	if (outfile == NULL) {
 		fprintf(stderr, "Could not open output file %s, error code = %d\n", filename, errno);
 		exit(0);
-	}
+	}*/
   
   if (longi>180) longi -= 360;
   longi = longi*DEG2RAD;
@@ -153,7 +153,7 @@ void CharackMapGenerator::generate() {
   makeoutline(1);
   buildDescriptionMatrix();
 	
-  printbmpBW(outfile);
+  //printbmpBW(outfile);
 }
 
 void CharackMapGenerator::setcolours()
