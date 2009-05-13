@@ -66,31 +66,13 @@
 
 class CharackTerrain {
 	private:
-		float hs[CK_DIM_TERRAIN][CK_DIM_TERRAIN]; //Heights
-		Vec3f normals[CK_DIM_TERRAIN][CK_DIM_TERRAIN];
-		bool computedNormals; //Whether normals is up-to-date
-		Perlin *mPerlinNoise;
+		float *mHeightData;
+
 	public:
 		CharackTerrain();
 		~CharackTerrain();
-		
-		//Sets the height at (x, z) to y
-		void setHeight(int x, int z, float y);
-		
-		//Returns the height at (x, z)
-		float getHeight(int x, int z);
-		
-		//Computes the normals, if they haven't been computed yet
-		void computeNormals();
-		
-		//Returns the normal at (x, z)
-		Vec3f getNormal(int x, int z);
-
-		void render(float theScale);
 
 		void loadData(float *theData);
-		void applyColorByHeight(float theX, float theY, float theZ);
-		void makeDataSmooth(int theHowManyTimes);
 		float *getData();
 };
 

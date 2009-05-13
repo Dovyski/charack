@@ -40,6 +40,7 @@ extern CharackWorld g_world;
 
 HeightMap::HeightMap() : m_size(0), m_gridSpacing(0), m_heightScale(1.0f)
 {
+
 }
 
 HeightMap::~HeightMap()
@@ -83,97 +84,6 @@ bool HeightMap::generateDiamondSquareFractal(float roughness)
     // Based on article and associated code:
     // "Fractal Terrain Generation - Midpoint Displacement" by Jason Shankel
     // (Game Programming Gems I, pp.503-507).
-/*
-    srand(static_cast<unsigned int>(time(0)));
-
-    std::fill(m_heights.begin(), m_heights.end(), 0.0f);
-
-    int p1, p2, p3, p4, mid;
-    float dH = m_size * 0.5f;
-    float dHFactor = powf(2.0f, -roughness);
-    float minH = 0.0f, maxH = 0.0f;
-
-    for (int w = m_size; w > 0; dH *= dHFactor, w /= 2)
-    {
-        // Diamond Step.
-        for (int z = 0; z < m_size; z += w)
-        {
-            for (int x = 0; x < m_size; x += w)
-            {
-                p1 = heightIndexAt(x, z);
-                p2 = heightIndexAt(x + w, z);
-                p3 = heightIndexAt(x + w, z + w);
-                p4 = heightIndexAt(x, z + w);
-                mid = heightIndexAt(x + w / 2, z + w / 2);
-
-//                m_heights[mid] = Math::random(-dH, dH) + (m_heights[p1] + m_heights[p2] + m_heights[p3] + m_heights[p4]) * 0.25f;
-                m_heights[mid] = Math::random(-10, 500);
-
-                minH = min(minH, m_heights[mid]);
-                maxH = max(maxH, m_heights[mid]);
-            }
-        }
-
-        // Square step.
-        for (int z = 0; z < m_size; z += w)
-        {
-            for (int x = 0; x < m_size; x += w)
-            {
-                p1 = heightIndexAt(x, z);
-                p2 = heightIndexAt(x + w, z);
-                p3 = heightIndexAt(x + w / 2, z - w / 2);
-                p4 = heightIndexAt(x + w / 2, z + w / 2);
-                mid = heightIndexAt(x + w / 2, z);
-
-//                m_heights[mid] = Math::random(-dH, dH) + (m_heights[p1] + m_heights[p2] + m_heights[p3] + m_heights[p4]) * 0.25f;
-                m_heights[mid] = Math::random(-dH, dH);
-
-                minH = min(minH, m_heights[mid]);
-                maxH = max(maxH, m_heights[mid]);
-
-                p1 = heightIndexAt(x, z);
-                p2 = heightIndexAt(x, z + w);
-                p3 = heightIndexAt(x + w / 2, z + w / 2);
-                p3 = heightIndexAt(x - w / 2, z + w / 2);
-                mid = heightIndexAt(x, z + w / 2);
-
-//                m_heights[mid] = Math::random(-dH, dH) + (m_heights[p1] + m_heights[p2] + m_heights[p3] + m_heights[p4]) * 0.25f;
-                m_heights[mid] = Math::random(-dH, dH);
-
-                minH = min(minH, m_heights[mid]);
-                maxH = max(maxH, m_heights[mid]);
-            }
-        }
-    }
-
-    smooth();
-
-//	for (int i = 0; i < m_size * m_size; ++i) {
-//        m_heights[i] = 0;
-//	}
-*/
-
-/*
-FILE *aFile;
-aFile = fopen("log.txt", "w+");
-
-	if(aFile == NULL) {
-        throw std::runtime_error("Failed to generate log file.");
-	}
-*/
-
-/////////////////////////////////////////////////
-// FUNCIONANDO
-/////////////////////////////////////////////////
-/*
-	g_world.render();
-	float *aData =  g_world.getTerrain()->getData();
-
-	for (int i = 0; i < m_size * m_size; ++i) {
-		m_heights[i] = aData[i];
-	}
-*/
-
 
 	if(g_world.update()) {
 		float *aData =  g_world.getTerrain()->getData();
@@ -187,15 +97,6 @@ aFile = fopen("log.txt", "w+");
 
 		return false;
 	}
-
-
-    // Normalize height field so altitudes fall into range [0,255].
-//	for (int i = 0; i < m_size * m_size; ++i) {
-        //m_heights[i] = 255.0f * (m_heights[i] - minH) / (maxH - minH);
-        //m_heights[i] = 255.0f * (m_heights[i] - CK_SEA_BOTTON) / (CK_MAX_HEIGHT - CK_SEA_BOTTON);
-//		fprintf(aFile, "m_heights[%i] = %.2f\n", i, m_heights[i]);
-//	}
-//fclose(aFile);
 }
 
 float HeightMap::heightAt(float x, float z) const

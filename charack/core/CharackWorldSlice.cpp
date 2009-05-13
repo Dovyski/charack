@@ -81,12 +81,10 @@ int CharackWorldSlice::updateData() {
 			recreateAllData();
 
 		} else if(xObserver > mOldObserverPos.x) {
-			//shiftData(CharackWorldSlice::MOVE_RIGHT);
-			recreateAllData();
+			shiftData(CharackWorldSlice::MOVE_RIGHT);
 
 		} else if (xObserver < mOldObserverPos.x) {
-			//shiftData(CharackWorldSlice::MOVE_LEFT);
-			recreateAllData();
+			shiftData(CharackWorldSlice::MOVE_LEFT);
 
 		} else if (zObserver > mOldObserverPos.z) {
 			shiftData(CharackWorldSlice::MOVE_BACKWARD);
@@ -99,7 +97,8 @@ int CharackWorldSlice::updateData() {
 		mOldObserverPos.z = aObserver->getPositionZ();
 		mOldSample		  = aSample;
 
-		generateLandAndWaterData();
+		// TODO: fix!
+		//generateLandAndWaterData();
 	}
 
 	return aReturn;

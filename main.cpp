@@ -967,7 +967,7 @@ void PerformCameraCollisionDetection()
 void ProcessUserInput()
 {
 	int aSpeed	 = 1;
-	int aSpeedUp = (int)(g_world.getSample() * 100);
+	int aSpeedUp = (int)(g_world.getSample() * 1);
 
     Keyboard &keyboard = Keyboard::instance();
 
