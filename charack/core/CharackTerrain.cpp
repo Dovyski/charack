@@ -65,3 +65,44 @@ void CharackTerrain::loadData(float *theData) {
 float *CharackTerrain::getData() {
 	return mHeightData;
 }
+
+void CharackTerrain::makeDataSmooth(int theHowManyTimes) {
+	float aTemp[CK_DIM_TERRAIN + 2][CK_DIM_TERRAIN + 2];
+	int aSizeTemp = CK_DIM_TERRAIN + 2;
+
+	theHowManyTimes = theHowManyTimes <= 0 ? 1 : theHowManyTimes;
+
+	while(theHowManyTimes--) {
+		// Lets duplicate the heightmap
+		for(int y = 1; y <= CK_DIM_TERRAIN; y++) {
+			for(int x = 1; x <= CK_DIM_TERRAIN; x++) {
+				aTemp[x][y] = mHeightData[(x-1)*CK_DIM_TERRAIN + (y-1)];
+			}
+		}
+
+		// Make it seamless
+		for (int x=1; x < (aSizeTemp -1); x++) {
+			aTemp[0			   ][x			  ] = aTemp[1][x];
+			aTemp[aSizeTemp - 1][x			  ] = aTemp[aSizeTemp - 2][x];
+			aTemp[x			   ][0			  ] = aTemp[x][1];
+			aTemp[x			   ][aSizeTemp - 1] = aTemp[x][aSizeTemp - 2];
+		}
+
+		aTemp[0			   ][0			  ]	= aTemp[1][1];
+		aTemp[aSizeTemp - 1][aSizeTemp - 1] = aTemp[aSizeTemp - 2][aSizeTemp - 2];
+		aTemp[0			   ][aSizeTemp - 1]	= aTemp[1][aSizeTemp - 2];
+		aTemp[aSizeTemp - 1][0			  ]	= aTemp[aSizeTemp - 2][1];
+
+
+		// Smooth them all
+		for(int y = 1; y < (aSizeTemp - 1); y++) {
+			for(int x = 1; x < (aSizeTemp - 1); x++) {
+				float aCenter = aTemp[x][y]/4.0f;
+				float aSides = (aTemp[x+1][y] + aTemp[x-1][y] + aTemp[x][y+1] + aTemp[x][y-1])/8.0f;
+				float aCorners = (aTemp[x+1][y+1] + aTemp[x+1][y-1] + aTemp[x-1][y+1] + aTemp[x-1][y-1])/16.0f;
+
+				mHeightData[(x-1)*CK_DIM_TERRAIN + (y-1)] = aCenter + aSides + aCorners;
+			}
+		}
+	}
+}

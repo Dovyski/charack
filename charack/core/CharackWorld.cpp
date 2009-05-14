@@ -61,16 +61,14 @@ int CharackWorld::update(void) {
 		// the info matrix to insert the water information and, after that,
 		// make the coast lines a litte bit more realistic.
 		// So, lets do that:
-		// TODO: fix!
-		//getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getMapGenerator(), getObserver(), getSample());
+		getCoastGenerator()->disturbStraightCoastLines(getWorldSlice()->getHeightData(), getMapGenerator(), getObserver(), getSample());
 
 		// All information we have is smooth and ready to be displayed. 
 		// Lets update the terrain mesh...
 		getTerrain()->loadData(getWorldSlice()->getHeightData());
 
 		// Make all data smooth to avoid sharpen edges.
-		// TODO: fix!
-		//getTerrain()->makeDataSmooth(CK_HOW_SMOOTH);
+		getTerrain()->makeDataSmooth(CK_HOW_SMOOTH);
 
 		aRet = 1;
 	}

@@ -81,10 +81,10 @@ int CharackWorldSlice::updateData() {
 			recreateAllData();
 
 		} else if(xObserver > mOldObserverPos.x) {
-			shiftData(CharackWorldSlice::MOVE_RIGHT);
+			recreateAllData();
 
 		} else if (xObserver < mOldObserverPos.x) {
-			shiftData(CharackWorldSlice::MOVE_LEFT);
+			recreateAllData();
 
 		} else if (zObserver > mOldObserverPos.z) {
 			shiftData(CharackWorldSlice::MOVE_BACKWARD);

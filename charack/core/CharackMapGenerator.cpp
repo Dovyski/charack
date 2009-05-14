@@ -729,7 +729,7 @@ int CharackMapGenerator::isLand(float theX, float theZ, int theResolution) {
 	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
 
 	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
-		aRet = 0;
+		aRet = CharackMapGenerator::WATER;
 
 	} else if(getDescription(theX, theZ) == CharackMapGenerator::LAND_COAST && theResolution == CharackMapGenerator::RESOLUTION_HIGH) {
 		// We are over a pixel that represents a coast line. Lets provie a high resolution
@@ -775,25 +775,15 @@ int CharackMapGenerator::getDescription(float theX, float theZ) {
 }
 
 int CharackMapGenerator::distanceFrom(int theTargetType, int theResolution, float theXObserver, float theZObserver, int theSample, int theDirection, int theMaxSteps) {
-	int aDistance = 0, aSteps = 0;
-	
 	theSample  *= theDirection;
 
-	while(aSteps < theMaxSteps) {
-		if(isLand(theXObserver, theZObserver, theResolution) == theTargetType) {
-			break; // target have been found
-		} else {
-			if(theDirection == MOVE_RIGHT || theDirection == MOVE_LEFT) {
-				theXObserver += theSample;
-			} else {
-				theZObserver += theSample;
-			}
-			aDistance++;
-			aSteps++;
-		}
+	if(theDirection == MOVE_RIGHT || theDirection == MOVE_LEFT) {
+		theXObserver += theSample * theMaxSteps;
+	} else {
+		theZObserver += theSample * theMaxSteps;
 	}
 
-	return aDistance;
+	return isLand(theXObserver, theZObserver, theResolution) == theTargetType ? 0 : theMaxSteps;
 }
 
 int **CharackMapGenerator::getDescriptionMatrix() {

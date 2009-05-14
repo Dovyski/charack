@@ -74,6 +74,7 @@ class CharackTerrain {
 
 		void loadData(float *theData);
 		float *getData();
+		void makeDataSmooth(int theHowManyTimes);
 };
 
 #endif

@@ -55,7 +55,7 @@
 #define CK_COAST_HIGH_RES_ISLAND		0.2
 
 // Settings for disturbing coast lines
-#define CK_COAST_DISTURBE				1
+#define CK_COAST_DISTURBE				0
 #define CK_COAST_DISTURBE_RATE			0.03f
 #define CK_COAST_DISTRB_MAX_STEP		8
 #define CK_COAST_DISTRB_MAX_DISTANCE	(CK_COAST_DISTRB_MAX_STEP * 4)
@@ -64,7 +64,7 @@
 #define CK_MESH_SPACE					2000
 
 // How many times the terrain manager should smoothfy the collected data before displaying it.
-#define CK_HOW_SMOOTH					4
+#define CK_HOW_SMOOTH					1
 #define CK_FOG_NEAR						5000.0f
 #define CK_FOG_FAR						20.0f
 
