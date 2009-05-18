@@ -128,11 +128,13 @@ class CharackMapGenerator {
 		int isWater(int theI, int theJ);
 		void buildDescriptionMatrix();
 		int highResolutionIsLand(float theX, float theZ);
+		int highResolutionSmallIslands(float theX, float theZ);
 
 	public:
-		static const int WATER			= 0; // water
-		static const int LAND			= 1; // pure land, not a coast line.
-		static const int LAND_COAST		= 2; // land, but a coast line one.
+		static const int WATER						= 0; // water
+		static const int LAND						= 1; // pure land, not a coast line.
+		static const int LAND_COAST					= 2; // land, but a coast line one.
+		static const int LAND_COAST_SMALL_ISLANDS	= 4; // land, but a coast line one.
 
 		static const int RESOLUTION_LOW		= 0;
 		static const int RESOLUTION_HIGH	= 1;

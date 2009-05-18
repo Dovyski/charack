@@ -713,7 +713,11 @@ double fmax_dov(double x, double y)
 
 
 int CharackMapGenerator::highResolutionIsLand(float theX, float theZ) {
-	return abs(mPerlinNoise->Get(theX/150000, theZ/150000)) > CK_COAST_HIGH_RES_ISLAND ? LAND : WATER;
+	return abs(mPerlinNoise->Get(theX/150000, theZ/150000)) > CK_COAST_HIGH_RES_ISLAND ?CharackMapGenerator::LAND : CharackMapGenerator::WATER;
+}
+
+int CharackMapGenerator::highResolutionSmallIslands(float theX, float theZ) {
+	return abs(mPerlinNoise->Get(theX/2000, theZ/2000)) > CK_COAST_HIGH_RES_ISLAND ? CharackMapGenerator::LAND : CharackMapGenerator::WATER;
 }
 
 int CharackMapGenerator::getMatrixIndex(float theWorldPos, int theAxis) {
@@ -724,18 +728,22 @@ int CharackMapGenerator::getMatrixIndex(float theWorldPos, int theAxis) {
 }
 
 int CharackMapGenerator::isLand(float theX, float theZ, int theResolution) {
-	int aRet = CharackMapGenerator::LAND;
-	int aX = (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
-	int aZ = (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aRet		= CharackMapGenerator::LAND;
+	int aX			= (int)abs(floor((theX/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aZ			= (int)abs(floor((theZ/CK_MAX_WIDTH) * CK_MACRO_MATRIX_WIDTH));
+	int aTileType	= getDescription(theX, theZ);
 
 	if(theX < 0 || theX >= CK_MAX_WIDTH || theZ < 0 || theZ >= CK_MAX_WIDTH) {
 		aRet = CharackMapGenerator::WATER;
 
-	} else if(getDescription(theX, theZ) == CharackMapGenerator::LAND_COAST && theResolution == CharackMapGenerator::RESOLUTION_HIGH) {
+	} else if((aTileType == CharackMapGenerator::LAND_COAST || aTileType == CharackMapGenerator::LAND_COAST_SMALL_ISLANDS) && theResolution == CharackMapGenerator::RESOLUTION_HIGH) {
 		// We are over a pixel that represents a coast line. Lets provie a high resolution
 		// information about land and water here in order to procude non-sharp cost lines.
 		aRet = highResolutionIsLand(theX, theZ);
 
+		if(aRet == CharackMapGenerator::WATER && aTileType == CharackMapGenerator::LAND_COAST_SMALL_ISLANDS) {
+			aRet = highResolutionSmallIslands(theX, theZ);
+		}
 	} else {
 		// We are over an ordinary pixel. Lets calculate the return using low resolution information.
 		aRet = mDescriptionMatrix[aZ][aX];
@@ -754,7 +762,7 @@ void CharackMapGenerator::buildDescriptionMatrix() {
 			aHasWaterNeighbor			= isWater(i, j-1) || isWater(i-1, j) || isWater(i+1, j) || isWater(i, j+1);
 			
 			if(!isWater(i, j) && aHasWaterNeighbor) {
-				mDescriptionMatrix[i][j] = CharackMapGenerator::LAND_COAST;
+				mDescriptionMatrix[i][j] = (rand() % 2) == 0 ? CharackMapGenerator::LAND_COAST : CharackMapGenerator::LAND_COAST_SMALL_ISLANDS;
 			}
 		}
 	}
