@@ -57,7 +57,7 @@ class CharackCoastGenerator {
 		int mMaxStepsWater;
 		float mMaxBeachHeight;
 
-		float generateBeachHeight(float theTotalDistance);
+		float generateBeachHeight(float theTotalDistance, int theMaxStepLand);
 		float generateDisturbedCoastLineHeight(float theTotalDistance, float theXObserver, float theZObserver);
 
 	public:
@@ -65,7 +65,7 @@ class CharackCoastGenerator {
 		~CharackCoastGenerator();
 
 		void setMaxStepsLand(int theValue);
-		int getMaxStepsLand();
+		int getMaxStepsLand(int theTileType);
 
 		void setMaxStepsWater(int theValue);
 		int getMaxStepsWater();

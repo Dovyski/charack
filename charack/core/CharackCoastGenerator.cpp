@@ -41,8 +41,9 @@ void CharackCoastGenerator::setMaxStepsLand(int theValue) {
 	mMaxStepsLand = theValue <= 0 ? 0 : theValue;
 }
 
-int CharackCoastGenerator::getMaxStepsLand() {
-	return mMaxStepsLand;
+int CharackCoastGenerator::getMaxStepsLand(int theTileType) {
+	// TODO: set maxStep dynamically?
+	return theTileType == CharackMapGenerator::LAND_COAST ? mMaxStepsLand : mMaxStepsLand*2;
 }
 
 void CharackCoastGenerator::setMaxStepsWater(int theValue) {
@@ -62,8 +63,20 @@ float CharackCoastGenerator::getMaxBeachHeight() {
 }
 
 void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample) {
-	int aDim = CK_DIM_TERRAIN, i = 0, aDistanceLeft = 0, aDistanceRight = 0, aDistanceUp = 0, aDistanceDown = 0, xMesh,zMesh;
-	float xObserver = theObserver->getPositionX(), zObserver = theObserver->getPositionZ(), aTotalDistance = 0;
+	float	xObserver		= theObserver->getPositionX(),
+			zObserver		= theObserver->getPositionZ(),
+			aTotalDistance	= 0;
+
+	int		aDim			= CK_DIM_TERRAIN,
+			i				= 0,
+			aDistanceLeft	= 0,
+			aDistanceRight	= 0,
+			aDistanceUp		= 0,
+			aDistanceDown	= 0,
+			xMesh			= 0,
+			zMesh			= 0,
+			aTileType		= theMapGenerator->getDescription(xObserver, zObserver),
+			aMaxStepLand	= getMaxStepsLand(aTileType);
 
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += theSample){ 
 		for(xMesh = 0, xObserver = theObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += theSample, ++i){ 
@@ -75,23 +88,23 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 			if(theMapGenerator->isLand(xObserver, zObserver)) {
 				// We have found a land pixel...
 
-				aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	 getMaxStepsLand());
-				aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT, getMaxStepsLand());
-				aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,	 getMaxStepsLand());
-				aDistanceDown	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_DOWN,	 getMaxStepsLand());
+				aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	 aMaxStepLand);
+				aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT,	 aMaxStepLand);
+				aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,	 aMaxStepLand);
+				aDistanceDown	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_DOWN,	 aMaxStepLand);
 
 				aTotalDistance	= (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
 
 				// If we are far away from the coast, we use the height information of the land portion.
 				// If we are close to the coast, we use the beach height, so we can produce a smooth transition
 				// between land and water.
-				theHeightData[i] = aTotalDistance < CK_COAST_MAX_SEA_DISTANCE ? generateBeachHeight(aTotalDistance) : theHeightData[i];
+				theHeightData[i] = aTotalDistance < aMaxStepLand * 4 ? generateBeachHeight(aTotalDistance, aMaxStepLand) : theHeightData[i];
 			} else {
 				// We have found a water pixels...
 				if(CK_COAST_DISTURBE) {
 					aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	getMaxStepsWater());
 					aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT,	getMaxStepsWater());
-					aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,	getMaxStepsWater());
+					aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,		getMaxStepsWater());
 					aDistanceDown	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_DOWN,	getMaxStepsWater());
 
 					aTotalDistance	 = (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
@@ -105,8 +118,8 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 }
 
 
-float CharackCoastGenerator::generateBeachHeight(float theTotalDistance) {
-	float aRet = floor((theTotalDistance/CK_COAST_MAX_SEA_DISTANCE) * getMaxBeachHeight());
+float CharackCoastGenerator::generateBeachHeight(float theTotalDistance, int theMaxStepLand) {
+	float aRet = floor((theTotalDistance/(theMaxStepLand * 4)) * getMaxBeachHeight());
 	return aRet < 0 ? 0 : aRet; 
 }
 
