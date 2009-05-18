@@ -235,7 +235,7 @@ void CharackWorld::renderFog() {
 float CharackWorld::getHeight(float theX, float theZ) {
 	if(CK_COAST_MANGLE_HEIGHT) {
 		int aLimit = CK_MAX_HEIGHT - CK_COAST_BEACH_HEIGHT;
-		return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/200, theZ/200) * aLimit);
+		return CK_COAST_BEACH_HEIGHT + abs(mPerlinNoise->Get(theX/1000, theZ/1000) * aLimit);
 	} else {
 		return abs(mPerlinNoise->Get(theX/200, theZ/200)) * CK_MAX_HEIGHT;
 	}

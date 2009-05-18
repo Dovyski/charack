@@ -85,7 +85,7 @@
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 
-const int       TERRAIN_REGIONS_COUNT = 4;
+const int       TERRAIN_REGIONS_COUNT = 5;
 
 const float     HEIGHTMAP_ROUGHNESS = 1.2f;
 const float     HEIGHTMAP_SCALE = 2.0f;
@@ -144,16 +144,19 @@ CharackWorld		g_world(300, 1);
 TerrainRegion g_regions[TERRAIN_REGIONS_COUNT] =
 {
     // Terrain region 1.
-    0.0f, 50.0f * HEIGHTMAP_SCALE, 0, "content/textures/grass.jpg",
+    0.0f, 6.0f * HEIGHTMAP_SCALE, 0, "content/textures/sand.jpg",
 
     // Terrain region 2.
-    51.0f * HEIGHTMAP_SCALE, 101.0f * HEIGHTMAP_SCALE, 0, "content/textures/dirt.jpg",
+    7.0f * HEIGHTMAP_SCALE, 40.0f * HEIGHTMAP_SCALE, 0, "content/textures/dirt.jpg",
 
     // Terrain region 3.
-    102.0f * HEIGHTMAP_SCALE, 203.0f * HEIGHTMAP_SCALE, 0, "content/textures/rock.jpg",
+    41.0f * HEIGHTMAP_SCALE, 60.0f * HEIGHTMAP_SCALE, 0, "content/textures/rock.jpg",
 
     // Terrain region 4.
-    204.0f * HEIGHTMAP_SCALE, 255.0f * HEIGHTMAP_SCALE, 0, "content/textures/snow.jpg"
+    61.0f * HEIGHTMAP_SCALE, 150.0f * HEIGHTMAP_SCALE, 0, "content/textures/grass.jpg",
+
+    // Terrain region 5.
+    151.0f * HEIGHTMAP_SCALE, 255.0f * HEIGHTMAP_SCALE, 0, "content/textures/rock.jpg"
 };
 
 //-----------------------------------------------------------------------------
@@ -1119,6 +1122,7 @@ void RenderTerrain()
         BindTexture(g_nullTexture, 1);
         BindTexture(g_nullTexture, 2);
         BindTexture(g_nullTexture, 3);
+        BindTexture(g_nullTexture, 4);
     }
     else
     {
@@ -1126,6 +1130,7 @@ void RenderTerrain()
         BindTexture(g_regions[1].texture, 1);
         BindTexture(g_regions[2].texture, 2);
         BindTexture(g_regions[3].texture, 3);
+		BindTexture(g_regions[4].texture, 4);
     }
     
     g_terrain.draw();
@@ -1395,10 +1400,19 @@ void UpdateTerrainShaderParameters()
     handle = glGetUniformLocation(g_terrainShader, "region4.min");
     glUniform1f(handle, g_regions[3].min);
 
+    // Update terrain region 5.
+
+    handle = glGetUniformLocation(g_terrainShader, "region5.max");
+    glUniform1f(handle, g_regions[4].max);
+
+    handle = glGetUniformLocation(g_terrainShader, "region5.min");
+    glUniform1f(handle, g_regions[4].min);
+
     // Bind textures.
 
     glUniform1i(glGetUniformLocation(g_terrainShader, "region1ColorMap"), 0);
     glUniform1i(glGetUniformLocation(g_terrainShader, "region2ColorMap"), 1);
     glUniform1i(glGetUniformLocation(g_terrainShader, "region3ColorMap"), 2);
     glUniform1i(glGetUniformLocation(g_terrainShader, "region4ColorMap"), 3);
+    glUniform1i(glGetUniformLocation(g_terrainShader, "region5ColorMap"), 4);
 }
