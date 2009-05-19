@@ -66,6 +66,7 @@
 #include "mathlib.h"
 #include "opengl.h"
 #include "terrain.h"
+#include "ocean.h"
 #include "WGL_ARB_multisample.h"
 
 #include "charack/charack.h"
@@ -92,6 +93,12 @@ const float     HEIGHTMAP_SCALE = 2.0f;
 const float     HEIGHTMAP_TILING_FACTOR = 12.0f;
 const int       HEIGHTMAP_SIZE = 128;
 const int       HEIGHTMAP_GRID_SPACING = 16;
+
+const int       OCEAN_REGIONS_COUNT = 2;
+
+const float     OCEAN_SCALE = 0.5f; //0.12
+const float     OCEAN_TILING_FACTOR = 12.0f;
+const int       OCEAN_GRID_SPACING = 16;
 
 const float     CAMERA_FOVX = 90.0f;
 const float     CAMERA_ZFAR = CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 2.0f;
@@ -134,8 +141,10 @@ bool                g_isFlyingEnabled;
 float               g_lightDir[4] = {0.0f, 1.0f, 0.0f, 0.0f};
 GLuint              g_nullTexture;
 GLuint              g_terrainShader;
+GLuint              g_oceanShader;
 GLFont              g_font;
 Terrain             g_terrain;
+Ocean				g_ocean;
 Camera              g_camera;
 Vector3             g_cameraBoundsMax;
 Vector3             g_cameraBoundsMin;
@@ -159,6 +168,15 @@ TerrainRegion g_regions[TERRAIN_REGIONS_COUNT] =
     151.0f * HEIGHTMAP_SCALE, 255.0f * HEIGHTMAP_SCALE, 0, "content/textures/rock.jpg"
 };
 
+TerrainRegion g_oceanRegions[OCEAN_REGIONS_COUNT] =
+{
+    // Ocean region 1.
+    0.0f, 6.0f * OCEAN_SCALE, 0, "content/textures/sand.jpg",
+
+    // Ocean region 2.
+    7.0f * OCEAN_SCALE, 255.0f * OCEAN_SCALE, 0, "content/textures/dirt.jpg",
+};
+
 //-----------------------------------------------------------------------------
 // Functions Prototypes.
 //-----------------------------------------------------------------------------
@@ -171,6 +189,7 @@ HWND    CreateAppWindow(const WNDCLASSEX &wcl, const char *pszTitle);
 GLuint  CreateNullTexture(int width, int height);
 void    EnableVerticalSync(bool enableVerticalSync);
 void    GenerateTerrain();
+void	GenerateOcean();
 float   GetElapsedTimeInSeconds();
 Vector3 GetMovementDirection();
 bool    Init();
@@ -186,6 +205,7 @@ void    ProcessUserInput();
 void    ReadTextFile(const char *pszFilename, std::string &buffer);
 void    RenderFrame();
 void    RenderTerrain();
+void    RenderOcean();
 void    RenderText();
 void    RenderWorldMap();
 void    SetProcessorAffinity();
@@ -195,6 +215,7 @@ void    UpdateCamera(float elapsedTimeSec);
 void    UpdateFrame(float elapsedTimeSec);
 void    UpdateFrameRate(float elapsedTimeSec);
 void    UpdateTerrainShaderParameters();
+void    UpdateOceanShaderParameters();
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //-----------------------------------------------------------------------------
@@ -365,7 +386,15 @@ void CleanupApp()
         g_terrainShader = 0;
     }
 
+    if (g_oceanShader)
+    {
+        glUseProgram(0);
+        glDeleteProgram(g_oceanShader);
+        g_oceanShader = 0;
+    }
+
     g_terrain.destroy();
+	g_ocean.destroy();
     g_font.destroy();
 }
 
@@ -486,6 +515,12 @@ void GenerateTerrain()
 {
     if (!g_terrain.generateUsingDiamondSquareFractal(HEIGHTMAP_ROUGHNESS))
         throw std::runtime_error("Failed to generate terrain.");
+}
+
+void GenerateOcean()
+{
+    if (!g_ocean.generateUsingDiamondSquareFractal(HEIGHTMAP_ROUGHNESS))
+        throw std::runtime_error("Failed to generate ocean.");
 }
 
 float GetElapsedTimeInSeconds()
@@ -698,12 +733,21 @@ void InitApp()
     if (!(g_terrainShader = LoadShaderProgram("content/shaders/terrain.glsl", infoLog)))
         throw std::runtime_error("Failed to load shader: terrain.glsl.\n" + infoLog);
 
+    if (!(g_oceanShader = LoadShaderProgram("content/shaders/ocean.glsl", infoLog)))
+        throw std::runtime_error("Failed to load shader: terrain.glsl.\n" + infoLog);
+
     // Setup terrain.
 
     if (!g_terrain.create(CK_DIM_TERRAIN /*HEIGHTMAP_SIZE*/, HEIGHTMAP_GRID_SPACING, HEIGHTMAP_SCALE))
         throw std::runtime_error("Failed to create terrain.");
 
+	// Setup water
+
+    if (!g_ocean.create(CK_DIM_TERRAIN /*HEIGHTMAP_SIZE*/, OCEAN_GRID_SPACING, OCEAN_SCALE))
+        throw std::runtime_error("Failed to create ocean.");
+
     GenerateTerrain();
+	GenerateOcean();
             
     // Setup camera.
 
@@ -1100,6 +1144,7 @@ void RenderFrame()
     glMultMatrixf(&g_camera.getViewMatrix()[0][0]);
 
     RenderTerrain();
+	RenderOcean();
     RenderText();
 	
 	if(g_worldMapEnabled) {
@@ -1136,6 +1181,48 @@ void RenderTerrain()
     g_terrain.draw();
     
     for (int i = 3; i >= 0; --i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+
+    glUseProgram(0);
+}
+
+
+void RenderOcean()
+{
+    glUseProgram(g_oceanShader);
+    UpdateOceanShaderParameters();
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_POSITION, g_lightDir);
+  
+    if (g_disableColorMaps)
+    {
+        BindTexture(g_nullTexture, 0);
+        BindTexture(g_nullTexture, 1);
+        //BindTexture(g_nullTexture, 2);
+        //BindTexture(g_nullTexture, 3);
+        //BindTexture(g_nullTexture, 4);
+    }
+    else
+    {
+        BindTexture(g_oceanRegions[0].texture, 0);
+        BindTexture(g_oceanRegions[1].texture, 1);
+        //BindTexture(g_regions[2].texture, 2);
+        //BindTexture(g_regions[3].texture, 3);
+		//BindTexture(g_regions[4].texture, 4);
+    }
+    
+    g_ocean.draw();
+    
+	for (int i = 2; i >= 0; --i)
     {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -1415,4 +1502,63 @@ void UpdateTerrainShaderParameters()
     glUniform1i(glGetUniformLocation(g_terrainShader, "region3ColorMap"), 2);
     glUniform1i(glGetUniformLocation(g_terrainShader, "region4ColorMap"), 3);
     glUniform1i(glGetUniformLocation(g_terrainShader, "region5ColorMap"), 4);
+}
+
+void UpdateOceanShaderParameters()
+{
+    GLint handle = -1;
+
+    // Update the ocean tiling factor.
+
+    handle = glGetUniformLocation(g_oceanShader, "tilingFactor");
+    glUniform1f(handle, OCEAN_TILING_FACTOR);
+
+    // Update terrain region 1.
+
+    handle = glGetUniformLocation(g_oceanShader, "region1.max");
+    glUniform1f(handle, g_oceanRegions[0].max);
+
+    handle = glGetUniformLocation(g_oceanShader, "region1.min");
+    glUniform1f(handle, g_oceanRegions[0].min);    
+
+    // Update terrain region 2.
+
+    handle = glGetUniformLocation(g_oceanShader, "region2.max");
+    glUniform1f(handle, g_oceanRegions[1].max);
+
+    handle = glGetUniformLocation(g_oceanShader, "region2.min");
+    glUniform1f(handle, g_oceanRegions[1].min);
+
+/*
+	// Update terrain region 3.
+
+    handle = glGetUniformLocation(g_oceanShader, "region3.max");
+    glUniform1f(handle, g_oceanRegions[2].max);
+
+    handle = glGetUniformLocation(g_oceanShader, "region3.min");
+    glUniform1f(handle, g_oceanRegions[2].min);
+
+    // Update terrain region 4.
+
+    handle = glGetUniformLocation(g_oceanShader, "region4.max");
+    glUniform1f(handle, g_oceanRegions[3].max);
+
+    handle = glGetUniformLocation(g_oceanShader, "region4.min");
+    glUniform1f(handle, g_oceanRegions[3].min);
+
+    // Update terrain region 5.
+
+    handle = glGetUniformLocation(g_oceanShader, "region5.max");
+    glUniform1f(handle, g_oceanRegions[4].max);
+
+    handle = glGetUniformLocation(g_oceanShader, "region5.min");
+    glUniform1f(handle, g_oceanRegions[4].min);
+*/
+    // Bind textures.
+
+    glUniform1i(glGetUniformLocation(g_oceanShader, "region1ColorMap"), 0);
+    glUniform1i(glGetUniformLocation(g_oceanShader, "region2ColorMap"), 1);
+    //glUniform1i(glGetUniformLocation(g_oceanShader, "region3ColorMap"), 2);
+    //glUniform1i(glGetUniformLocation(g_oceanShader, "region4ColorMap"), 3);
+    //glUniform1i(glGetUniformLocation(g_oceanShader, "region5ColorMap"), 4);
 }

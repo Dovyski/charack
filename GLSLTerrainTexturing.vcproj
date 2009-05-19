@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ocean.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\opengl.cpp"
 				>
 			</File>
@@ -238,6 +242,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ocean.h"
+				>
+			</File>
+			<File
 				RelativePath=".\opengl.h"
 				>
 			</File>
@@ -258,6 +266,10 @@
 			<Filter
 				Name="Shaders"
 				>
+				<File
+					RelativePath=".\content\shaders\ocean.glsl"
+					>
+				</File>
 				<File
 					RelativePath=".\Content\Shaders\terrain.glsl"
 					>
