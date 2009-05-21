@@ -106,6 +106,8 @@ const float     CAMERA_ZNEAR = 1.0f;
 const float     CAMERA_Y_OFFSET = 25.0f;
 const Vector3   CAMERA_ACCELERATION(400.0f, 400.0f, 400.0f);
 const Vector3   CAMERA_VELOCITY(100.0f, 100.0f, 100.0f);
+const float     CAMERA_VIEW_FRUSTUM = 1000.0f;
+const float     CAMERA_VIEW_FRUSTUM_CALC = CAMERA_VIEW_FRUSTUM/100.0f * 6.0f;
 
 //-----------------------------------------------------------------------------
 // Types.
@@ -1026,6 +1028,40 @@ void PerformCameraCollisionDetection()
     g_camera.setPosition(newPos);
 }
 
+void PerformCameraChunkMove() {
+	static Vector3 aCenter(CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 0.5f, 0 ,CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 0.5f);
+
+    const Vector3 &pos = g_camera.getPosition();
+    Vector3 newPos(pos);
+	float aDiference = 0;
+	
+	aDiference = newPos.x - aCenter.x;
+
+	if(abs(aDiference) > CAMERA_VIEW_FRUSTUM) {
+		newPos.x = aCenter.x;
+
+		if(aDiference > 0) {
+			g_world.getObserver()->moveRight(CAMERA_VIEW_FRUSTUM_CALC);
+		} else {
+			g_world.getObserver()->moveLeft(CAMERA_VIEW_FRUSTUM_CALC);
+		}
+	}
+
+	aDiference = newPos.z - aCenter.z;
+
+	if(abs(aDiference) > CAMERA_VIEW_FRUSTUM) {
+		newPos.z = aCenter.z;
+
+		if(aDiference > 0) {
+			g_world.getObserver()->moveBackward(CAMERA_VIEW_FRUSTUM_CALC);
+		} else {
+			g_world.getObserver()->moveForward(CAMERA_VIEW_FRUSTUM_CALC);
+		}
+	}
+
+	g_camera.setPosition(newPos);
+}
+
 void ProcessUserInput()
 {
 	int aSpeed	 = 1;
@@ -1420,19 +1456,20 @@ void UpdateCamera(float elapsedTimeSec)
     mouse.setPosition(g_windowWidth / 2, g_windowHeight / 2);
 
     PerformCameraCollisionDetection();
+	PerformCameraChunkMove();
 }
 
 void UpdateFrame(float elapsedTimeSec)
 {
     UpdateFrameRate(elapsedTimeSec);
 
-    GenerateTerrain();
-
     Mouse::instance().update();
     Keyboard::instance().update();
 
     ProcessUserInput();
     UpdateCamera(elapsedTimeSec);
+
+    GenerateTerrain();
 }
 
 void UpdateFrameRate(float elapsedTimeSec)
