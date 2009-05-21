@@ -73,21 +73,15 @@ struct TerrainRegion
 
 uniform TerrainRegion region1;
 uniform TerrainRegion region2;
-//uniform TerrainRegion region3;
-//uniform TerrainRegion region4;
-//uniform TerrainRegion region5;
 
 uniform sampler2D region1ColorMap;
 uniform sampler2D region2ColorMap;
-//uniform sampler2D region3ColorMap;
-//uniform sampler2D region4ColorMap;
-//uniform sampler2D region5ColorMap;
 
 varying vec4 normal;
 
 vec4 GenerateTerrainColor()
 {
-    vec4 terrainColor = vec4(0.0, 0.0, 1.0, 1.0);
+    vec4 terrainColor = vec4(0.0, 0.0, 0.0, 1.0);
     float height = normal.w;
     float regionMin = 0.0;
     float regionMax = 0.0;
@@ -109,30 +103,6 @@ vec4 GenerateTerrainColor()
     regionWeight = (regionRange - abs(height - regionMax)) / regionRange;
     regionWeight = max(0.0, regionWeight);
     terrainColor += regionWeight * texture2D(region2ColorMap, gl_TexCoord[0].st);
-
-    // Terrain region 3.
-    //regionMin = region3.min;
-    //regionMax = region3.max;
-    //regionRange = regionMax - regionMin;
-    //regionWeight = (regionRange - abs(height - regionMax)) / regionRange;
-    //regionWeight = max(0.0, regionWeight);
-    //terrainColor += regionWeight * texture2D(region3ColorMap, gl_TexCoord[0].st);
-
-    // Terrain region 4.
-   // regionMin = region4.min;
-    //regionMax = region4.max;
-    //regionRange = regionMax - regionMin;
-    //regionWeight = (regionRange - abs(height - regionMax)) / regionRange;
-    //regionWeight = max(0.0, regionWeight);
-    //terrainColor += regionWeight * texture2D(region4ColorMap, gl_TexCoord[0].st);
-    
-    // Terrain region 5.
-    //regionMin = region5.min;
-    //regionMax = region5.max;
-    //regionRange = regionMax - regionMin;
-    //regionWeight = (regionRange - abs(height - regionMax)) / regionRange;
-    //regionWeight = max(0.0, regionWeight);
-    //terrainColor += regionWeight * texture2D(region5ColorMap, gl_TexCoord[0].st);    
 
     return terrainColor;
 }

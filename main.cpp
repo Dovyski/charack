@@ -96,8 +96,8 @@ const int       HEIGHTMAP_GRID_SPACING = 16;
 
 const int       OCEAN_REGIONS_COUNT = 2;
 
-const float     OCEAN_SCALE = 0.5f; //0.12
-const float     OCEAN_TILING_FACTOR = 12.0f;
+const float     OCEAN_SCALE = 0.12f; //0.12
+const float     OCEAN_TILING_FACTOR = 1.0f;
 const int       OCEAN_GRID_SPACING = 16;
 
 const float     CAMERA_FOVX = 90.0f;
@@ -171,10 +171,10 @@ TerrainRegion g_regions[TERRAIN_REGIONS_COUNT] =
 TerrainRegion g_oceanRegions[OCEAN_REGIONS_COUNT] =
 {
     // Ocean region 1.
-    0.0f, 6.0f * OCEAN_SCALE, 0, "content/textures/sand.jpg",
+    0.0f, 254.0f * OCEAN_SCALE, 0, "content/textures/water2.jpg",
 
     // Ocean region 2.
-    7.0f * OCEAN_SCALE, 255.0f * OCEAN_SCALE, 0, "content/textures/dirt.jpg",
+    255.0f * OCEAN_SCALE, 255.0f * OCEAN_SCALE, 0, "content/textures/water.jpg",
 };
 
 //-----------------------------------------------------------------------------
@@ -370,6 +370,15 @@ void CleanupApp()
         {
             glDeleteTextures(1, &g_regions[i].texture);
             g_regions[i].texture = 0;
+        }
+    }
+
+    for (int i = 0; i < OCEAN_REGIONS_COUNT; ++i)
+    {
+        if (g_oceanRegions[i].texture)
+        {
+            glDeleteTextures(1, &g_oceanRegions[i].texture);
+            g_oceanRegions[i].texture = 0;
         }
     }
 
@@ -724,6 +733,12 @@ void InitApp()
     {
         if (!(g_regions[i].texture = LoadTexture(g_regions[i].filename.c_str())))
             throw std::runtime_error("Failed to load texture: " + g_regions[i].filename);
+    }
+
+    for (int i = 0; i < OCEAN_REGIONS_COUNT; ++i)
+    {
+        if (!(g_oceanRegions[i].texture = LoadTexture(g_oceanRegions[i].filename.c_str())))
+            throw std::runtime_error("Failed to load texture: " + g_oceanRegions[i].filename);
     }
 
     // Setup shaders.
@@ -1196,7 +1211,7 @@ void RenderTerrain()
 
 void RenderOcean()
 {
-    glUseProgram(g_oceanShader);
+	glUseProgram(g_oceanShader);
     UpdateOceanShaderParameters();
 
     glEnable(GL_LIGHTING);
@@ -1207,22 +1222,16 @@ void RenderOcean()
     {
         BindTexture(g_nullTexture, 0);
         BindTexture(g_nullTexture, 1);
-        //BindTexture(g_nullTexture, 2);
-        //BindTexture(g_nullTexture, 3);
-        //BindTexture(g_nullTexture, 4);
     }
     else
     {
         BindTexture(g_oceanRegions[0].texture, 0);
         BindTexture(g_oceanRegions[1].texture, 1);
-        //BindTexture(g_regions[2].texture, 2);
-        //BindTexture(g_regions[3].texture, 3);
-		//BindTexture(g_regions[4].texture, 4);
     }
     
     g_ocean.draw();
     
-	for (int i = 2; i >= 0; --i)
+	for (int i = 1; i >= 0; --i)
     {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -1529,36 +1538,8 @@ void UpdateOceanShaderParameters()
     handle = glGetUniformLocation(g_oceanShader, "region2.min");
     glUniform1f(handle, g_oceanRegions[1].min);
 
-/*
-	// Update terrain region 3.
-
-    handle = glGetUniformLocation(g_oceanShader, "region3.max");
-    glUniform1f(handle, g_oceanRegions[2].max);
-
-    handle = glGetUniformLocation(g_oceanShader, "region3.min");
-    glUniform1f(handle, g_oceanRegions[2].min);
-
-    // Update terrain region 4.
-
-    handle = glGetUniformLocation(g_oceanShader, "region4.max");
-    glUniform1f(handle, g_oceanRegions[3].max);
-
-    handle = glGetUniformLocation(g_oceanShader, "region4.min");
-    glUniform1f(handle, g_oceanRegions[3].min);
-
-    // Update terrain region 5.
-
-    handle = glGetUniformLocation(g_oceanShader, "region5.max");
-    glUniform1f(handle, g_oceanRegions[4].max);
-
-    handle = glGetUniformLocation(g_oceanShader, "region5.min");
-    glUniform1f(handle, g_oceanRegions[4].min);
-*/
     // Bind textures.
 
     glUniform1i(glGetUniformLocation(g_oceanShader, "region1ColorMap"), 0);
     glUniform1i(glGetUniformLocation(g_oceanShader, "region2ColorMap"), 1);
-    //glUniform1i(glGetUniformLocation(g_oceanShader, "region3ColorMap"), 2);
-    //glUniform1i(glGetUniformLocation(g_oceanShader, "region4ColorMap"), 3);
-    //glUniform1i(glGetUniformLocation(g_oceanShader, "region5ColorMap"), 4);
 }
