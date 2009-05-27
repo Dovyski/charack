@@ -75,7 +75,7 @@
 // Constants.
 //-----------------------------------------------------------------------------
 
-#define APP_TITLE "GLSL Terrain Texturing Demo"
+#define APP_TITLE "Charack: pseudo-infinite world generator"
 
 // Windows Vista compositing support.
 #if !defined(PFD_SUPPORT_COMPOSITION)
@@ -90,7 +90,7 @@ const int       TERRAIN_REGIONS_COUNT = 5;
 
 const float     HEIGHTMAP_ROUGHNESS = 1.2f;
 const float     HEIGHTMAP_SCALE = 2.0f;
-const float     HEIGHTMAP_TILING_FACTOR = 12.0f;
+const float     HEIGHTMAP_TILING_FACTOR = 18.0f;
 const int       HEIGHTMAP_SIZE = 128;
 const int       HEIGHTMAP_GRID_SPACING = 16;
 
