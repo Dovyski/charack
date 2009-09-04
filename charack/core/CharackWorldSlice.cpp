@@ -166,11 +166,15 @@ void CharackWorldSlice::recreateAllData() {
 	CharackObserver *aObserver =  mWorld->getObserver();
 	float xObserver = aObserver->getPositionX(), zObserver = aObserver->getPositionZ();
 
+	mWorld->getBenchmark()->startClock();
+
 	for(zMesh = 0; zMesh < aDim; zMesh++, zObserver += aSample){ 
 		for(xMesh = 0, xObserver = aObserver->getPositionX(); xMesh < aDim; xMesh++, xObserver += aSample){ 
 			mHeightData[i++] = mWorld->getHeight(xObserver, zObserver);
 		}
 	}
+
+	mWorld->getBenchmark()->stopClock(CharackBenchmark::LABEL_RAW_HEIGHTMAP_GENERATION);
 
 	//printf("CharackWorldSlice::recreateAllData()\n");
 }

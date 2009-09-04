@@ -85,8 +85,9 @@ CTable alt_colors =
 		 {0,0,0},	    /* Black - background	*/
 		 {0,0,0}};	    /* Black - gridlines	*/
 
-CharackMapGenerator::CharackMapGenerator() {
+CharackMapGenerator::CharackMapGenerator(CharackBenchmark *theBenchmark) {
 	mPerlinNoise	= new Perlin(16, 8, 1, 10);
+	mBench			= theBenchmark;
 
 	altColors = 0;
 	back = BACK;
@@ -113,9 +114,11 @@ CharackMapGenerator::~CharackMapGenerator() {
 
 
 void CharackMapGenerator::generate() {
-  FILE *outfile, *colfile = NULL;
+  //FILE *outfile, *colfile = NULL;
   char filename[256] = "C:\\temp\\p.bmp";
   int do_file = 0;
+
+  mBench->startClock();
 
   longi = 0.0;
   lat = 0.0;
@@ -152,7 +155,8 @@ void CharackMapGenerator::generate() {
   mercator();
   makeoutline(1);
   buildDescriptionMatrix();
-	
+
+  mBench->stopClock(CharackBenchmark::LABEL_MM_GENERATION);
   //printbmpBW(outfile);
 }
 

@@ -38,6 +38,7 @@
 #include "config.h"
 #include "CharackCoastGenerator.h"
 #include "../util/CharackVector3.h"
+#include "../util/CharackBenchmark.h"
 #include "../util/perlin.h"
 
 #define BLACK 0
@@ -73,6 +74,7 @@ typedef int CTable[MAXCOL][3];
 class CharackMapGenerator {
 	private:
 		Perlin *mPerlinNoise;
+		CharackBenchmark *mBench;
 
 		int altColors;
 		int BLUE1, LAND0, LAND1, LAND2, LAND4;
@@ -147,7 +149,7 @@ class CharackMapGenerator {
 		static const int AXIS_X			= 1;
 		static const int AXIS_Z			= 2;
 
-		CharackMapGenerator();
+		CharackMapGenerator(CharackBenchmark *theBenchmark);
 		~CharackMapGenerator();
 
 		// Generate the world (land and water)

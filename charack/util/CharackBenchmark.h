@@ -25,57 +25,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CHARACK_COST_GENERATOR_H_
-#define __CHARACK_COST_GENERATOR_H_
+#ifndef __CHARACK_BENCHMARK_H_
+#define __CHARACK_BENCHMARK_H_
 
+#include <windows.h>
+#include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include "../core/config.h"
 
-class CharackMapGenerator;
-class CharackObserver;
+#define CK_BENCH_MAX_LABELS				7
+#define CK_BENCH_MAX_LEN_LABEL_NAME		60
 
-#include "CharackMapGenerator.h"
-#include "CharackObserver.h"
-
-#include "config.h"
-#include "../util/CharackVector3.h"
-#include "../util/CharackBenchmark.h"
-#include "../util/perlin.h"
-
-#define _CK_CG_GET(theMatrix, i, j)					(theMatrix[(i)*(CK_DIM_TERRAIN) + (j)])
-#define _CK_CG_CONSTRAINT_CHECK(z)					(z < CK_MAX_WIDTH)
-
-/**
- * Generates the coast for a continent. Using the midpoint displacement fractal, the class can transform
- * a straight line into a set of disturbed points, which can be used to render a continent coast.
- */
-class CharackCoastGenerator {
+class CharackBenchmark {
 	private:
-		Perlin *mPerlinNoise;
-		CharackBenchmark *mBench;
-		int mMaxStepsLand;
-		int mMaxStepsWater;
-		float mMaxBeachHeight;
+		long int mStartMark;
+		long int mTimeCount[CK_BENCH_MAX_LABELS];
+		char mLabelTexts[CK_BENCH_MAX_LABELS][CK_BENCH_MAX_LEN_LABEL_NAME];
 
-		float generateBeachHeight(float theTotalDistance, int theMaxStepLand);
-		float generateDisturbedCoastLineHeight(float theTotalDistance, float theXObserver, float theZObserver);
+		void init();
 
 	public:
-		CharackCoastGenerator(CharackBenchmark *theBenchmark);
-		~CharackCoastGenerator();
+		static const char LABEL_MM_GENERATION				= 0;//
+		static const char LABEL_RAW_HEIGHTMAP_GENERATION	= 1;//
+		static const char LABEL_COASTLINE_GENERATION		= 2;//
+		static const char LABEL_BEACH_GENERATION			= 3;//
+		static const char LABEL_TERRAIN_SMOOTHING			= 4;
+		static const char LABEL_RENDERIZATION				= 5;
+		static const char LABEL_OCEAN_HEIGHTMAP				= 6;//
 
-		void setMaxStepsLand(int theValue);
-		int getMaxStepsLand(int theTileType);
+		CharackBenchmark();		
+		~CharackBenchmark();
 
-		void setMaxStepsWater(int theValue);
-		int getMaxStepsWater();
+		void startClock();
+		void stopClock(char theLabel);
 
-		void setMaxBeachHeight(float theValue);
-		float getMaxBeachHeight();
-
-		void disturbStraightCoastLines(float *theHeightData, CharackMapGenerator *theMapGenerator, CharackObserver *theObserver, int theSample);
+		void printReport(char *thePath);
 };
 
 #endif

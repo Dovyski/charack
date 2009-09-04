@@ -383,6 +383,14 @@
 				Name="util"
 				>
 				<File
+					RelativePath=".\charack\util\CharackBenchmark.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\charack\util\CharackBenchmark.h"
+					>
+				</File>
+				<File
 					RelativePath=".\charack\util\CharackVector3.cpp"
 					>
 				</File>

@@ -29,14 +29,15 @@
 #include "../util/imageloader.h"
 
 CharackWorld::CharackWorld(int theViewFrustum, int theSample) {
+	mBench			= new CharackBenchmark();
 	mObserver		= new CharackObserver();
 	mCamera			= new CharackCamera();
-	mMapGenerator	= new CharackMapGenerator();
+	mMapGenerator	= new CharackMapGenerator(mBench);
 	mWorldSlice		= new CharackWorldSlice(this);
 	mPerlinNoise	= new Perlin(16, 8, 1, 10);
-	mCoastGen		= new CharackCoastGenerator();
+	mCoastGen		= new CharackCoastGenerator(mBench);
 	mTerrain		= new CharackTerrain();
-	
+
 	// Generate the world. The mMapGenerator is our "guide", it genetares the huge things in the
 	// world, like oceans and continents, then the other Charack classes will use that "guide"
 	// as a clue repository to generate specific height variation, beach stuff, mountains, etc.
@@ -289,8 +290,15 @@ void CharackWorld::printDebugInfo(void) {
 }
 
 void CharackWorld::placeObserverOnLand() {
-	// TODO: FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	getObserver()->setPosition(1124947.0f, 400.0f, 7710.0f); return;
+	// Nice locations:
+	// Beach test
+	//getObserver()->setPosition(1124947.0f, 400.0f, 7710.0f); return;
+	//
+	// Nice coast
+	getObserver()->setPosition(1124707.0f, 400.0f, 9090.0f); return;
+	//
+	// Nice island
+	//getObserver()->setPosition(1122847.0f, 400.0f, 10050.0f); return;
 
 	for(int z=0; z < CK_MAX_WIDTH; z++) {
 		for(int x=0; x < CK_MAX_WIDTH; x++) {
@@ -346,6 +354,10 @@ CharackWorldSlice *CharackWorld::getWorldSlice(void) {
 
 CharackCoastGenerator *CharackWorld::getCoastGenerator(void) {
 	return mCoastGen;
+}
+
+CharackBenchmark *CharackWorld::getBenchmark(void) {
+	return mBench;
 }
 
 void CharackWorld::init(void) {

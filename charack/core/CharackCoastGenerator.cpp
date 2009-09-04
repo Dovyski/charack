@@ -27,8 +27,9 @@
 
 #include "CharackCoastGenerator.h"
 
-CharackCoastGenerator::CharackCoastGenerator() {
+CharackCoastGenerator::CharackCoastGenerator(CharackBenchmark *theBenchmark) {
 	mPerlinNoise		= new Perlin(16, 8, 1, 10);
+	mBench				= theBenchmark;
 	mMaxStepsLand		= CK_COAST_MAX_STEP;
 	mMaxStepsWater		= CK_COAST_DISTRB_MAX_STEP;
 	mMaxBeachHeight		= CK_COAST_BEACH_HEIGHT;
@@ -85,15 +86,20 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 			// For "water pixels", we check the distance between them and the coast line and, using that information, we disturb the pixels
 			// around to produce a disturbed coast line. It will produce more realistic coast lines.
 
+			mBench->startClock();
+
 			if(theMapGenerator->isLand(xObserver, zObserver)) {
 				// We have found a land pixel...
-
+				mBench->stopClock(CharackBenchmark::LABEL_COASTLINE_GENERATION);
+				mBench->startClock();
+				
 				aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	 aMaxStepLand);
 				aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT,	 aMaxStepLand);
 				aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,	 aMaxStepLand);
 				aDistanceDown	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_DOWN,	 aMaxStepLand);
-
 				aTotalDistance	= (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
+				
+				mBench->stopClock(CharackBenchmark::LABEL_BEACH_GENERATION);
 
 				// If we are far away from the coast, we use the height information of the land portion.
 				// If we are close to the coast, we use the beach height, so we can produce a smooth transition
@@ -101,6 +107,8 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 				theHeightData[i] = aTotalDistance < aMaxStepLand * 4 ? generateBeachHeight(aTotalDistance, aMaxStepLand) : theHeightData[i];
 			} else {
 				// We have found a water pixels...
+				mBench->stopClock(CharackBenchmark::LABEL_OCEAN_HEIGHTMAP);
+
 				if(CK_COAST_DISTURBE) {
 					aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	getMaxStepsWater());
 					aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT,	getMaxStepsWater());

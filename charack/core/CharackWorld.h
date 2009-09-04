@@ -45,6 +45,7 @@ class CharackWorldSlice;
 
 #include "../util/perlin.h"
 #include "../util/imageloader.h"
+#include "../util/CharackBenchmark.h"
 
 class CharackWorld {
 	private:
@@ -54,6 +55,7 @@ class CharackWorld {
 		CharackTerrain *mTerrain;
 		CharackWorldSlice *mWorldSlice;
 		CharackCoastGenerator *mCoastGen;
+		CharackBenchmark *mBench;
 
 		float (*mHeightFunctionX)(float); // generate the height coordinates for X axis
 		float (*mHeightFunctionZ)(float); // generate the height coordinates for X axis
@@ -80,6 +82,7 @@ class CharackWorld {
 		CharackCamera *getCamera(void);
 		CharackTerrain *getTerrain(void);
 		CharackCoastGenerator *getCoastGenerator(void);
+		CharackBenchmark *getBenchmark(void);
 
 		void setViewFrustum(int theViewFrustum);
 		int getViewFrustum();

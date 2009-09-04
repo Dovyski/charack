@@ -105,7 +105,7 @@ const float     CAMERA_ZFAR = CK_DIM_TERRAIN * HEIGHTMAP_GRID_SPACING * 2.0f;
 const float     CAMERA_ZNEAR = 1.0f;
 const float     CAMERA_Y_OFFSET = 25.0f;
 const Vector3   CAMERA_ACCELERATION(400.0f, 400.0f, 400.0f);
-const Vector3   CAMERA_VELOCITY(100.0f, 100.0f, 100.0f);
+const Vector3   CAMERA_VELOCITY(300.0f, 300.0f, 300.0f);
 const float     CAMERA_VIEW_FRUSTUM = 1000.0f;
 const float     CAMERA_VIEW_FRUSTUM_CALC = CAMERA_VIEW_FRUSTUM/100.0f * 6.0f;
 
@@ -1179,6 +1179,8 @@ void ReadTextFile(const char *pszFilename, std::string &buffer)
 
 void RenderFrame()
 {
+	g_world.getBenchmark()->startClock();
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -1201,6 +1203,10 @@ void RenderFrame()
 	if(g_worldMapEnabled) {
 		RenderWorldMap();
 	}
+	
+	g_world.getBenchmark()->stopClock(CharackBenchmark::LABEL_RENDERIZATION);
+	g_world.getBenchmark()->printReport("c:\\Temp\\report.txt");
+	exit(0);
 }
 
 void RenderTerrain()
