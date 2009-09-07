@@ -118,7 +118,9 @@ void CharackMapGenerator::generate() {
   char filename[256] = "C:\\temp\\p.bmp";
   int do_file = 0;
 
+#ifdef __CHARACK_BENCH
   mBench->startClock();
+#endif
 
   longi = 0.0;
   lat = 0.0;
@@ -156,7 +158,10 @@ void CharackMapGenerator::generate() {
   makeoutline(1);
   buildDescriptionMatrix();
 
+#ifdef __CHARACK_BENCH
   mBench->stopClock(CharackBenchmark::LABEL_MM_GENERATION);
+#endif
+
   //printbmpBW(outfile);
 }
 

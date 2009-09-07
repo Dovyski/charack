@@ -86,20 +86,26 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 			// For "water pixels", we check the distance between them and the coast line and, using that information, we disturb the pixels
 			// around to produce a disturbed coast line. It will produce more realistic coast lines.
 
+#ifdef __CHARACK_BENCH
 			mBench->startClock();
+#endif
 
 			if(theMapGenerator->isLand(xObserver, zObserver)) {
 				// We have found a land pixel...
+#ifdef __CHARACK_BENCH
 				mBench->stopClock(CharackBenchmark::LABEL_COASTLINE_GENERATION);
 				mBench->startClock();
+#endif
 				
 				aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	 aMaxStepLand);
 				aDistanceRight	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_RIGHT,	 aMaxStepLand);
 				aDistanceUp		= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_UP,	 aMaxStepLand);
 				aDistanceDown	= theMapGenerator->distanceFrom(CharackMapGenerator::WATER, CharackMapGenerator::RESOLUTION_HIGH, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_DOWN,	 aMaxStepLand);
 				aTotalDistance	= (float)(aDistanceRight + aDistanceLeft + aDistanceUp + aDistanceDown);
-				
+
+#ifdef __CHARACK_BENCH
 				mBench->stopClock(CharackBenchmark::LABEL_BEACH_GENERATION);
+#endif
 
 				// If we are far away from the coast, we use the height information of the land portion.
 				// If we are close to the coast, we use the beach height, so we can produce a smooth transition
@@ -107,7 +113,9 @@ void CharackCoastGenerator::disturbStraightCoastLines(float *theHeightData, Char
 				theHeightData[i] = aTotalDistance < aMaxStepLand * 4 ? generateBeachHeight(aTotalDistance, aMaxStepLand) : theHeightData[i];
 			} else {
 				// We have found a water pixels...
+#ifdef __CHARACK_BENCH
 				mBench->stopClock(CharackBenchmark::LABEL_OCEAN_HEIGHTMAP);
+#endif
 
 				if(CK_COAST_DISTURBE) {
 					aDistanceLeft	= theMapGenerator->distanceFrom(CharackMapGenerator::LAND, CharackMapGenerator::RESOLUTION_LOW, xObserver, zObserver, theSample, CharackMapGenerator::MOVE_LEFT,	getMaxStepsWater());

@@ -295,14 +295,14 @@ void CharackWorld::placeObserverOnLand() {
 	//getObserver()->setPosition(1124947.0f, 400.0f, 7710.0f); return;
 	//
 	// Nice coast
-	getObserver()->setPosition(1124707.0f, 400.0f, 9090.0f); return;
+	//getObserver()->setPosition(1124707.0f, 400.0f, 9090.0f); return;
 	//
 	// Nice island
 	//getObserver()->setPosition(1122847.0f, 400.0f, 10050.0f); return;
 
 	for(int z=0; z < CK_MAX_WIDTH; z++) {
 		for(int x=0; x < CK_MAX_WIDTH; x++) {
-			if(getMapGenerator()->isLand(x, z)) {
+			if(getMapGenerator()->isLand(x, z, CharackMapGenerator::RESOLUTION_LOW)) {
 				getObserver()->setPosition(x, getObserver()->getPositionY(), z);
 				return;
 			}

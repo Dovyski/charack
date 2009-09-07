@@ -37,8 +37,8 @@
 // Max world width/	height
 #define CK_MAX_WIDTH					3000000.0f
 #define CK_MAX_HEIGHT					255.0f
-#define CK_MACRO_MATRIX_WIDTH			800
-#define CK_MACRO_MATRIX_HEIGHT			800
+#define CK_MACRO_MATRIX_WIDTH			1200
+#define CK_MACRO_MATRIX_HEIGHT			1200
 
 // OpenGL scale behavior
 #define CK_SCALE						2000.0f
@@ -70,5 +70,7 @@
 
 // Useful macros
 #define CK_DEG2RAD(X)					((PI*(X))/180)
+
+#define __CHARACK_BENCH
 
 #endif

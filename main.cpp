@@ -796,7 +796,7 @@ void InitApp()
     g_cameraBoundsMin.z = lowerBounds;
 
 	// Camera control and GUI
-	g_worldMapEnabled = true;
+	g_worldMapEnabled = false;
 	g_isFlyingEnabled = false;
 
     // Setup input.
@@ -1179,7 +1179,9 @@ void ReadTextFile(const char *pszFilename, std::string &buffer)
 
 void RenderFrame()
 {
+#ifdef __CHARACK_BENCH	
 	g_world.getBenchmark()->startClock();
+#endif
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -1203,10 +1205,15 @@ void RenderFrame()
 	if(g_worldMapEnabled) {
 		RenderWorldMap();
 	}
-	
+
+#ifdef __CHARACK_BENCH
 	g_world.getBenchmark()->stopClock(CharackBenchmark::LABEL_RENDERIZATION);
-	g_world.getBenchmark()->printReport("c:\\Temp\\report.txt");
+
+	char aPath[60];
+	sprintf(aPath, "c:\\Temp\\mm_%d.txt", CK_MACRO_MATRIX_WIDTH);
+	g_world.getBenchmark()->printReport(aPath);
 	exit(0);
+#endif
 }
 
 void RenderTerrain()
